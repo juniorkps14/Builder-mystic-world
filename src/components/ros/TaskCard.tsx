@@ -28,8 +28,38 @@ import {
   Copy,
   AlertTriangle,
   Timer,
+  Plus,
+  ChevronDown,
+  ChevronRight,
+  Layers,
+  ArrowRight,
+  Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+export interface Subtask {
+  id: string;
+  name: string;
+  type: string;
+  description: string;
+  parameters: Record<string, any>;
+  timeout: number;
+  retries: number;
+  waitForFeedback: boolean;
+  feedbackTimeout: number;
+  status:
+    | "pending"
+    | "running"
+    | "completed"
+    | "failed"
+    | "paused"
+    | "waiting_feedback";
+  progress: number;
+  duration: number;
+  startTime?: Date;
+  endTime?: Date;
+  errorMessage?: string;
+}
 
 export interface Task {
   id: string;
@@ -54,6 +84,12 @@ export interface Task {
   endTime?: Date;
   errorMessage?: string;
   dependencies: string[];
+  // Subtask management
+  hasSubtasks: boolean;
+  subtasks: Subtask[];
+  subtaskExecutionMode: "sequential" | "parallel";
+  maxSubtaskConcurrency: number;
+  subtaskWaitForFeedback: boolean;
 }
 
 interface TaskCardProps {
@@ -67,6 +103,12 @@ interface TaskCardProps {
   onStart: (taskId: string) => void;
   onPause: (taskId: string) => void;
   onStop: (taskId: string) => void;
+  onSubtaskUpdate: (taskId: string, subtask: Subtask) => void;
+  onSubtaskDelete: (taskId: string, subtaskId: string) => void;
+  onSubtaskAdd: (taskId: string) => void;
+  onSubtaskStart: (taskId: string, subtaskId: string) => void;
+  onSubtaskPause: (taskId: string, subtaskId: string) => void;
+  onSubtaskStop: (taskId: string, subtaskId: string) => void;
   dragHandleProps?: any;
 }
 
@@ -81,10 +123,17 @@ export function TaskCard({
   onStart,
   onPause,
   onStop,
+  onSubtaskUpdate,
+  onSubtaskDelete,
+  onSubtaskAdd,
+  onSubtaskStart,
+  onSubtaskPause,
+  onSubtaskStop,
   dragHandleProps,
 }: TaskCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTask, setEditedTask] = useState(task);
+  const [showSubtasks, setShowSubtasks] = useState(true);
 
   const statusColors = {
     pending: "bg-muted text-muted-foreground",
@@ -448,6 +497,117 @@ export function TaskCard({
                       })
                     }
                   />
+                </div>
+              )}
+            </div>
+
+            <Separator />
+
+            {/* Subtask Configuration */}
+            <div className="space-y-4">
+              <h4 className="font-medium">Subtask Configuration</h4>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <Label>Enable Subtasks</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Break this task into smaller subtasks
+                  </p>
+                </div>
+                <Switch
+                  checked={editedTask.hasSubtasks}
+                  onCheckedChange={(checked) =>
+                    setEditedTask({ ...editedTask, hasSubtasks: checked })
+                  }
+                />
+              </div>
+
+              {editedTask.hasSubtasks && (
+                <div className="space-y-4 p-4 rounded-lg bg-muted/50">
+                  <div>
+                    <Label>Subtask Execution Mode</Label>
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      <Button
+                        type="button"
+                        variant={
+                          editedTask.subtaskExecutionMode === "sequential"
+                            ? "default"
+                            : "outline"
+                        }
+                        onClick={() =>
+                          setEditedTask({
+                            ...editedTask,
+                            subtaskExecutionMode: "sequential",
+                          })
+                        }
+                        className="gap-2 justify-start"
+                        size="sm"
+                      >
+                        <ArrowRight className="h-4 w-4" />
+                        Sequential
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={
+                          editedTask.subtaskExecutionMode === "parallel"
+                            ? "default"
+                            : "outline"
+                        }
+                        onClick={() =>
+                          setEditedTask({
+                            ...editedTask,
+                            subtaskExecutionMode: "parallel",
+                          })
+                        }
+                        className="gap-2 justify-start"
+                        size="sm"
+                      >
+                        <Zap className="h-4 w-4" />
+                        Parallel
+                      </Button>
+                    </div>
+                  </div>
+
+                  {editedTask.subtaskExecutionMode === "parallel" && (
+                    <div>
+                      <Label htmlFor="max-subtask-concurrency">
+                        Max Concurrent Subtasks:{" "}
+                        {editedTask.maxSubtaskConcurrency}
+                      </Label>
+                      <Input
+                        id="max-subtask-concurrency"
+                        type="range"
+                        min="1"
+                        max="5"
+                        value={editedTask.maxSubtaskConcurrency}
+                        onChange={(e) =>
+                          setEditedTask({
+                            ...editedTask,
+                            maxSubtaskConcurrency: parseInt(e.target.value),
+                          })
+                        }
+                        className="mt-2"
+                      />
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <Label>Subtasks Wait for Feedback (Default)</Label>
+                      <p className="text-xs text-muted-foreground">
+                        Default feedback setting for new subtasks
+                      </p>
+                    </div>
+                    <Switch
+                      checked={editedTask.subtaskWaitForFeedback}
+                      onCheckedChange={(checked) =>
+                        setEditedTask({
+                          ...editedTask,
+                          subtaskWaitForFeedback: checked,
+                        })
+                      }
+                    />
+                  </div>
                 </div>
               )}
             </div>

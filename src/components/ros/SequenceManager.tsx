@@ -7,7 +7,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { TaskCard, Task } from "./TaskCard";
+import { TaskCardWithSubtasks } from "./TaskCardWithSubtasks";
+import { Task } from "./TaskCard";
 import { SequenceEditor, Sequence } from "./SequenceEditor";
 import {
   Play,
@@ -79,6 +80,11 @@ export function SequenceManager() {
         startTime: new Date(Date.now() - 300000),
         endTime: new Date(Date.now() - 255000),
         dependencies: [],
+        hasSubtasks: false,
+        subtasks: [],
+        subtaskExecutionMode: "sequential",
+        maxSubtaskConcurrency: 2,
+        subtaskWaitForFeedback: false,
       },
       {
         id: "task_2",
@@ -94,6 +100,54 @@ export function SequenceManager() {
         progress: 100,
         duration: 8,
         dependencies: ["task_1"],
+        hasSubtasks: true,
+        subtasks: [
+          {
+            id: "subtask_2_1",
+            name: "Setup Camera",
+            type: "ros_service",
+            description: "Initialize camera settings",
+            parameters: { exposure: "auto", focus: "infinity" },
+            timeout: 15,
+            retries: 1,
+            waitForFeedback: false,
+            feedbackTimeout: 30,
+            status: "completed",
+            progress: 100,
+            duration: 3,
+          },
+          {
+            id: "subtask_2_2",
+            name: "Capture Image",
+            type: "sensor_reading",
+            description: "Take the actual photo",
+            parameters: { format: "jpg", quality: "high" },
+            timeout: 10,
+            retries: 2,
+            waitForFeedback: true,
+            feedbackTimeout: 60,
+            status: "completed",
+            progress: 100,
+            duration: 2,
+          },
+          {
+            id: "subtask_2_3",
+            name: "Verify Image Quality",
+            type: "custom_script",
+            description: "Check if image meets quality standards",
+            parameters: { min_resolution: "1080p", brightness_check: true },
+            timeout: 8,
+            retries: 1,
+            waitForFeedback: true,
+            feedbackTimeout: 45,
+            status: "completed",
+            progress: 100,
+            duration: 3,
+          },
+        ],
+        subtaskExecutionMode: "sequential",
+        maxSubtaskConcurrency: 2,
+        subtaskWaitForFeedback: true,
       },
       {
         id: "task_3",
@@ -110,6 +164,40 @@ export function SequenceManager() {
         duration: 78,
         startTime: new Date(Date.now() - 78000),
         dependencies: ["task_2"],
+        hasSubtasks: true,
+        subtasks: [
+          {
+            id: "subtask_3_1",
+            name: "Plan Route",
+            type: "ros_service",
+            description: "Calculate optimal path to checkpoint B",
+            parameters: { algorithm: "A*", avoid_obstacles: true },
+            timeout: 30,
+            retries: 2,
+            waitForFeedback: false,
+            feedbackTimeout: 30,
+            status: "completed",
+            progress: 100,
+            duration: 12,
+          },
+          {
+            id: "subtask_3_2",
+            name: "Execute Movement",
+            type: "movement",
+            description: "Move robot along planned path",
+            parameters: { max_speed: 0.5, safety_distance: 0.3 },
+            timeout: 90,
+            retries: 1,
+            waitForFeedback: false,
+            feedbackTimeout: 30,
+            status: "running",
+            progress: 65,
+            duration: 66,
+          },
+        ],
+        subtaskExecutionMode: "parallel",
+        maxSubtaskConcurrency: 2,
+        subtaskWaitForFeedback: false,
       },
       {
         id: "task_4",
@@ -125,6 +213,11 @@ export function SequenceManager() {
         progress: 0,
         duration: 0,
         dependencies: ["task_3"],
+        hasSubtasks: false,
+        subtasks: [],
+        subtaskExecutionMode: "sequential",
+        maxSubtaskConcurrency: 2,
+        subtaskWaitForFeedback: true,
       },
       {
         id: "task_5",
@@ -140,6 +233,11 @@ export function SequenceManager() {
         progress: 30,
         duration: 5,
         dependencies: [],
+        hasSubtasks: false,
+        subtasks: [],
+        subtaskExecutionMode: "sequential",
+        maxSubtaskConcurrency: 2,
+        subtaskWaitForFeedback: false,
       },
       {
         id: "task_6",
@@ -155,6 +253,11 @@ export function SequenceManager() {
         progress: 75,
         duration: 45,
         dependencies: [],
+        hasSubtasks: false,
+        subtasks: [],
+        subtaskExecutionMode: "sequential",
+        maxSubtaskConcurrency: 2,
+        subtaskWaitForFeedback: false,
       },
       {
         id: "task_7",
@@ -170,6 +273,54 @@ export function SequenceManager() {
         progress: 0,
         duration: 0,
         dependencies: ["task_5", "task_6"],
+        hasSubtasks: true,
+        subtasks: [
+          {
+            id: "subtask_7_1",
+            name: "Collect Data",
+            type: "ros_service",
+            description: "Gather all inspection data",
+            parameters: { include_logs: true, compress: false },
+            timeout: 20,
+            retries: 1,
+            waitForFeedback: false,
+            feedbackTimeout: 30,
+            status: "pending",
+            progress: 0,
+            duration: 0,
+          },
+          {
+            id: "subtask_7_2",
+            name: "Generate Charts",
+            type: "custom_script",
+            description: "Create visualization charts",
+            parameters: { chart_type: "timeline", include_graphs: true },
+            timeout: 30,
+            retries: 1,
+            waitForFeedback: true,
+            feedbackTimeout: 90,
+            status: "pending",
+            progress: 0,
+            duration: 0,
+          },
+          {
+            id: "subtask_7_3",
+            name: "Compile PDF",
+            type: "custom_script",
+            description: "Create final PDF report",
+            parameters: { template: "inspection_v2", watermark: true },
+            timeout: 15,
+            retries: 2,
+            waitForFeedback: true,
+            feedbackTimeout: 60,
+            status: "pending",
+            progress: 0,
+            duration: 0,
+          },
+        ],
+        subtaskExecutionMode: "parallel",
+        maxSubtaskConcurrency: 3,
+        subtaskWaitForFeedback: true,
       },
     ];
 
@@ -260,6 +411,11 @@ export function SequenceManager() {
       progress: 0,
       duration: 0,
       dependencies: [],
+      hasSubtasks: false,
+      subtasks: [],
+      subtaskExecutionMode: "sequential",
+      maxSubtaskConcurrency: 2,
+      subtaskWaitForFeedback: false,
     };
     setTasks((prev) => [...prev, newTask]);
     if (activeSequence) {
@@ -459,7 +615,7 @@ export function SequenceManager() {
             ) : (
               <div className="space-y-4">
                 {currentTasks.map((task, index) => (
-                  <TaskCard
+                  <TaskCardWithSubtasks
                     key={task.id}
                     task={task}
                     index={index}
