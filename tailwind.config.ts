@@ -62,11 +62,33 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // ROS-specific color palette
+        ros: {
+          success: "hsl(var(--ros-success))",
+          warning: "hsl(var(--ros-warning))",
+          error: "hsl(var(--ros-error))",
+          info: "hsl(var(--ros-info))",
+          node: {
+            active: "hsl(var(--ros-node-active))",
+            inactive: "hsl(var(--ros-node-inactive))",
+          },
+          topic: "hsl(var(--ros-topic))",
+          service: "hsl(var(--ros-service))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      fontFamily: {
+        mono: [
+          "JetBrains Mono",
+          "Consolas",
+          "Monaco",
+          "Courier New",
+          "monospace",
+        ],
       },
       keyframes: {
         "accordion-down": {
@@ -85,10 +107,38 @@ export default {
             height: "0",
           },
         },
+        "pulse-glow": {
+          "0%, 100%": {
+            opacity: "1",
+            transform: "scale(1)",
+          },
+          "50%": {
+            opacity: "0.7",
+            transform: "scale(1.05)",
+          },
+        },
+        "data-flow": {
+          "0%": {
+            transform: "translateX(-100%)",
+            opacity: "0",
+          },
+          "50%": {
+            opacity: "1",
+          },
+          "100%": {
+            transform: "translateX(100%)",
+            opacity: "0",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "data-flow": "data-flow 3s ease-in-out infinite",
+      },
+      backdropBlur: {
+        xs: "2px",
       },
     },
   },
