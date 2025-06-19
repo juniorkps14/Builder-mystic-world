@@ -4,6 +4,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Home,
   Gamepad2,
   Camera,
@@ -17,48 +24,71 @@ import {
   Zap,
   Radio,
   Layers,
+  Sun,
+  Moon,
+  Monitor,
+  Languages,
+  GitBranch,
+  MapPin,
+  Cpu,
+  Circle,
+  Compass,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const navigationItems = [
   {
-    title: "Dashboard",
+    titleKey: "nav.dashboard",
     icon: Home,
     href: "/",
     badge: null,
   },
   {
-    title: "Robot Control",
+    titleKey: "nav.robotControl",
     icon: Gamepad2,
     href: "/control",
     badge: null,
   },
   {
-    title: "Sequences",
+    titleKey: "nav.sequences",
     icon: Layers,
     href: "/sequences",
     badge: "New",
   },
   {
-    title: "Camera Feeds",
+    titleKey: "nav.roboticArm",
+    icon: Activity,
+    href: "/robotic-arm",
+    badge: "New",
+  },
+  {
+    titleKey: "nav.holonomic",
+    icon: Circle,
+    href: "/holonomic-drive",
+    badge: "New",
+  },
+  {
+    titleKey: "nav.cameras",
     icon: Camera,
     href: "/cameras",
     badge: "Live",
   },
   {
-    title: "Sensors",
-    icon: Activity,
+    titleKey: "nav.sensors",
+    icon: Compass,
     href: "/sensors",
     badge: "8",
   },
   {
-    title: "Navigation",
+    titleKey: "nav.navigation",
     icon: Map,
     href: "/navigation",
     badge: null,
   },
   {
-    title: "System Monitor",
+    titleKey: "nav.system",
     icon: BarChart3,
     href: "/system",
     badge: null,
@@ -67,37 +97,55 @@ const navigationItems = [
 
 const rosItems = [
   {
-    title: "Nodes",
+    titleKey: "nav.ioConfig",
+    icon: Cpu,
+    href: "/io-config",
+    badge: "New",
+  },
+  {
+    titleKey: "nav.tfTree",
+    icon: GitBranch,
+    href: "/tf-tree",
+    badge: "Live",
+  },
+  {
+    titleKey: "nav.mapView",
+    icon: MapPin,
+    href: "/map-viewer",
+    badge: "Live",
+  },
+  {
+    titleKey: "nav.nodes",
     icon: Network,
     href: "/nodes",
     badge: "12",
   },
   {
-    title: "Topics",
+    titleKey: "nav.topics",
     icon: Radio,
     href: "/topics",
     badge: "24",
   },
   {
-    title: "Services",
+    titleKey: "nav.services",
     icon: Zap,
     href: "/services",
     badge: "8",
   },
   {
-    title: "Parameters",
+    titleKey: "nav.parameters",
     icon: Layers,
     href: "/parameters",
     badge: null,
   },
   {
-    title: "Logs",
+    titleKey: "nav.logs",
     icon: FileText,
     href: "/logs",
     badge: "New",
   },
   {
-    title: "Terminal",
+    titleKey: "nav.terminal",
     icon: Terminal,
     href: "/terminal",
     badge: null,
@@ -106,6 +154,8 @@ const rosItems = [
 
 export function Sidebar() {
   const location = useLocation();
+  const { t, language, setLanguage } = useLanguage();
+  const { theme, setTheme } = useTheme();
 
   return (
     <div className="flex h-full w-64 flex-col border-r border-border bg-sidebar">
@@ -116,10 +166,10 @@ export function Sidebar() {
           </div>
           <div>
             <h2 className="text-lg font-bold text-sidebar-foreground">
-              Dino Core
+              {t("app.name")}
             </h2>
             <p className="text-xs text-sidebar-foreground/60">
-              ROS Control Interface
+              {t("app.subtitle")}
             </p>
           </div>
         </div>
@@ -128,12 +178,12 @@ export function Sidebar() {
         <div className="bg-sidebar-accent rounded-lg p-3 mb-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-sidebar-accent-foreground">
-              System Status
+              {t("app.systemStatus")}
             </span>
             <div className="ros-status-indicator ros-status-active" />
           </div>
           <div className="text-xs text-sidebar-accent-foreground/70">
-            All systems operational
+            {t("app.allSystemsOperational")}
           </div>
         </div>
       </div>
@@ -160,7 +210,7 @@ export function Sidebar() {
                 >
                   <div className="flex items-center gap-3">
                     <item.icon className="h-4 w-4" />
-                    <span>{item.title}</span>
+                    <span>{t(item.titleKey)}</span>
                   </div>
                   {item.badge && (
                     <Badge
@@ -199,7 +249,7 @@ export function Sidebar() {
                 >
                   <div className="flex items-center gap-3">
                     <item.icon className="h-4 w-4" />
-                    <span>{item.title}</span>
+                    <span>{t(item.titleKey)}</span>
                   </div>
                   {item.badge && (
                     <Badge
@@ -217,7 +267,71 @@ export function Sidebar() {
       </ScrollArea>
 
       {/* Bottom Settings */}
-      <div className="p-6 border-t border-sidebar-border space-y-2">
+      <div className="p-6 border-t border-sidebar-border space-y-3">
+        {/* Language Selector */}
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <Languages className="h-4 w-4 text-sidebar-foreground" />
+            <span className="text-sm font-medium text-sidebar-foreground">
+              Language
+            </span>
+          </div>
+          <Select value={language} onValueChange={setLanguage}>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="en">{t("language.english")}</SelectItem>
+              <SelectItem value="th">{t("language.thai")}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Theme Selector */}
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            {theme === "light" && (
+              <Sun className="h-4 w-4 text-sidebar-foreground" />
+            )}
+            {theme === "dark" && (
+              <Moon className="h-4 w-4 text-sidebar-foreground" />
+            )}
+            {theme === "system" && (
+              <Monitor className="h-4 w-4 text-sidebar-foreground" />
+            )}
+            <span className="text-sm font-medium text-sidebar-foreground">
+              Theme
+            </span>
+          </div>
+          <Select value={theme} onValueChange={setTheme}>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="light">
+                <div className="flex items-center gap-2">
+                  <Sun className="h-4 w-4" />
+                  {t("theme.light")}
+                </div>
+              </SelectItem>
+              <SelectItem value="dark">
+                <div className="flex items-center gap-2">
+                  <Moon className="h-4 w-4" />
+                  {t("theme.dark")}
+                </div>
+              </SelectItem>
+              <SelectItem value="system">
+                <div className="flex items-center gap-2">
+                  <Monitor className="h-4 w-4" />
+                  {t("theme.system")}
+                </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <Separator />
+
         <Button
           variant="ghost"
           className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent"
@@ -225,7 +339,7 @@ export function Sidebar() {
         >
           <Link to="/about">
             <FileText className="h-4 w-4" />
-            About
+            {t("nav.about")}
           </Link>
         </Button>
         <Button
@@ -235,7 +349,7 @@ export function Sidebar() {
         >
           <Link to="/settings">
             <Settings className="h-4 w-4" />
-            Settings
+            {t("nav.settings")}
           </Link>
         </Button>
       </div>

@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Activity,
   Bell,
@@ -14,6 +15,8 @@ import {
 } from "lucide-react";
 
 export function Header() {
+  const { t } = useLanguage();
+
   // Mock ROS system status
   const systemStatus = {
     roscore: true,
@@ -37,9 +40,11 @@ export function Header() {
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-ros-success rounded-full animate-pulse-glow" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">Dino Core</h1>
+              <h1 className="text-xl font-bold text-foreground">
+                {t("app.name")}
+              </h1>
               <p className="text-xs text-muted-foreground">
-                Robot Operating System Interface
+                {t("app.subtitle")}
               </p>
             </div>
           </div>
