@@ -37,9 +37,9 @@ export function Header() {
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-ros-success rounded-full animate-pulse-glow" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">ROS Control</h1>
+              <h1 className="text-xl font-bold text-foreground">Dino Core</h1>
               <p className="text-xs text-muted-foreground">
-                Robot Operating System
+                Robot Operating System Interface
               </p>
             </div>
           </div>

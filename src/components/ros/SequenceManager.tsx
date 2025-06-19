@@ -71,6 +71,8 @@ export function SequenceManager() {
         parameters: { x: 5.2, y: 3.1, theta: 0 },
         timeout: 120,
         retries: 2,
+        waitForFeedback: false,
+        feedbackTimeout: 30,
         status: "completed",
         progress: 100,
         duration: 45,
@@ -86,6 +88,8 @@ export function SequenceManager() {
         parameters: { camera: "front", resolution: "1080p" },
         timeout: 30,
         retries: 1,
+        waitForFeedback: true,
+        feedbackTimeout: 60,
         status: "completed",
         progress: 100,
         duration: 8,
@@ -99,6 +103,8 @@ export function SequenceManager() {
         parameters: { x: -2.8, y: 4.5, theta: 1.57 },
         timeout: 120,
         retries: 2,
+        waitForFeedback: false,
+        feedbackTimeout: 30,
         status: "running",
         progress: 65,
         duration: 78,
@@ -113,6 +119,8 @@ export function SequenceManager() {
         parameters: { x: 0, y: 0, theta: 0 },
         timeout: 180,
         retries: 1,
+        waitForFeedback: true,
+        feedbackTimeout: 45,
         status: "pending",
         progress: 0,
         duration: 0,
@@ -126,6 +134,8 @@ export function SequenceManager() {
         parameters: { sensor: "thermal", threshold: 85 },
         timeout: 15,
         retries: 2,
+        waitForFeedback: false,
+        feedbackTimeout: 30,
         status: "running",
         progress: 30,
         duration: 5,
@@ -139,7 +149,9 @@ export function SequenceManager() {
         parameters: { sensor: "accelerometer", duration: 60 },
         timeout: 90,
         retries: 1,
-        status: "running",
+        waitForFeedback: false,
+        feedbackTimeout: 30,
+        status: "waiting_feedback",
         progress: 75,
         duration: 45,
         dependencies: [],
@@ -152,6 +164,8 @@ export function SequenceManager() {
         parameters: { format: "pdf", include_images: true },
         timeout: 60,
         retries: 1,
+        waitForFeedback: true,
+        feedbackTimeout: 120,
         status: "pending",
         progress: 0,
         duration: 0,
@@ -240,6 +254,8 @@ export function SequenceManager() {
       parameters: {},
       timeout: 60,
       retries: 1,
+      waitForFeedback: false,
+      feedbackTimeout: 30,
       status: "pending",
       progress: 0,
       duration: 0,
@@ -294,7 +310,7 @@ export function SequenceManager() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
             <div className="text-center">
               <div className="text-2xl font-bold">{currentTasks.length}</div>
               <div className="text-sm text-muted-foreground">Total Tasks</div>
@@ -316,6 +332,17 @@ export function SequenceManager() {
                 {currentTasks.filter((t) => t.status === "failed").length}
               </div>
               <div className="text-sm text-muted-foreground">Failed</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-500">
+                {
+                  currentTasks.filter((t) => t.status === "waiting_feedback")
+                    .length
+                }
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Waiting Feedback
+              </div>
             </div>
           </div>
 

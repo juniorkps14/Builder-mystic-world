@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -38,7 +39,15 @@ export interface Task {
   parameters: Record<string, any>;
   timeout: number;
   retries: number;
-  status: "pending" | "running" | "completed" | "failed" | "paused";
+  waitForFeedback: boolean;
+  feedbackTimeout: number;
+  status:
+    | "pending"
+    | "running"
+    | "completed"
+    | "failed"
+    | "paused"
+    | "waiting_feedback";
   progress: number;
   duration: number;
   startTime?: Date;
@@ -83,6 +92,7 @@ export function TaskCard({
     completed: "bg-ros-success text-white",
     failed: "bg-destructive text-destructive-foreground",
     paused: "bg-ros-warning text-black",
+    waiting_feedback: "bg-blue-500 text-white",
   };
 
   const statusIcons = {
@@ -91,6 +101,7 @@ export function TaskCard({
     completed: CheckCircle2,
     failed: XCircle,
     paused: Pause,
+    waiting_feedback: AlertTriangle,
   };
 
   const StatusIcon = statusIcons[task.status];
@@ -191,6 +202,28 @@ export function TaskCard({
               </Button>
             )}
 
+            {task.status === "waiting_feedback" && (
+              <>
+                <Button
+                  size="sm"
+                  onClick={() => onStart(task.id)}
+                  className="gap-1"
+                >
+                  <CheckCircle2 className="h-3 w-3" />
+                  Confirm
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => onStop(task.id)}
+                  className="gap-1"
+                >
+                  <XCircle className="h-3 w-3" />
+                  Reject
+                </Button>
+              </>
+            )}
+
             {/* Action Buttons */}
             <Button
               size="sm"
@@ -235,6 +268,26 @@ export function TaskCard({
                 <span className="text-muted-foreground">Duration:</span>
                 <p className="font-mono">{formatDuration(task.duration)}</p>
               </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 text-sm mt-3">
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground">Feedback:</span>
+                <Badge
+                  variant={task.waitForFeedback ? "default" : "outline"}
+                  className="text-xs"
+                >
+                  {task.waitForFeedback ? "Required" : "Auto"}
+                </Badge>
+              </div>
+              {task.waitForFeedback && (
+                <div>
+                  <span className="text-muted-foreground">
+                    Feedback Timeout:
+                  </span>
+                  <p className="font-mono">{task.feedbackTimeout}s</p>
+                </div>
+              )}
             </div>
 
             {/* Progress Bar */}
@@ -359,6 +412,44 @@ export function TaskCard({
                   }
                 />
               </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <Label>Wait for Feedback</Label>
+                  <p className="text-sm text-muted-foreground">
+                    {editedTask.waitForFeedback
+                      ? "Task will wait for confirmation before proceeding"
+                      : "Task will complete automatically"}
+                  </p>
+                </div>
+                <Switch
+                  checked={editedTask.waitForFeedback}
+                  onCheckedChange={(checked) =>
+                    setEditedTask({ ...editedTask, waitForFeedback: checked })
+                  }
+                />
+              </div>
+
+              {editedTask.waitForFeedback && (
+                <div>
+                  <Label htmlFor="feedback-timeout">
+                    Feedback Timeout (seconds)
+                  </Label>
+                  <Input
+                    id="feedback-timeout"
+                    type="number"
+                    value={editedTask.feedbackTimeout}
+                    onChange={(e) =>
+                      setEditedTask({
+                        ...editedTask,
+                        feedbackTimeout: parseInt(e.target.value) || 30,
+                      })
+                    }
+                  />
+                </div>
+              )}
             </div>
 
             <Separator />

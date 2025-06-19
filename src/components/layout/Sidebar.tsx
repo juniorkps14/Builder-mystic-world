@@ -116,10 +116,10 @@ export function Sidebar() {
           </div>
           <div>
             <h2 className="text-lg font-bold text-sidebar-foreground">
-              ROS Web
+              Dino Core
             </h2>
             <p className="text-xs text-sidebar-foreground/60">
-              Control Interface
+              ROS Control Interface
             </p>
           </div>
         </div>
@@ -217,7 +217,17 @@ export function Sidebar() {
       </ScrollArea>
 
       {/* Bottom Settings */}
-      <div className="p-6 border-t border-sidebar-border">
+      <div className="p-6 border-t border-sidebar-border space-y-2">
+        <Button
+          variant="ghost"
+          className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent"
+          asChild
+        >
+          <Link to="/about">
+            <FileText className="h-4 w-4" />
+            About
+          </Link>
+        </Button>
         <Button
           variant="ghost"
           className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent"

@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { ExecutionModeSelector } from "./ExecutionModeSelector";
 import {
   Select,
   SelectContent,
@@ -42,6 +43,14 @@ export interface Sequence {
   description: string;
   isParallel: boolean;
   maxConcurrency: number;
+  executionMode: {
+    type: "sequential" | "parallel";
+    maxConcurrency: number;
+    waitForFeedback: boolean;
+    globalFeedbackTimeout: number;
+    failureHandling: "stop" | "continue" | "retry";
+    retryCount: number;
+  };
   status: "idle" | "running" | "paused" | "completed" | "failed";
   createdAt: Date;
   updatedAt: Date;
@@ -67,6 +76,14 @@ export function SequenceEditor({
       description: "",
       isParallel: false,
       maxConcurrency: 3,
+      executionMode: {
+        type: "sequential",
+        maxConcurrency: 3,
+        waitForFeedback: false,
+        globalFeedbackTimeout: 30,
+        failureHandling: "stop",
+        retryCount: 1,
+      },
       status: "idle",
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -319,6 +336,18 @@ export function SequenceEditor({
           </div>
         </div>
       </Card>
+
+      <ExecutionModeSelector
+        mode={editedSequence.executionMode}
+        onModeChange={(mode) =>
+          setEditedSequence({
+            ...editedSequence,
+            executionMode: mode,
+            isParallel: mode.type === "parallel",
+            maxConcurrency: mode.maxConcurrency,
+          })
+        }
+      />
     </div>
   );
 }

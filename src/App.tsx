@@ -18,6 +18,7 @@ import Services from "./pages/Services";
 import Parameters from "./pages/Parameters";
 import Logs from "./pages/Logs";
 import Terminal from "./pages/Terminal";
+import About from "./pages/About";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -49,6 +50,7 @@ const App = () => (
                   <Route path="/parameters" element={<Parameters />} />
                   <Route path="/logs" element={<Logs />} />
                   <Route path="/terminal" element={<Terminal />} />
+                  <Route path="/about" element={<About />} />
                   <Route path="/settings" element={<Settings />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
