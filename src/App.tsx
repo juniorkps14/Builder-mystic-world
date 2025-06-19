@@ -13,6 +13,7 @@ import Sequences from "./pages/Sequences";
 import RoboticArm from "./pages/RoboticArm";
 import HolonomicDrive from "./pages/HolonomicDrive";
 import IOConfiguration from "./pages/IOConfiguration";
+import FeatureManagement from "./pages/FeatureManagement";
 import TFTree from "./pages/TFTree";
 import MapViewer from "./pages/MapViewer";
 import Sensors from "./pages/Sensors";
@@ -55,6 +56,7 @@ const App = () => (
                         element={<HolonomicDrive />}
                       />
                       <Route path="/io-config" element={<IOConfiguration />} />
+                      <Route path="/features" element={<FeatureManagement />} />
                       <Route path="/tf-tree" element={<TFTree />} />
                       <Route path="/map-viewer" element={<MapViewer />} />
                       <Route path="/cameras" element={<Cameras />} />

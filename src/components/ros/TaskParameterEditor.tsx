@@ -1,0 +1,719 @@
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Task } from "./TaskCard";
+import {
+  Move3D,
+  Settings,
+  Eye,
+  Camera,
+  Compass,
+  Zap,
+  Brain,
+  Shield,
+  Mic,
+  Hand,
+  Wifi,
+  Cloud,
+  BarChart3,
+  Wrench,
+  Battery,
+  MapPin,
+  Timer,
+  AlertTriangle,
+} from "lucide-react";
+
+interface TaskParameterEditorProps {
+  task: Task;
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (task: Task) => void;
+}
+
+export function TaskParameterEditor({
+  task,
+  isOpen,
+  onClose,
+  onSave,
+}: TaskParameterEditorProps) {
+  const [editedTask, setEditedTask] = useState<Task>(task);
+
+  const taskTypes = {
+    movement: {
+      icon: Move3D,
+      name: "Robot Movement",
+      description: "Control robot position and orientation",
+      parameters: {
+        position: { x: 0, y: 0, z: 0 },
+        orientation: { roll: 0, pitch: 0, yaw: 0 },
+        speed: 1.0,
+        acceleration: 0.5,
+        precision: 0.01,
+        moveType: "linear", // linear, joint, circular
+        coordinateFrame: "base_link",
+        pathPlanning: true,
+        obstacleAvoidance: true,
+      },
+    },
+    manipulation: {
+      icon: Hand,
+      name: "Arm Manipulation",
+      description: "Control robotic arm movements",
+      parameters: {
+        targetPosition: { x: 0.5, y: 0, z: 0.3 },
+        targetOrientation: { roll: 0, pitch: 0, yaw: 0 },
+        gripperAction: "none", // none, open, close, grasp
+        force: 50, // percentage
+        approachVector: { x: 0, y: 0, z: -0.1 },
+        retractVector: { x: 0, y: 0, z: 0.1 },
+        planningGroup: "arm",
+        endEffectorFrame: "end_effector",
+      },
+    },
+    vision: {
+      icon: Eye,
+      name: "Vision Processing",
+      description: "Computer vision and image processing",
+      parameters: {
+        camera: "front_camera",
+        processingType: "object_detection", // object_detection, qr_code, face_recognition, color_tracking
+        targetObject: "",
+        confidence: 0.8,
+        saveImage: true,
+        imageFormat: "jpg",
+        resolution: "1920x1080",
+        roi: { x: 0, y: 0, width: 100, height: 100 }, // region of interest
+      },
+    },
+    sensor_reading: {
+      icon: Compass,
+      name: "Sensor Reading",
+      description: "Read and process sensor data",
+      parameters: {
+        sensorType: "lidar", // lidar, camera, imu, ultrasonic, temperature
+        topic: "/scan",
+        duration: 1.0,
+        samplingRate: 10,
+        filterType: "none", // none, low_pass, high_pass, kalman
+        threshold: 0.5,
+        units: "meters",
+        logData: true,
+      },
+    },
+    ai_processing: {
+      icon: Brain,
+      name: "AI Processing",
+      description: "Machine learning and AI tasks",
+      parameters: {
+        modelType: "classification", // classification, detection, segmentation, nlp
+        modelPath: "/models/default.onnx",
+        inputTopic: "/camera/image",
+        outputTopic: "/ai/results",
+        confidence: 0.7,
+        batchSize: 1,
+        useGPU: false,
+        preprocessing: true,
+      },
+    },
+    safety_check: {
+      icon: Shield,
+      name: "Safety Check",
+      description: "Safety monitoring and validation",
+      parameters: {
+        checkType: "collision", // collision, boundary, temperature, battery
+        threshold: 0.1,
+        action: "stop", // stop, slow_down, warn, abort
+        recoveryAction: "backup",
+        alertLevel: "warning", // info, warning, error, critical
+        autoRecover: true,
+        timeout: 5.0,
+      },
+    },
+    communication: {
+      icon: Wifi,
+      name: "Communication",
+      description: "Network and communication tasks",
+      parameters: {
+        protocol: "tcp", // tcp, udp, websocket, mqtt
+        address: "localhost",
+        port: 8080,
+        message: "",
+        encoding: "utf-8",
+        timeout: 10.0,
+        retry: 3,
+        encryption: false,
+      },
+    },
+    voice_command: {
+      icon: Mic,
+      name: "Voice Command",
+      description: "Speech recognition and voice control",
+      parameters: {
+        language: "en-US",
+        confidence: 0.8,
+        timeout: 5.0,
+        keywords: [],
+        responseType: "speech", // speech, text, action
+        voiceModel: "default",
+        noiseReduction: true,
+      },
+    },
+    data_logging: {
+      icon: BarChart3,
+      name: "Data Logging",
+      description: "Data collection and logging",
+      parameters: {
+        dataSource: "/joint_states",
+        logFormat: "csv", // csv, json, rosbag
+        filename: "data_log",
+        duration: 10.0,
+        samplingRate: 50,
+        compression: true,
+        autoUpload: false,
+        cloudStorage: "local",
+      },
+    },
+    maintenance: {
+      icon: Wrench,
+      name: "Maintenance",
+      description: "System maintenance and diagnostics",
+      parameters: {
+        checkType: "diagnostics", // diagnostics, calibration, cleaning, lubrication
+        component: "all", // all, motors, sensors, joints
+        severity: "routine", // routine, preventive, corrective
+        autoFix: false,
+        reportGeneration: true,
+        scheduleNext: 30, // days
+      },
+    },
+  };
+
+  const handleParameterChange = (paramKey: string, value: any) => {
+    setEditedTask((prev) => ({
+      ...prev,
+      parameters: {
+        ...prev.parameters,
+        [paramKey]: value,
+      },
+    }));
+  };
+
+  const handleNestedParameterChange = (
+    groupKey: string,
+    paramKey: string,
+    value: any,
+  ) => {
+    setEditedTask((prev) => ({
+      ...prev,
+      parameters: {
+        ...prev.parameters,
+        [groupKey]: {
+          ...prev.parameters[groupKey],
+          [paramKey]: value,
+        },
+      },
+    }));
+  };
+
+  const handleSave = () => {
+    onSave(editedTask);
+    onClose();
+  };
+
+  const taskTypeInfo = taskTypes[editedTask.type as keyof typeof taskTypes];
+  const defaultParams = taskTypeInfo?.parameters || {};
+
+  // Merge default parameters with existing ones
+  const mergedParams = { ...defaultParams, ...editedTask.parameters };
+
+  const renderParameterField = (key: string, value: any, label?: string) => {
+    const displayLabel = label || key.replace(/([A-Z])/g, " $1").trim();
+
+    if (typeof value === "boolean") {
+      return (
+        <div key={key} className="flex items-center justify-between">
+          <Label className="text-sm">{displayLabel}</Label>
+          <Switch
+            checked={value}
+            onCheckedChange={(checked) => handleParameterChange(key, checked)}
+          />
+        </div>
+      );
+    }
+
+    if (typeof value === "number") {
+      // Determine if it's a percentage, angle, or regular number
+      const isPercentage = key.includes("confidence") || key.includes("force");
+      const isAngle =
+        key.includes("roll") || key.includes("pitch") || key.includes("yaw");
+      const isPosition =
+        key.includes("x") || key.includes("y") || key.includes("z");
+
+      return (
+        <div key={key} className="space-y-2">
+          <Label className="text-sm">
+            {displayLabel}: {value}
+            {isPercentage ? "%" : isAngle ? "°" : isPosition ? "m" : ""}
+          </Label>
+          <Slider
+            value={[value]}
+            onValueChange={(values) => handleParameterChange(key, values[0])}
+            min={isPercentage ? 0 : isAngle ? -180 : isPosition ? -10 : 0}
+            max={isPercentage ? 100 : isAngle ? 180 : isPosition ? 10 : 100}
+            step={isPercentage ? 1 : isAngle ? 1 : isPosition ? 0.01 : 0.1}
+          />
+        </div>
+      );
+    }
+
+    if (typeof value === "string") {
+      // Check if it's a select field
+      const selectOptions = {
+        moveType: ["linear", "joint", "circular", "spline"],
+        coordinateFrame: ["base_link", "world", "map", "odom"],
+        gripperAction: ["none", "open", "close", "grasp", "release"],
+        processingType: [
+          "object_detection",
+          "qr_code",
+          "face_recognition",
+          "color_tracking",
+          "edge_detection",
+        ],
+        sensorType: [
+          "lidar",
+          "camera",
+          "imu",
+          "ultrasonic",
+          "temperature",
+          "pressure",
+        ],
+        modelType: [
+          "classification",
+          "detection",
+          "segmentation",
+          "nlp",
+          "regression",
+        ],
+        checkType: [
+          "collision",
+          "boundary",
+          "temperature",
+          "battery",
+          "pressure",
+        ],
+        action: ["stop", "slow_down", "warn", "abort", "continue"],
+        protocol: ["tcp", "udp", "websocket", "mqtt", "http"],
+        language: ["en-US", "th-TH", "zh-CN", "ja-JP", "ko-KR"],
+        logFormat: ["csv", "json", "rosbag", "txt"],
+      };
+
+      if (selectOptions[key as keyof typeof selectOptions]) {
+        return (
+          <div key={key} className="space-y-2">
+            <Label className="text-sm">{displayLabel}</Label>
+            <Select
+              value={value}
+              onValueChange={(newValue) => handleParameterChange(key, newValue)}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {selectOptions[key as keyof typeof selectOptions].map(
+                  (option) => (
+                    <SelectItem key={option} value={option}>
+                      {option.replace(/_/g, " ").toUpperCase()}
+                    </SelectItem>
+                  ),
+                )}
+              </SelectContent>
+            </Select>
+          </div>
+        );
+      }
+
+      // Text areas for longer content
+      if (key.includes("message") || key.includes("description")) {
+        return (
+          <div key={key} className="space-y-2">
+            <Label className="text-sm">{displayLabel}</Label>
+            <Textarea
+              value={value}
+              onChange={(e) => handleParameterChange(key, e.target.value)}
+              placeholder={`Enter ${displayLabel.toLowerCase()}...`}
+              rows={3}
+            />
+          </div>
+        );
+      }
+
+      // Regular text input
+      return (
+        <div key={key} className="space-y-2">
+          <Label className="text-sm">{displayLabel}</Label>
+          <Input
+            value={value}
+            onChange={(e) => handleParameterChange(key, e.target.value)}
+            placeholder={`Enter ${displayLabel.toLowerCase()}...`}
+          />
+        </div>
+      );
+    }
+
+    if (typeof value === "object" && value !== null) {
+      return (
+        <div key={key} className="space-y-3">
+          <Label className="text-sm font-semibold">{displayLabel}</Label>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 border rounded-lg">
+            {Object.entries(value).map(([subKey, subValue]) =>
+              renderNestedParameter(key, subKey, subValue),
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  const renderNestedParameter = (groupKey: string, key: string, value: any) => {
+    const displayLabel = key.replace(/([A-Z])/g, " $1").trim();
+
+    if (typeof value === "number") {
+      return (
+        <div key={`${groupKey}.${key}`} className="space-y-1">
+          <Label className="text-xs">{displayLabel}</Label>
+          <Input
+            type="number"
+            step="0.01"
+            value={value}
+            onChange={(e) =>
+              handleNestedParameterChange(
+                groupKey,
+                key,
+                parseFloat(e.target.value) || 0,
+              )
+            }
+          />
+        </div>
+      );
+    }
+
+    if (typeof value === "string") {
+      return (
+        <div key={`${groupKey}.${key}`} className="space-y-1">
+          <Label className="text-xs">{displayLabel}</Label>
+          <Input
+            value={value}
+            onChange={(e) =>
+              handleNestedParameterChange(groupKey, key, e.target.value)
+            }
+          />
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-3">
+            {taskTypeInfo && <taskTypeInfo.icon className="h-6 w-6" />}
+            Configure Task: {editedTask.name}
+          </DialogTitle>
+          <DialogDescription>
+            {taskTypeInfo?.description || "Configure parameters for this task"}
+          </DialogDescription>
+        </DialogHeader>
+
+        <Tabs defaultValue="basic" className="space-y-4">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="basic">Basic Settings</TabsTrigger>
+            <TabsTrigger value="parameters">Parameters</TabsTrigger>
+            <TabsTrigger value="advanced">Advanced</TabsTrigger>
+          </TabsList>
+
+          {/* Basic Settings */}
+          <TabsContent value="basic" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Task Name</Label>
+                <Input
+                  value={editedTask.name}
+                  onChange={(e) =>
+                    setEditedTask({ ...editedTask, name: e.target.value })
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Task Type</Label>
+                <Select
+                  value={editedTask.type}
+                  onValueChange={(value) =>
+                    setEditedTask({ ...editedTask, type: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(taskTypes).map(([key, info]) => (
+                      <SelectItem key={key} value={key}>
+                        <div className="flex items-center gap-2">
+                          <info.icon className="h-4 w-4" />
+                          {info.name}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Description</Label>
+              <Textarea
+                value={editedTask.description}
+                onChange={(e) =>
+                  setEditedTask({ ...editedTask, description: e.target.value })
+                }
+                rows={3}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="space-y-2">
+                <Label>Timeout (seconds)</Label>
+                <Input
+                  type="number"
+                  value={editedTask.timeout}
+                  onChange={(e) =>
+                    setEditedTask({
+                      ...editedTask,
+                      timeout: parseInt(e.target.value) || 60,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Max Retries</Label>
+                <Input
+                  type="number"
+                  value={editedTask.retries}
+                  onChange={(e) =>
+                    setEditedTask({
+                      ...editedTask,
+                      retries: parseInt(e.target.value) || 1,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <Label>Wait for Feedback</Label>
+                <Switch
+                  checked={editedTask.waitForFeedback}
+                  onCheckedChange={(checked) =>
+                    setEditedTask({ ...editedTask, waitForFeedback: checked })
+                  }
+                />
+              </div>
+
+              {editedTask.waitForFeedback && (
+                <div className="space-y-2">
+                  <Label>Feedback Timeout</Label>
+                  <Input
+                    type="number"
+                    value={editedTask.feedbackTimeout}
+                    onChange={(e) =>
+                      setEditedTask({
+                        ...editedTask,
+                        feedbackTimeout: parseInt(e.target.value) || 30,
+                      })
+                    }
+                  />
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
+          {/* Parameters */}
+          <TabsContent value="parameters" className="space-y-4">
+            {taskTypeInfo && (
+              <div className="p-4 bg-muted rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <taskTypeInfo.icon className="h-5 w-5 text-primary" />
+                  <h3 className="font-semibold">{taskTypeInfo.name}</h3>
+                  <Badge variant="outline">{editedTask.type}</Badge>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {taskTypeInfo.description}
+                </p>
+              </div>
+            )}
+
+            <div className="space-y-4">
+              {Object.entries(mergedParams).map(([key, value]) =>
+                renderParameterField(key, value),
+              )}
+            </div>
+          </TabsContent>
+
+          {/* Advanced */}
+          <TabsContent value="advanced" className="space-y-4">
+            <div className="space-y-4">
+              <Card className="p-4">
+                <h3 className="font-semibold mb-3">Subtask Configuration</h3>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label>Enable Subtasks</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Break this task into smaller subtasks
+                    </p>
+                  </div>
+                  <Switch
+                    checked={editedTask.hasSubtasks}
+                    onCheckedChange={(checked) =>
+                      setEditedTask({ ...editedTask, hasSubtasks: checked })
+                    }
+                  />
+                </div>
+
+                {editedTask.hasSubtasks && (
+                  <div className="mt-4 space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label>Execution Mode</Label>
+                        <Select
+                          value={editedTask.subtaskExecutionMode}
+                          onValueChange={(value: "sequential" | "parallel") =>
+                            setEditedTask({
+                              ...editedTask,
+                              subtaskExecutionMode: value,
+                            })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="sequential">
+                              Sequential
+                            </SelectItem>
+                            <SelectItem value="parallel">Parallel</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label>Max Concurrent Subtasks</Label>
+                        <Input
+                          type="number"
+                          value={editedTask.maxSubtaskConcurrency}
+                          onChange={(e) =>
+                            setEditedTask({
+                              ...editedTask,
+                              maxSubtaskConcurrency:
+                                parseInt(e.target.value) || 2,
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </Card>
+
+              <Card className="p-4">
+                <h3 className="font-semibold mb-3">Error Handling</h3>
+                <div className="space-y-3">
+                  <div>
+                    <Label>On Error Action</Label>
+                    <Select defaultValue="retry">
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="retry">Retry Task</SelectItem>
+                        <SelectItem value="skip">Skip Task</SelectItem>
+                        <SelectItem value="abort">Abort Sequence</SelectItem>
+                        <SelectItem value="manual">
+                          Request Manual Intervention
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label>Auto Recovery</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Attempt automatic recovery on failure
+                      </p>
+                    </div>
+                    <Switch defaultChecked />
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="p-4">
+                <h3 className="font-semibold mb-3">Logging & Monitoring</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label>Enable Data Logging</Label>
+                    <Switch defaultChecked />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <Label>Performance Monitoring</Label>
+                    <Switch defaultChecked />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <Label>Real-time Telemetry</Label>
+                    <Switch />
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button onClick={handleSave}>Save Configuration</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}

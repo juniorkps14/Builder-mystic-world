@@ -103,6 +103,12 @@ const rosItems = [
     badge: "New",
   },
   {
+    titleKey: "nav.features",
+    icon: Zap,
+    href: "/features",
+    badge: "Pro",
+  },
+  {
     titleKey: "nav.tfTree",
     icon: GitBranch,
     href: "/tf-tree",

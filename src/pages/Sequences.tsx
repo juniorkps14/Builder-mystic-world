@@ -1,16 +1,16 @@
-import { SequenceManager } from "@/components/ros/SequenceManager";
+import { EnhancedSequenceManager } from "@/components/ros/EnhancedSequenceManager";
 
 const Sequences = () => {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Sequence Management</h1>
+        <h1 className="text-3xl font-bold">Advanced Sequence Management</h1>
         <p className="text-muted-foreground">
-          Create and manage task sequences with sequential and parallel
-          execution modes
+          Create, manage, and execute intelligent task sequences with AI-powered
+          features, cross-platform compatibility, and comprehensive analytics
         </p>
       </div>
-      <SequenceManager />
+      <EnhancedSequenceManager />
     </div>
   );
 };
