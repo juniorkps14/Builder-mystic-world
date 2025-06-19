@@ -25,6 +25,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Task } from "./TaskCard";
+import { ConditionalLogicEditor } from "./ConditionalLogicEditor";
 import {
   Move3D,
   Settings,
@@ -44,6 +45,9 @@ import {
   MapPin,
   Timer,
   AlertTriangle,
+  Code,
+  Navigation,
+  Target,
 } from "lucide-react";
 
 interface TaskParameterEditorProps {
@@ -65,47 +69,87 @@ export function TaskParameterEditor({
     movement: {
       icon: Move3D,
       name: "Robot Movement",
-      description: "Control robot position and orientation",
+      description:
+        "Control robot position and orientation with multiple movement modes",
       parameters: {
+        movementMode: "auto_nav", // auto_nav, move_to_position, manual_relative
         position: { x: 0, y: 0, z: 0 },
         orientation: { roll: 0, pitch: 0, yaw: 0 },
+        relativeDistance: { x: 2.1, y: 0, z: 0 },
+        targetFrame: "map", // map, base_link, odom
         speed: 1.0,
         acceleration: 0.5,
         precision: 0.01,
-        moveType: "linear", // linear, joint, circular
+        moveType: "linear", // linear, joint, circular, spline
         coordinateFrame: "base_link",
         pathPlanning: true,
         obstacleAvoidance: true,
+        useCostmap: true,
+        costmapLayer: "global_costmap",
+        plannerType: "navfn", // navfn, global_planner, astar
+        recoveryBehavior: true,
+        goalTolerance: { xy: 0.1, yaw: 0.1 },
+        // Conditional logic
+        enableConditions: false,
+        conditions: [],
+        onSuccess: "continue",
+        onFailure: "retry",
       },
     },
     manipulation: {
       icon: Hand,
       name: "Arm Manipulation",
-      description: "Control robotic arm movements",
+      description: "Control robotic arm movements with conditional logic",
       parameters: {
+        manipulationMode: "position_control", // position_control, joint_control, cartesian_path
         targetPosition: { x: 0.5, y: 0, z: 0.3 },
         targetOrientation: { roll: 0, pitch: 0, yaw: 0 },
-        gripperAction: "none", // none, open, close, grasp
+        jointAngles: { j1: 0, j2: 0, j3: 0, j4: 0, j5: 0, j6: 0 },
+        gripperAction: "none", // none, open, close, grasp, release
         force: 50, // percentage
         approachVector: { x: 0, y: 0, z: -0.1 },
         retractVector: { x: 0, y: 0, z: 0.1 },
         planningGroup: "arm",
         endEffectorFrame: "end_effector",
+        velocityScaling: 0.5,
+        accelerationScaling: 0.5,
+        allowedPlanningTime: 5.0,
+        // Conditional logic
+        enableConditions: false,
+        conditions: [],
+        onSuccess: "continue",
+        onFailure: "retry",
+        forceThreshold: 10.0,
+        checkCollision: true,
       },
     },
     vision: {
       icon: Eye,
       name: "Vision Processing",
-      description: "Computer vision and image processing",
+      description:
+        "Computer vision and image processing with conditional logic",
       parameters: {
         camera: "front_camera",
-        processingType: "object_detection", // object_detection, qr_code, face_recognition, color_tracking
+        processingType: "object_detection", // object_detection, qr_code, face_recognition, color_tracking, lane_detection
         targetObject: "",
         confidence: 0.8,
         saveImage: true,
         imageFormat: "jpg",
         resolution: "1920x1080",
         roi: { x: 0, y: 0, width: 100, height: 100 }, // region of interest
+        preprocessImage: true,
+        filterType: "blur", // blur, sharpen, edge_enhance, none
+        lightingCompensation: true,
+        // Conditional logic
+        enableConditions: true,
+        conditions: [
+          { type: "if", condition: "object_detected", action: "save_image" },
+          { type: "if", condition: "confidence > 0.9", action: "continue" },
+          { type: "else", action: "retry" },
+        ],
+        onObjectDetected: "continue",
+        onNoObject: "wait",
+        maxDetectionAttempts: 3,
       },
     },
     sensor_reading: {
@@ -212,13 +256,15 @@ export function TaskParameterEditor({
   };
 
   const handleParameterChange = (paramKey: string, value: any) => {
-    setEditedTask((prev) => ({
-      ...prev,
+    const updatedTask = {
+      ...editedTask,
       parameters: {
-        ...prev.parameters,
+        ...editedTask.parameters,
         [paramKey]: value,
       },
-    }));
+    };
+    setEditedTask(updatedTask);
+    console.log("Parameter updated:", paramKey, value, updatedTask.parameters);
   };
 
   const handleNestedParameterChange = (
@@ -226,20 +272,28 @@ export function TaskParameterEditor({
     paramKey: string,
     value: any,
   ) => {
-    setEditedTask((prev) => ({
-      ...prev,
+    const updatedTask = {
+      ...editedTask,
       parameters: {
-        ...prev.parameters,
+        ...editedTask.parameters,
         [groupKey]: {
-          ...prev.parameters[groupKey],
+          ...(editedTask.parameters[groupKey] || {}),
           [paramKey]: value,
         },
       },
-    }));
+    };
+    setEditedTask(updatedTask);
+    console.log("Nested parameter updated:", groupKey, paramKey, value);
   };
 
   const handleSave = () => {
-    onSave(editedTask);
+    // Ensure all parameters are properly merged
+    const finalTask = {
+      ...editedTask,
+      parameters: mergedParams,
+    };
+    console.log("Saving task with parameters:", finalTask);
+    onSave(finalTask);
     onClose();
   };
 
@@ -274,17 +328,39 @@ export function TaskParameterEditor({
 
       return (
         <div key={key} className="space-y-2">
-          <Label className="text-sm">
-            {displayLabel}: {value}
-            {isPercentage ? "%" : isAngle ? "°" : isPosition ? "m" : ""}
-          </Label>
+          <div className="flex items-center justify-between">
+            <Label className="text-sm">{displayLabel}</Label>
+            <div className="flex items-center gap-2">
+              <Input
+                type="number"
+                value={value}
+                onChange={(e) =>
+                  handleParameterChange(key, parseFloat(e.target.value) || 0)
+                }
+                className="h-7 w-20 text-xs"
+                step={isPercentage ? 1 : isAngle ? 1 : isPosition ? 0.01 : 0.1}
+              />
+              <span className="text-xs text-muted-foreground min-w-fit">
+                {isPercentage ? "%" : isAngle ? "°" : isPosition ? "m" : ""}
+              </span>
+            </div>
+          </div>
           <Slider
             value={[value]}
             onValueChange={(values) => handleParameterChange(key, values[0])}
             min={isPercentage ? 0 : isAngle ? -180 : isPosition ? -10 : 0}
             max={isPercentage ? 100 : isAngle ? 180 : isPosition ? 10 : 100}
             step={isPercentage ? 1 : isAngle ? 1 : isPosition ? 0.01 : 0.1}
+            className="flex-1"
           />
+          <div className="flex justify-between text-xs text-muted-foreground">
+            <span>
+              {isPercentage ? 0 : isAngle ? -180 : isPosition ? -10 : 0}
+            </span>
+            <span>
+              {isPercentage ? 100 : isAngle ? 180 : isPosition ? 10 : 100}
+            </span>
+          </div>
         </div>
       );
     }
@@ -292,8 +368,17 @@ export function TaskParameterEditor({
     if (typeof value === "string") {
       // Check if it's a select field
       const selectOptions = {
+        movementMode: ["auto_nav", "move_to_position", "manual_relative"],
+        manipulationMode: [
+          "position_control",
+          "joint_control",
+          "cartesian_path",
+        ],
         moveType: ["linear", "joint", "circular", "spline"],
         coordinateFrame: ["base_link", "world", "map", "odom"],
+        targetFrame: ["map", "base_link", "odom"],
+        plannerType: ["navfn", "global_planner", "astar", "rrt"],
+        costmapLayer: ["global_costmap", "local_costmap", "obstacle_layer"],
         gripperAction: ["none", "open", "close", "grasp", "release"],
         processingType: [
           "object_detection",
@@ -301,6 +386,7 @@ export function TaskParameterEditor({
           "face_recognition",
           "color_tracking",
           "edge_detection",
+          "lane_detection",
         ],
         sensorType: [
           "lidar",
@@ -325,9 +411,12 @@ export function TaskParameterEditor({
           "pressure",
         ],
         action: ["stop", "slow_down", "warn", "abort", "continue"],
+        onSuccess: ["continue", "wait", "repeat", "jump_to"],
+        onFailure: ["retry", "skip", "abort", "manual", "alternative"],
         protocol: ["tcp", "udp", "websocket", "mqtt", "http"],
         language: ["en-US", "th-TH", "zh-CN", "ja-JP", "ko-KR"],
         logFormat: ["csv", "json", "rosbag", "txt"],
+        filterType: ["blur", "sharpen", "edge_enhance", "none"],
       };
 
       if (selectOptions[key as keyof typeof selectOptions]) {
@@ -580,11 +669,208 @@ export function TaskParameterEditor({
               </div>
             )}
 
+            {/* Movement Mode Selection for Movement Tasks */}
+            {editedTask.type === "movement" && (
+              <Card className="p-4">
+                <h4 className="font-semibold mb-3 flex items-center gap-2">
+                  <Navigation className="h-4 w-4" />
+                  Movement Mode
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                  {[
+                    {
+                      mode: "auto_nav",
+                      title: "Auto Navigation",
+                      description:
+                        "Use ROS navigation stack with path planning",
+                      icon: Navigation,
+                    },
+                    {
+                      mode: "move_to_position",
+                      title: "Move to Position",
+                      description: "Direct movement using TF coordinates",
+                      icon: Target,
+                    },
+                    {
+                      mode: "manual_relative",
+                      title: "Manual Relative",
+                      description:
+                        "Move relative distance from current position",
+                      icon: Move3D,
+                    },
+                  ].map((option) => (
+                    <Card
+                      key={option.mode}
+                      className={`p-3 cursor-pointer transition-all ${
+                        mergedParams.movementMode === option.mode
+                          ? "ring-2 ring-primary bg-primary/5"
+                          : "hover:bg-accent"
+                      }`}
+                      onClick={() =>
+                        handleParameterChange("movementMode", option.mode)
+                      }
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <option.icon className="h-4 w-4 text-primary" />
+                        <span className="font-medium text-sm">
+                          {option.title}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {option.description}
+                      </p>
+                    </Card>
+                  ))}
+                </div>
+
+                {/* Mode-specific parameters */}
+                {mergedParams.movementMode === "auto_nav" && (
+                  <div className="space-y-3 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                    <Label className="text-sm font-semibold">
+                      Navigation Settings
+                    </Label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label className="text-xs">Planner Type</Label>
+                        <Select
+                          value={mergedParams.plannerType || "navfn"}
+                          onValueChange={(value) =>
+                            handleParameterChange("plannerType", value)
+                          }
+                        >
+                          <SelectTrigger className="h-8">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="navfn">NavFn</SelectItem>
+                            <SelectItem value="global_planner">
+                              Global Planner
+                            </SelectItem>
+                            <SelectItem value="astar">A* Planner</SelectItem>
+                            <SelectItem value="rrt">RRT Planner</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <Label className="text-xs">Use Costmap</Label>
+                        <Switch
+                          checked={mergedParams.useCostmap}
+                          onCheckedChange={(checked) =>
+                            handleParameterChange("useCostmap", checked)
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {mergedParams.movementMode === "manual_relative" && (
+                  <div className="space-y-3 p-3 bg-green-50 dark:bg-green-950/20 rounded-lg">
+                    <Label className="text-sm font-semibold">
+                      Relative Movement (from current position)
+                    </Label>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div>
+                        <Label className="text-xs">X Distance (m)</Label>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          value={mergedParams.relativeDistance?.x || 0}
+                          onChange={(e) =>
+                            handleNestedParameterChange(
+                              "relativeDistance",
+                              "x",
+                              parseFloat(e.target.value) || 0,
+                            )
+                          }
+                          className="h-8"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Y Distance (m)</Label>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          value={mergedParams.relativeDistance?.y || 0}
+                          onChange={(e) =>
+                            handleNestedParameterChange(
+                              "relativeDistance",
+                              "y",
+                              parseFloat(e.target.value) || 0,
+                            )
+                          }
+                          className="h-8"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Z Distance (m)</Label>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          value={mergedParams.relativeDistance?.z || 0}
+                          onChange={(e) =>
+                            handleNestedParameterChange(
+                              "relativeDistance",
+                              "z",
+                              parseFloat(e.target.value) || 0,
+                            )
+                          }
+                          className="h-8"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </Card>
+            )}
+
             <div className="space-y-4">
-              {Object.entries(mergedParams).map(([key, value]) =>
-                renderParameterField(key, value),
-              )}
+              {Object.entries(mergedParams)
+                .filter(
+                  ([key]) =>
+                    // Filter out mode-specific params that are handled above
+                    ![
+                      "movementMode",
+                      "relativeDistance",
+                      "plannerType",
+                      "useCostmap",
+                    ].includes(key),
+                )
+                .map(([key, value]) => renderParameterField(key, value))}
             </div>
+
+            {/* Conditional Logic Section */}
+            {mergedParams.enableConditions && (
+              <ConditionalLogicEditor
+                conditions={mergedParams.conditions || []}
+                onChange={(conditions) =>
+                  handleParameterChange("conditions", conditions)
+                }
+                availableVariables={[
+                  "task_status",
+                  "execution_time",
+                  "error_count",
+                  "sensor_data",
+                  "battery_level",
+                  "obstacle_detected",
+                  "goal_reached",
+                  "confidence_score",
+                  "distance_to_goal",
+                ]}
+                availableActions={[
+                  "continue",
+                  "retry",
+                  "abort",
+                  "wait",
+                  "skip",
+                  "emergency_stop",
+                  "notify_operator",
+                  "save_data",
+                  "change_speed",
+                  "alternative_path",
+                ]}
+              />
+            )}
           </TabsContent>
 
           {/* Advanced */}
@@ -653,11 +939,63 @@ export function TaskParameterEditor({
               </Card>
 
               <Card className="p-4">
-                <h3 className="font-semibold mb-3">Error Handling</h3>
-                <div className="space-y-3">
+                <h3 className="font-semibold mb-3 flex items-center gap-2">
+                  <Code className="h-4 w-4" />
+                  Conditional Logic & Error Handling
+                </h3>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label>Enable Conditional Logic</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Add IF/ELSE conditions and smart decision making
+                      </p>
+                    </div>
+                    <Switch
+                      checked={mergedParams.enableConditions || false}
+                      onCheckedChange={(checked) =>
+                        handleParameterChange("enableConditions", checked)
+                      }
+                    />
+                  </div>
+
+                  <Separator />
+
                   <div>
-                    <Label>On Error Action</Label>
-                    <Select defaultValue="retry">
+                    <Label>On Success Action</Label>
+                    <Select
+                      value={mergedParams.onSuccess || "continue"}
+                      onValueChange={(value) =>
+                        handleParameterChange("onSuccess", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="continue">
+                          Continue to Next Task
+                        </SelectItem>
+                        <SelectItem value="wait">
+                          Wait for Confirmation
+                        </SelectItem>
+                        <SelectItem value="repeat">Repeat Task</SelectItem>
+                        <SelectItem value="jump_to">
+                          Jump to Specific Task
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label>On Failure Action</Label>
+                    <Select
+                      value={mergedParams.onFailure || "retry"}
+                      onValueChange={(value) =>
+                        handleParameterChange("onFailure", value)
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -667,6 +1005,9 @@ export function TaskParameterEditor({
                         <SelectItem value="abort">Abort Sequence</SelectItem>
                         <SelectItem value="manual">
                           Request Manual Intervention
+                        </SelectItem>
+                        <SelectItem value="alternative">
+                          Try Alternative Method
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -681,6 +1022,19 @@ export function TaskParameterEditor({
                     </div>
                     <Switch defaultChecked />
                   </div>
+
+                  {mergedParams.enableConditions && (
+                    <div className="p-3 bg-primary/5 rounded-lg">
+                      <p className="text-sm text-primary font-medium mb-2">
+                        Conditional Logic Enabled
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Configure your conditions in the Parameters tab. You can
+                        use IF/ELSE statements, switch cases, and smart decision
+                        trees.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </Card>
 
