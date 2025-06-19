@@ -34,6 +34,12 @@ const navigationItems = [
     badge: null,
   },
   {
+    title: "Sequences",
+    icon: Layers,
+    href: "/sequences",
+    badge: "New",
+  },
+  {
     title: "Camera Feeds",
     icon: Camera,
     href: "/cameras",

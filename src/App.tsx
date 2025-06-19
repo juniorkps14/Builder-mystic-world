@@ -7,6 +7,7 @@ import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import Index from "./pages/Index";
 import RobotControl from "./pages/RobotControl";
+import Sequences from "./pages/Sequences";
 import Sensors from "./pages/Sensors";
 import System from "./pages/System";
 import Cameras from "./pages/Cameras";
@@ -37,6 +38,7 @@ const App = () => (
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/control" element={<RobotControl />} />
+                  <Route path="/sequences" element={<Sequences />} />
                   <Route path="/cameras" element={<Cameras />} />
                   <Route path="/sensors" element={<Sensors />} />
                   <Route path="/navigation" element={<Navigation />} />
