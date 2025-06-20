@@ -783,7 +783,7 @@ export function EnhancedSequenceManager() {
             ) : (
               <div className="space-y-4">
                 {currentTasks.map((task, index) => (
-                  <div key={task.id} className="relative">
+                  <div key={task.id} className="relative group">
                     <TaskCardWithSubtasks
                       task={task}
                       index={index}
@@ -799,18 +799,20 @@ export function EnhancedSequenceManager() {
                       onPause={(taskId) => handleTaskAction("pause", taskId)}
                       onStop={(taskId) => handleTaskAction("stop", taskId)}
                     />
-                    {/* Enhanced task controls */}
-                    <div className="absolute top-2 right-2">
+                    {/* Enhanced task parameter editor button */}
+                    <div className="absolute top-4 right-4 z-10">
                       <Button
                         size="sm"
-                        variant="ghost"
+                        variant="outline"
                         onClick={() => {
                           setSelectedTask(task);
                           setShowTaskEditor(true);
                         }}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="bg-background border shadow-sm hover:bg-accent"
+                        title="Edit Task Parameters"
                       >
-                        <Settings className="h-3 w-3" />
+                        <Settings className="h-4 w-4 mr-1" />
+                        Edit
                       </Button>
                     </div>
                   </div>
