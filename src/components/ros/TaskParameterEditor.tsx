@@ -90,6 +90,37 @@ export function TaskParameterEditor({
         plannerType: "navfn", // navfn, global_planner, astar
         recoveryBehavior: true,
         goalTolerance: { xy: 0.1, yaw: 0.1 },
+        // Advanced Obstacle Detection & Avoidance
+        obstacleDetectionMode: "dynamic", // dynamic, static, predictive, none
+        obstacleTypes: ["static", "dynamic"], // static, dynamic, human, vehicle, unknown
+        obstacleRegions: [], // Array of obstacle positions/regions in costmap
+        avoidanceStrategy: "circumnavigate", // circumnavigate, wait, alternative_route, stop
+        safetyDistance: 0.5, // meters
+        obstacleDetectionRange: 5.0, // meters
+        // Costmap Configuration
+        costmapSettings: {
+          inflationRadius: 0.55,
+          costScalingFactor: 10.0,
+          obstacleLayer: true,
+          inflationLayer: true,
+          staticLayer: true,
+          voxelLayer: false,
+          socialCostmapLayer: false,
+        },
+        // Dynamic Obstacle Handling
+        dynamicObstacleSettings: {
+          predictiveWindow: 3.0, // seconds
+          velocityThreshold: 0.1, // m/s
+          trackingEnabled: true,
+          predictionModel: "linear", // linear, polynomial, kalman
+        },
+        // Emergency Behaviors
+        emergencyBehaviors: {
+          emergencyStop: true,
+          backupDistance: 1.0,
+          alertOperator: true,
+          logIncident: true,
+        },
         // Conditional logic
         enableConditions: false,
         conditions: [],
