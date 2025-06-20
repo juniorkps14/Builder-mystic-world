@@ -331,13 +331,21 @@ export function Sidebar() {
           variant="ghost"
           size="sm"
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="absolute -right-3 top-6 h-6 w-6 rounded-full bg-background/90 backdrop-blur-sm border border-border/50 hover:bg-background/95 z-50 shadow-lg hover:shadow-xl transition-all duration-200"
+          className="absolute -right-4 top-8 h-8 w-8 rounded-full bg-gradient-to-r from-primary/20 to-primary/10 backdrop-blur-md border border-primary/20 hover:from-primary/30 hover:to-primary/20 z-50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-110 active:scale-95"
         >
-          {isCollapsed ? (
-            <ChevronRight className="h-3 w-3" />
-          ) : (
-            <ChevronLeft className="h-3 w-3" />
-          )}
+          <div className="relative">
+            {isCollapsed ? (
+              <ChevronRight className="h-4 w-4 text-primary transition-transform duration-300" />
+            ) : (
+              <ChevronLeft className="h-4 w-4 text-primary transition-transform duration-300" />
+            )}
+
+            {/* Subtle glow effect */}
+            <div
+              className="absolute inset-0 rounded-full bg-primary/20 blur-sm animate-pulse opacity-50"
+              style={{ animationDuration: "3s" }}
+            />
+          </div>
         </Button>
 
         {/* Header */}
