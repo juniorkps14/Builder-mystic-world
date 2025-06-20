@@ -409,11 +409,11 @@
 
   /* Pulse Variants */
   .pulse-soft {
-    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    animation: pulse 5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
   .pulse-glow {
-    animation: glow 2s ease-in-out infinite alternate;
+    animation: glow 4s ease-in-out infinite alternate;
   }
 
   /* Custom scrollbar for ROS interface */
