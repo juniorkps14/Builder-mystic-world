@@ -59,7 +59,7 @@ export function TaskCardWithSubtasks(props: TaskCardWithSubtasksProps) {
     const newSubtask: Subtask = {
       id: `subtask_${Date.now()}`,
       name: "New Subtask",
-      type: "custom_script",
+      type: "movement",
       description: "Description for new subtask",
       parameters: {},
       timeout: 30,
