@@ -982,7 +982,7 @@ export function TaskParameterEditor({
               </div>
 
               <div className="space-y-2">
-                <Label>Max Retries</Label>
+                <Label>{t("task.retries")}</Label>
                 <Input
                   type="number"
                   value={editedTask.retries}
@@ -996,7 +996,7 @@ export function TaskParameterEditor({
               </div>
 
               <div className="flex items-center justify-between">
-                <Label>Wait for Feedback</Label>
+                <Label>{t("task.waitForFeedback")}</Label>
                 <Switch
                   checked={editedTask.waitForFeedback}
                   onCheckedChange={(checked) =>
@@ -1299,7 +1299,7 @@ export function TaskParameterEditor({
                         onClick={loadCostmapRegions}
                         className="h-7"
                       >
-                        📊 Load from Costmap
+                        �� Load from Costmap
                       </Button>
                     </div>
 
