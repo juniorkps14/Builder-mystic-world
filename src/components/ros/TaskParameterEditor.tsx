@@ -2246,11 +2246,20 @@ export function TaskParameterEditor({
           </TabsContent>
         </Tabs>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            Cancel
+        <DialogFooter className="fade-in-up flex gap-3">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="glass-effect border-0 font-extralight hover-lift hover-scale"
+          >
+            ยกเลิก
           </Button>
-          <Button onClick={handleSave}>Save Configuration</Button>
+          <Button
+            onClick={handleSave}
+            className="gradient-animate font-extralight hover-lift shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            บันทึกการตั้งค่า
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
