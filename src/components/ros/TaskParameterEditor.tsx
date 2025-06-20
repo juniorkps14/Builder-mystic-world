@@ -1972,7 +1972,15 @@ export function TaskParameterEditor({
                       "onPathBlocked",
                       "onGoalReached",
                       "position",
-                      "orientation", // These are handled in special sections
+                      "orientation",
+                      "relativeDistance", // These are handled in special sections
+                      // Pattern movement params
+                      "enablePatternMovement",
+                      "movementPattern",
+                      "patternType",
+                      "patternRepeat",
+                      "waitAtWaypoint",
+                      "waypointTolerance",
                     ].includes(key),
                 )
                 .map(([key, value]) => renderParameterField(key, value))}
