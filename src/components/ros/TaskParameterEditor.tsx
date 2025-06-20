@@ -253,6 +253,47 @@ export function TaskParameterEditor({
         scheduleNext: 30, // days
       },
     },
+    retry: {
+      icon: RotateCcw,
+      name: "Retry Control",
+      description:
+        "Restart execution from this point or retry specific operations",
+      parameters: {
+        retryType: "restart_from_here", // restart_from_here, retry_last_action, retry_sequence
+        maxRetryAttempts: 3,
+        retryDelay: 5.0, // seconds
+        retryCondition: "on_failure", // on_failure, manual, conditional
+        resetState: true,
+        preserveProgress: false,
+        notifyOperator: true,
+        logRetryAttempt: true,
+        // Conditional retry logic
+        enableConditions: false,
+        conditions: [],
+        onMaxRetries: "abort", // abort, manual_intervention, skip
+      },
+    },
+    checkpoint: {
+      icon: MapPin,
+      name: "Checkpoint",
+      description:
+        "Create a checkpoint for state saving and recovery operations",
+      parameters: {
+        checkpointType: "save_state", // save_state, recovery_point, progress_marker
+        saveData: true,
+        dataTypes: ["position", "task_state", "sensor_data"], // position, task_state, sensor_data, variables
+        autoSave: true,
+        saveInterval: 10.0, // seconds for auto-save
+        compressionEnabled: true,
+        backupLocation: "local", // local, cloud, both
+        restoreOnFailure: true,
+        notificationLevel: "info", // info, warning, none
+        // Recovery options
+        enableRecovery: true,
+        recoveryTimeout: 30.0,
+        maxRecoveryAttempts: 2,
+      },
+    },
   };
 
   const handleParameterChange = (paramKey: string, value: any) => {
