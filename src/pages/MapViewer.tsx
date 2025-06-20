@@ -55,22 +55,50 @@ const MapViewer = () => {
     costmap: false,
   });
 
+  // Helper function to generate laser scan (moved before state initialization)
+  const generateLaserScan = useCallback(
+    (
+      position: { x: number; y: number; theta: number } = {
+        x: 2.34,
+        y: 1.67,
+        theta: 0.45,
+      },
+    ) => {
+      const scan = [];
+      for (let i = 0; i < 360; i++) {
+        const angle = (i * Math.PI) / 180;
+        const range = 3 + Math.random() * 2; // Random range between 3-5 meters
+        scan.push({
+          angle,
+          range,
+          x: position.x + range * Math.cos(angle + position.theta),
+          y: position.y + range * Math.sin(angle + position.theta),
+        });
+      }
+      return scan;
+    },
+    [],
+  );
+
   // Robot state
-  const [robotState, setRobotState] = useState({
-    position: { x: 2.34, y: 1.67, theta: 0.45 },
-    velocity: { linear: 0.25, angular: 0.1 },
-    path: [
-      { x: 0, y: 0 },
-      { x: 1.2, y: 0.8 },
-      { x: 2.34, y: 1.67 },
-    ],
-    plannedPath: [
-      { x: 2.34, y: 1.67 },
-      { x: 3.5, y: 2.1 },
-      { x: 5.0, y: 2.5 },
-      { x: 6.2, y: 1.8 },
-    ],
-    laserScan: generateLaserScan(),
+  const [robotState, setRobotState] = useState(() => {
+    const initialPosition = { x: 2.34, y: 1.67, theta: 0.45 };
+    return {
+      position: initialPosition,
+      velocity: { linear: 0.25, angular: 0.1 },
+      path: [
+        { x: 0, y: 0 },
+        { x: 1.2, y: 0.8 },
+        { x: 2.34, y: 1.67 },
+      ],
+      plannedPath: [
+        { x: 2.34, y: 1.67 },
+        { x: 3.5, y: 2.1 },
+        { x: 5.0, y: 2.5 },
+        { x: 6.2, y: 1.8 },
+      ],
+      laserScan: generateLaserScan(initialPosition),
+    };
   });
 
   // Waypoints
@@ -85,25 +113,6 @@ const MapViewer = () => {
   const [navigationMode, setNavigationMode] = useState<
     "view" | "setGoal" | "addWaypoint"
   >("view");
-
-  function generateLaserScan() {
-    const scan = [];
-    for (let i = 0; i < 360; i++) {
-      const angle = (i * Math.PI) / 180;
-      const range = 3 + Math.random() * 2; // Random range between 3-5 meters
-      scan.push({
-        angle,
-        range,
-        x:
-          robotState.position.x +
-          range * Math.cos(angle + robotState.position.theta),
-        y:
-          robotState.position.y +
-          range * Math.sin(angle + robotState.position.theta),
-      });
-    }
-    return scan;
-  }
 
   // Canvas drawing functions
   const drawMap = () => {
