@@ -434,11 +434,48 @@ export function TaskParameterEditor({
     console.log("Nested parameter updated:", groupKey, paramKey, value);
   };
 
+  // Handle obstacle region management
+  const addObstacleRegion = () => {
+    if (newRegion.name.trim() === "") {
+      newRegion.name = `Region ${obstacleRegions.length + 1}`;
+    }
+
+    const region = { ...newRegion };
+    const updatedRegions = [...obstacleRegions, region];
+    setObstacleRegions(updatedRegions);
+
+    // Update task parameters
+    handleParameterChange("obstacleRegions", updatedRegions);
+
+    // Reset form
+    setNewRegion({ x1: 0, y1: 0, x2: 0, y2: 0, name: "" });
+    console.log("Added obstacle region:", region);
+  };
+
+  const removeObstacleRegion = (index: number) => {
+    const updatedRegions = obstacleRegions.filter((_, i) => i !== index);
+    setObstacleRegions(updatedRegions);
+    handleParameterChange("obstacleRegions", updatedRegions);
+  };
+
+  const loadCostmapRegions = () => {
+    // Simulate loading predefined regions from costmap
+    const predefinedRegions = [
+      { x1: 2.0, y1: 3.0, x2: 4.0, y2: 5.0, name: "Permanent Obstacle A" },
+      { x1: -1.0, y1: -2.0, x2: 1.0, y2: 0.0, name: "Static Structure B" },
+      { x1: 5.0, y1: 1.0, x2: 7.0, y2: 2.5, name: "Equipment Zone C" },
+    ];
+
+    setObstacleRegions(predefinedRegions);
+    handleParameterChange("obstacleRegions", predefinedRegions);
+    console.log("Loaded costmap regions:", predefinedRegions);
+  };
+
   const handleSave = () => {
     // Ensure all parameters are properly merged
     const finalTask = {
       ...editedTask,
-      parameters: mergedParams,
+      parameters: { ...mergedParams, obstacleRegions },
     };
     console.log("Saving task with parameters:", finalTask);
     onSave(finalTask);
