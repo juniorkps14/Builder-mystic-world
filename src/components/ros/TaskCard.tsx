@@ -135,6 +135,24 @@ export function TaskCard({
   const [editedTask, setEditedTask] = useState(task);
   const [showSubtasks, setShowSubtasks] = useState(true);
 
+  const taskTypeNames = {
+    movement: "Robot Movement",
+    manipulation: "Arm Manipulation",
+    vision: "Vision Processing",
+    sensor_reading: "Sensor Reading",
+    ai_processing: "AI Processing",
+    safety_check: "Safety Check",
+    communication: "Communication",
+    voice_command: "Voice Command",
+    data_logging: "Data Logging",
+    maintenance: "Maintenance",
+    // Legacy types for backwards compatibility
+    ros_service: "ROS Service Call",
+    ros_action: "ROS Action",
+    custom_script: "Custom Script",
+    wait: "Wait/Delay",
+  };
+
   const statusColors = {
     pending: "bg-muted text-muted-foreground",
     running: "bg-primary text-primary-foreground",
