@@ -41,7 +41,7 @@ import {
   Grid3X3,
   Compass,
   Camera,
-  Cube,
+  Box,
   Route,
   Zap,
   Wifi,
