@@ -218,220 +218,266 @@ export function Sidebar() {
   const { theme, setTheme } = useTheme();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const sidebarWidth = isCollapsed ? "w-16" : "w-64";
+  const renderNavItem = (item: any) => {
+    const isActive = location.pathname === item.href;
+
+    const NavButton = (
+      <Link
+        to={item.href}
+        className={cn(
+          "flex items-center justify-between rounded-xl p-3 text-sm transition-all duration-200 group relative overflow-hidden",
+          isActive
+            ? "bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20 shadow-sm"
+            : "text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground border border-transparent hover:border-sidebar-accent/30",
+          isCollapsed ? "justify-center" : "",
+        )}
+      >
+        <div className="flex items-center gap-3">
+          <div
+            className={cn(
+              "relative p-2 rounded-lg transition-all duration-200",
+              isActive ? item.bgColor : "group-hover:" + item.bgColor,
+            )}
+          >
+            <item.icon
+              className={cn(
+                "h-4 w-4 transition-all duration-200",
+                isActive ? item.color : "group-hover:" + item.color,
+              )}
+            />
+          </div>
+          {!isCollapsed && (
+            <span className="font-light">{t(item.titleKey)}</span>
+          )}
+        </div>
+        {!isCollapsed && item.badge && (
+          <Badge
+            variant={isActive ? "default" : "secondary"}
+            className="text-xs bg-gradient-to-r from-primary/80 to-primary/60 text-white border-0 shadow-sm"
+          >
+            {item.badge}
+          </Badge>
+        )}
+      </Link>
+    );
+
+    if (isCollapsed) {
+      return (
+        <Tooltip key={item.href}>
+          <TooltipTrigger asChild>{NavButton}</TooltipTrigger>
+          <TooltipContent side="right" className="glass-effect">
+            <p>{t(item.titleKey)}</p>
+          </TooltipContent>
+        </Tooltip>
+      );
+    }
+
+    return <div key={item.href}>{NavButton}</div>;
+  };
 
   return (
     <TooltipProvider>
-      <div className={cn(
-        "flex h-full flex-col border-r border-border/50 sidebar-glass transition-all duration-300 ease-in-out",
-        sidebarWidth
-      )}>
-        {/* Header with toggle button */}
-        <div className="p-4 relative">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="absolute -right-3 top-4 h-6 w-6 rounded-full bg-background/80 backdrop-blur-sm border border-border/50 hover:bg-background z-50 shadow-md"
-          >
-            {isCollapsed ? (
-              <ChevronRight className="h-3 w-3" />
-            ) : (
-              <ChevronLeft className="h-3 w-3" />
-            )}
-          </Button>
+      <div
+        className={cn(
+          "flex h-full flex-col border-r border-border/50 sidebar-glass transition-all duration-300 ease-in-out relative",
+          isCollapsed ? "w-20" : "w-64",
+        )}
+      >
+        {/* Toggle Button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="absolute -right-3 top-6 h-6 w-6 rounded-full bg-background/90 backdrop-blur-sm border border-border/50 hover:bg-background/95 z-50 shadow-lg hover:shadow-xl transition-all duration-200"
+        >
+          {isCollapsed ? (
+            <ChevronRight className="h-3 w-3" />
+          ) : (
+            <ChevronLeft className="h-3 w-3" />
+          )}
+        </Button>
 
+        {/* Header */}
+        <div className="p-6">
           {!isCollapsed ? (
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg">
-                <Bot className="h-6 w-6 text-primary-foreground" />
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-xl shadow-primary/20">
+                <Bot className="h-7 w-7 text-primary-foreground" />
               </div>
               <div>
-                <h2 className="text-lg font-medium text-sidebar-foreground">
-                  {t('app.name')}
+                <h2 className="text-xl font-light text-sidebar-foreground">
+                  {t("app.name")}
                 </h2>
-                <p className="text-xs text-sidebar-foreground/60">
-                  {t('app.subtitle')}
+                <p className="text-xs text-sidebar-foreground/70 font-light">
+                  {t("app.subtitle")}
                 </p>
               </div>
             </div>
           ) : (
             <div className="flex justify-center mb-6">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg">
-                <Bot className="h-6 w-6 text-primary-foreground" />
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-xl shadow-primary/20">
+                <Bot className="h-7 w-7 text-primary-foreground" />
               </div>
             </div>
           )}
 
-        {/* Quick Status */}
-        <div className="bg-sidebar-accent rounded-lg p-3 mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-sidebar-accent-foreground">
-              {t('app.systemStatus')}
-            </span>
-            <div className="ros-status-indicator ros-status-active" />
-          </div>
-          <div className="text-xs text-sidebar-accent-foreground/70">
-            {t('app.allSystemsOperational')}
-          </div>
+          {/* Quick Status */}
+          {!isCollapsed && (
+            <div className="glass-effect rounded-xl p-4 mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-light text-sidebar-accent-foreground">
+                  {t("app.systemStatus")}
+                </span>
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-lg shadow-green-500/50" />
+              </div>
+              <div className="text-xs text-sidebar-accent-foreground/80 font-light">
+                {t("app.allSystemsOperational")}
+              </div>
+            </div>
+          )}
         </div>
-      </div>
 
-      <ScrollArea className="flex-1 px-6">
-        {/* Main Navigation */}
-        <div className="mb-6">
-          <h3 className="mb-3 text-sm font-semibold text-sidebar-foreground/60 uppercase tracking-wider">
-            Navigation
-          </h3>
-          <nav className="space-y-1">
-            {navigationItems.map((item) => {
-              const isActive = location.pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className={cn(
-                    "flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-all duration-200",
-                    isActive
-                      ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                  )}
-                >
-                  <div className="flex items-center gap-3">
-                    <item.icon className="h-4 w-4" />
-                    <span>{t(item.titleKey)}</span>
-                  </div>
-                  {item.badge && (
-                    <Badge
-                      variant={isActive ? "secondary" : "outline"}
-                      className="text-xs"
-                    >
-                      {item.badge}
-                    </Badge>
-                  )}
+        <ScrollArea className="flex-1 px-4">
+          {/* Main Navigation */}
+          <div className="mb-6">
+            {!isCollapsed && (
+              <h3 className="mb-3 text-xs font-light text-sidebar-foreground/60 uppercase tracking-wider px-3">
+                หลัก
+              </h3>
+            )}
+            <nav className="space-y-2">
+              {navigationItems.map(renderNavItem)}
+            </nav>
+          </div>
+
+          <Separator className="my-6 mx-3 bg-border/30" />
+
+          {/* ROS System */}
+          <div className="mb-6">
+            {!isCollapsed && (
+              <h3 className="mb-3 text-xs font-light text-sidebar-foreground/60 uppercase tracking-wider px-3">
+                ระบบ ROS
+              </h3>
+            )}
+            <nav className="space-y-2">{rosItems.map(renderNavItem)}</nav>
+          </div>
+        </ScrollArea>
+
+        {/* Bottom Settings */}
+        {!isCollapsed && (
+          <div className="p-6 border-t border-sidebar-border/30 space-y-4">
+            {/* Language Selector */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Languages className="h-4 w-4 text-sidebar-foreground/70" />
+                <span className="text-sm font-light text-sidebar-foreground">
+                  ภาษา
+                </span>
+              </div>
+              <Select value={language} onValueChange={setLanguage}>
+                <SelectTrigger className="w-full glass-effect border-0">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="glass-effect">
+                  <SelectItem value="en">{t("language.english")}</SelectItem>
+                  <SelectItem value="th">{t("language.thai")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Theme Selector */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                {theme === "light" && (
+                  <Sun className="h-4 w-4 text-sidebar-foreground/70" />
+                )}
+                {theme === "dark" && (
+                  <Moon className="h-4 w-4 text-sidebar-foreground/70" />
+                )}
+                {theme === "system" && (
+                  <Monitor className="h-4 w-4 text-sidebar-foreground/70" />
+                )}
+                <span className="text-sm font-light text-sidebar-foreground">
+                  ธีม
+                </span>
+              </div>
+              <Select value={theme} onValueChange={setTheme}>
+                <SelectTrigger className="w-full glass-effect border-0">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="glass-effect">
+                  <SelectItem value="light">
+                    <div className="flex items-center gap-2">
+                      <Sun className="h-4 w-4" />
+                      {t("theme.light")}
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="dark">
+                    <div className="flex items-center gap-2">
+                      <Moon className="h-4 w-4" />
+                      {t("theme.dark")}
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="system">
+                    <div className="flex items-center gap-2">
+                      <Monitor className="h-4 w-4" />
+                      {t("theme.system")}
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Separator className="bg-border/30" />
+
+            <div className="space-y-2">
+              <Button
+                variant="ghost"
+                className="w-full justify-start gap-3 text-sidebar-foreground/80 hover:bg-sidebar-accent/50 font-light"
+                asChild
+              >
+                <Link to="/about">
+                  <FileText className="h-4 w-4" />
+                  {t("nav.about")}
                 </Link>
-              );
-            })}
-          </nav>
-        </div>
-
-        <Separator className="my-4" />
-
-        {/* ROS System */}
-        <div className="mb-6">
-          <h3 className="mb-3 text-sm font-semibold text-sidebar-foreground/60 uppercase tracking-wider">
-            ROS System
-          </h3>
-          <nav className="space-y-1">
-            {rosItems.map((item) => {
-              const isActive = location.pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className={cn(
-                    "flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-all duration-200",
-                    isActive
-                      ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                  )}
-                >
-                  <div className="flex items-center gap-3">
-                    <item.icon className="h-4 w-4" />
-                    <span>{t(item.titleKey)}</span>
-                  </div>
-                  {item.badge && (
-                    <Badge
-                      variant={isActive ? "secondary" : "outline"}
-                      className="text-xs"
-                    >
-                      {item.badge}
-                    </Badge>
-                  )}
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start gap-3 text-sidebar-foreground/80 hover:bg-sidebar-accent/50 font-light"
+                asChild
+              >
+                <Link to="/settings">
+                  <Settings className="h-4 w-4" />
+                  {t("nav.settings")}
                 </Link>
-              );
-            })}
-          </nav>
-        </div>
-      </ScrollArea>
-
-      {/* Bottom Settings */}
-      <div className="p-6 border-t border-sidebar-border space-y-3">
-        {/* Language Selector */}
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Languages className="h-4 w-4 text-sidebar-foreground" />
-            <span className="text-sm font-medium text-sidebar-foreground">Language</span>
+              </Button>
+            </div>
           </div>
-          <Select value={language} onValueChange={setLanguage}>
-            <SelectTrigger className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="en">{t('language.english')}</SelectItem>
-              <SelectItem value="th">{t('language.thai')}</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        )}
 
-        {/* Theme Selector */}
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            {theme === 'light' && <Sun className="h-4 w-4 text-sidebar-foreground" />}
-            {theme === 'dark' && <Moon className="h-4 w-4 text-sidebar-foreground" />}
-            {theme === 'system' && <Monitor className="h-4 w-4 text-sidebar-foreground" />}
-            <span className="text-sm font-medium text-sidebar-foreground">Theme</span>
+        {/* Collapsed Settings */}
+        {isCollapsed && (
+          <div className="p-4 border-t border-sidebar-border/30 space-y-3">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full h-12 p-0"
+                  asChild
+                >
+                  <Link to="/settings">
+                    <Settings className="h-5 w-5" />
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="glass-effect">
+                <p>{t("nav.settings")}</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
-          <Select value={theme} onValueChange={setTheme}>
-            <SelectTrigger className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="light">
-                <div className="flex items-center gap-2">
-                  <Sun className="h-4 w-4" />
-                  {t('theme.light')}
-                </div>
-              </SelectItem>
-              <SelectItem value="dark">
-                <div className="flex items-center gap-2">
-                  <Moon className="h-4 w-4" />
-                  {t('theme.dark')}
-                </div>
-              </SelectItem>
-              <SelectItem value="system">
-                <div className="flex items-center gap-2">
-                  <Monitor className="h-4 w-4" />
-                  {t('theme.system')}
-                </div>
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <Separator />
-
-        <Button
-          variant="ghost"
-          className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent"
-          asChild
-        >
-          <Link to="/about">
-            <FileText className="h-4 w-4" />
-            {t('nav.about')}
-          </Link>
-        </Button>
-        <Button
-          variant="ghost"
-          className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent"
-          asChild
-        >
-          <Link to="/settings">
-            <Settings className="h-4 w-4" />
-            {t('nav.settings')}
-          </Link>
-        </Button>
+        )}
       </div>
-    </div>
+    </TooltipProvider>
   );
 }
