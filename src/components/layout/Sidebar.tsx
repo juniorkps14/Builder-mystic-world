@@ -11,6 +11,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   Home,
   Gamepad2,
   Camera,
@@ -33,10 +39,20 @@ import {
   Cpu,
   Circle,
   Compass,
+  ChevronLeft,
+  ChevronRight,
+  Bot,
+  Eye,
+  Wifi,
+  Smartphone,
+  Globe,
+  Sparkles,
+  Shield,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useState } from "react";
 
 const navigationItems = [
   {
