@@ -808,11 +808,11 @@ export function EnhancedSequenceManager() {
                           setSelectedTask(task);
                           setShowTaskEditor(true);
                         }}
-                        className="bg-background border shadow-sm hover:bg-accent"
-                        title="Edit Task Parameters"
+                        className="bg-background border shadow-sm hover:bg-accent hover:bg-primary hover:text-primary-foreground"
+                        title="Advanced Parameter Editor - Edit task type, movement modes, conditional logic, and more"
                       >
                         <Settings className="h-4 w-4 mr-1" />
-                        Edit
+                        Advanced Edit
                       </Button>
                     </div>
                   </div>
