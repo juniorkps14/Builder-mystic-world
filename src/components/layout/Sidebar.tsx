@@ -225,48 +225,82 @@ export function Sidebar() {
       <Link
         to={item.href}
         className={cn(
-          "flex items-center justify-between rounded-xl p-3 text-sm transition-all duration-300 group relative overflow-hidden hover-lift",
+          "flex items-center justify-between rounded-2xl p-4 text-sm transition-all duration-500 group relative overflow-hidden",
           isActive
-            ? "bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20 shadow-lg glow-blue"
-            : "text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground border border-transparent hover:border-sidebar-accent/30",
+            ? "bg-gradient-to-r from-primary/15 via-primary/10 to-primary/5 text-primary border border-primary/20 shadow-lg backdrop-blur-sm"
+            : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-white/5 dark:hover:bg-white/5 border border-transparent hover:border-white/10",
           isCollapsed ? "justify-center" : "",
+          "hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]",
         )}
       >
-        <div className="flex items-center gap-3">
+        {/* Background Glow Effect - Only for Active */}
+        {isActive && (
+          <div
+            className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent rounded-2xl animate-pulse"
+            style={{ animationDuration: "3s" }}
+          />
+        )}
+
+        <div className="flex items-center gap-4 relative z-10">
           <div
             className={cn(
-              "relative p-2 rounded-lg transition-all duration-300 hover-scale",
+              "relative p-3 rounded-xl transition-all duration-500 group-hover:scale-110",
               isActive
-                ? item.bgColor + " shadow-lg"
-                : "group-hover:" + item.bgColor,
+                ? `${item.bgColor} shadow-lg ring-2 ring-primary/20`
+                : `hover:${item.bgColor} group-hover:shadow-md`,
             )}
           >
             <item.icon
               className={cn(
-                "h-4 w-4 transition-all duration-300",
+                "h-5 w-5 transition-all duration-500",
                 isActive
-                  ? item.color + " hover-rotate"
-                  : "group-hover:" + item.color,
+                  ? item.color
+                  : `text-sidebar-foreground/60 group-hover:${item.color}`,
               )}
             />
+
+            {/* Icon Glow Effect for Active */}
+            {isActive && (
+              <div
+                className="absolute inset-0 rounded-xl opacity-20 animate-pulse"
+                style={{
+                  background: `radial-gradient(circle, ${item.color.replace("text-", "rgb(var(--")} 0%, transparent 70%)`,
+                  animationDuration: "4s",
+                }}
+              />
+            )}
           </div>
+
           {!isCollapsed && (
-            <span className="font-extralight">{t(item.titleKey)}</span>
+            <div className="flex flex-col">
+              <span className="font-extralight text-sm leading-tight">
+                {t(item.titleKey)}
+              </span>
+              {isActive && (
+                <div className="h-0.5 w-8 bg-gradient-to-r from-primary to-transparent rounded-full mt-1 opacity-60" />
+              )}
+            </div>
           )}
         </div>
+
         {!isCollapsed && item.badge && (
-          <Badge
-            variant={isActive ? "default" : "secondary"}
-            className="text-xs gradient-animate text-white border-0 shadow-lg hover-bounce font-extralight"
-          >
-            {item.badge}
-          </Badge>
+          <div className="relative z-10">
+            <Badge
+              variant={isActive ? "default" : "secondary"}
+              className={cn(
+                "text-xs font-extralight border-0 shadow-md transition-all duration-300",
+                isActive
+                  ? "bg-gradient-to-r from-primary/80 to-primary/60 text-white shadow-primary/30"
+                  : "bg-white/10 text-sidebar-foreground/80 hover:bg-white/20",
+              )}
+            >
+              {item.badge}
+            </Badge>
+          </div>
         )}
 
-        {/* Shimmer effect on hover */}
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="shimmer absolute inset-0 rounded-xl" />
-        </div>
+        {/* Subtle Hover Effect */}
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       </Link>
     );
 
