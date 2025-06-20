@@ -914,11 +914,23 @@ export function TaskParameterEditor({
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs defaultValue="basic" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="basic">{t("task.basicSettings")}</TabsTrigger>
-            <TabsTrigger value="parameters">{t("task.parameters")}</TabsTrigger>
-            <TabsTrigger value="advanced">{t("task.advanced")}</TabsTrigger>
+        <Tabs defaultValue="basic" className="space-y-4 slide-in-right">
+          <TabsList className="grid w-full grid-cols-3 glass-effect border-0">
+            <TabsTrigger value="basic" className="font-extralight hover-scale">
+              {t("task.basicSettings")}
+            </TabsTrigger>
+            <TabsTrigger
+              value="parameters"
+              className="font-extralight hover-scale"
+            >
+              {t("task.parameters")}
+            </TabsTrigger>
+            <TabsTrigger
+              value="advanced"
+              className="font-extralight hover-scale"
+            >
+              {t("task.advanced")}
+            </TabsTrigger>
           </TabsList>
 
           {/* Basic Settings */}
