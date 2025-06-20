@@ -505,24 +505,28 @@ export function Sidebar() {
 
             <Separator className="bg-border/30" />
 
-            <div className="space-y-2">
+            <div className="space-y-3">
               <Button
                 variant="ghost"
-                className="w-full justify-start gap-3 text-sidebar-foreground/80 hover:bg-sidebar-accent/50 font-extralight hover-lift"
+                className="w-full justify-start gap-3 p-3 rounded-xl text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-white/5 font-extralight transition-all duration-500 hover:scale-[1.02] border border-transparent hover:border-white/10"
                 asChild
               >
                 <Link to="/about">
-                  <FileText className="h-4 w-4 hover-rotate" />
+                  <div className="p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors duration-300">
+                    <FileText className="h-4 w-4 transition-transform duration-300 hover:scale-110" />
+                  </div>
                   {t("nav.about")}
                 </Link>
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start gap-3 text-sidebar-foreground/80 hover:bg-sidebar-accent/50 font-extralight hover-lift"
+                className="w-full justify-start gap-3 p-3 rounded-xl text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-white/5 font-extralight transition-all duration-500 hover:scale-[1.02] border border-transparent hover:border-white/10"
                 asChild
               >
                 <Link to="/settings">
-                  <Settings className="h-4 w-4 spin-reverse" />
+                  <div className="p-2 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-950/30 transition-colors duration-300">
+                    <Settings className="h-4 w-4 transition-transform duration-700 hover:rotate-90" />
+                  </div>
                   {t("nav.settings")}
                 </Link>
               </Button>
