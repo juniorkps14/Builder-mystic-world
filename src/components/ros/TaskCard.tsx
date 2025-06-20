@@ -137,6 +137,7 @@ export function TaskCard({
 
   const taskTypeNames = {
     movement: "Robot Movement",
+    move_with_obstacle_check: "Move with Obstacle Check",
     manipulation: "Arm Manipulation",
     vision: "Vision Processing",
     sensor_reading: "Sensor Reading",
