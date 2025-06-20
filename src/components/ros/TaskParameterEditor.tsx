@@ -241,9 +241,8 @@ export function TaskParameterEditor({
     },
     vision: {
       icon: Eye,
-      name: "Vision Processing",
-      description:
-        "Computer vision and image processing with conditional logic",
+      name: "👁️ การประมวลผลภาพ",
+      description: "วิชั่นคอมพิวเตอร์และการประมวลผลภาพพร้อมตรรกะเงื่อนไข",
       parameters: {
         camera: "front_camera",
         processingType: "object_detection", // object_detection, qr_code, face_recognition, color_tracking, lane_detection
