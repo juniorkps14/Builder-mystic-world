@@ -341,12 +341,16 @@ export function Sidebar() {
           {/* Main Navigation */}
           <div className="mb-6">
             {!isCollapsed && (
-              <h3 className="mb-3 text-xs font-light text-sidebar-foreground/60 uppercase tracking-wider px-3">
+              <h3 className="mb-3 text-xs font-extralight text-sidebar-foreground/60 uppercase tracking-wider px-3 slide-in-right">
                 หลัก
               </h3>
             )}
             <nav className="space-y-2">
-              {navigationItems.map(renderNavItem)}
+              {navigationItems.map((item, index) => (
+                <div key={item.href} className="stagger-item">
+                  {renderNavItem(item)}
+                </div>
+              ))}
             </nav>
           </div>
 
