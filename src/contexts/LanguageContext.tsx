@@ -256,7 +256,7 @@ const translations = {
 
     // Robotic Arm
     "arm.title": "ควบคุมแขนกล",
-    "arm.joints": "ควบคุมข้อต่อ",
+    "arm.joints": "��วบคุมข้อต่อ",
     "arm.endEffector": "ปลายแขน",
     "arm.position": "ตำแหน่ง",
     "arm.orientation": "การหมุน",
@@ -319,7 +319,7 @@ const translations = {
     "movement.checkpoint": "จุดตรวจสอบ",
 
     // Movement Modes
-    "movement.moveToPosition": "เคลื่อนที่ไปตำแหน่���",
+    "movement.moveToPosition": "เคลื่อนที่ไปตำแหน่ง",
     "movement.manualRelative": "เคลื่อนที่แบบสัมพัทธ์",
     "movement.patternMovement": "เคลื่อนที่ตามรูปแบบ",
     "movement.autoNav": "นำทางอัตโนมัติ",
@@ -341,6 +341,48 @@ const translations = {
     "sequence.running": "กำลังทำงาน",
     "sequence.failed": "ล้มเหลว",
     "sequence.overallProgress": "ความคืบหน้าโดยรวม",
+
+    // Obstacle Detection
+    "obstacle.detectionMode": "โหมดการตรวจจับ",
+    "obstacle.avoidanceStrategy": "กลยุทธ์การหลีกเลี่ยง",
+    "obstacle.safetyDistance": "ระยะห่างปลอดภัย",
+    "obstacle.detectionRange": "ระยะการตรวจจับ",
+    "obstacle.knownRegions": "พื้นที่สิ่งกีดขวางที่ทราบ",
+    "obstacle.loadFromCostmap": "โหลดจาก Costmap",
+    "obstacle.addRegion": "เพิ่มพื้นที่",
+    "obstacle.regionName": "ชื่อพื้นที่",
+    "obstacle.currentRegions": "พื้นที่สิ่งกีดขวางปัจจุบัน",
+    "obstacle.continuous": "ต่อเนื่อง",
+    "obstacle.periodic": "เป็นช่วงๆ",
+    "obstacle.triggerBased": "ตามสัญญาณ",
+    "obstacle.smartAvoid": "หลีกเลี่ยงอัจฉริยะ",
+    "obstacle.wait": "รอ",
+    "obstacle.alternativeRoute": "เส้นทางทางเลือก",
+    "obstacle.emergencyStop": "หยุดฉุกเฉิน",
+    "obstacle.slowDown": "ลดความเร็ว",
+
+    // Pattern Movement
+    "pattern.configuration": "การตั้งค่ารูปแบบการเคลื่อนที่",
+    "pattern.enablePattern": "เปิดใช้การเคลื่อนที่ตามรูปแบบ",
+    "pattern.quickPresets": "รูปแบบสำเร็จรูป",
+    "pattern.square": "สี่เหลี่ยม",
+    "pattern.circle": "วงกลม",
+    "pattern.patrol": "ลาดตระเวน",
+    "pattern.clear": "ล้าง",
+    "pattern.addWaypoint": "เพิ่มจุดหมาย",
+    "pattern.currentPattern": "รูปแบบปัจจุบัน",
+    "pattern.waypoints": "จุดหมาย",
+    "pattern.patternRepeat": "ทำซ้ำรูปแบบ",
+    "pattern.waitAtWaypoint": "รอที่จุดหมาย",
+    "pattern.waypointTolerance": "ค่าคลาดเคลื่อนจุดหมาย",
+    "pattern.targetPosition": "ตำแหน่งเป้าหมายและการหมุน",
+    "pattern.relativeMovement": "การเคลื่อนที่แบบสัมพัทธ์ (จากตำแหน่งปัจจุบัน)",
+    "pattern.xPosition": "ตำแหน่ง X",
+    "pattern.yPosition": "ตำแหน่ง Y",
+    "pattern.yawAngle": "มุม Yaw",
+    "pattern.xDistance": "ระยะทาง X",
+    "pattern.yDistance": "ระยะทาง Y",
+    "pattern.yawChange": "การเปลี่ยนแปลง Yaw",
   },
 };
 
