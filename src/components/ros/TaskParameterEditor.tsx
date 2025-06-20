@@ -980,20 +980,25 @@ export function TaskParameterEditor({
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label>{t("task.description")}</Label>
+            <div className="space-y-2 stagger-item">
+              <Label className="font-extralight text-sm">
+                {t("task.description")}
+              </Label>
               <Textarea
                 value={editedTask.description}
                 onChange={(e) =>
                   setEditedTask({ ...editedTask, description: e.target.value })
                 }
                 rows={3}
+                className="glass-effect border-0 font-extralight hover-lift transition-all duration-300"
               />
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="space-y-2">
-                <Label>{t("task.timeout")} (วินาที)</Label>
+              <div className="space-y-2 stagger-item">
+                <Label className="font-extralight text-sm">
+                  {t("task.timeout")} (วินาที)
+                </Label>
                 <Input
                   type="number"
                   value={editedTask.timeout}
@@ -1003,11 +1008,14 @@ export function TaskParameterEditor({
                       timeout: parseInt(e.target.value) || 60,
                     })
                   }
+                  className="glass-effect border-0 font-extralight hover-lift"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label>{t("task.retries")}</Label>
+              <div className="space-y-2 stagger-item">
+                <Label className="font-extralight text-sm">
+                  {t("task.retries")}
+                </Label>
                 <Input
                   type="number"
                   value={editedTask.retries}
@@ -1017,11 +1025,14 @@ export function TaskParameterEditor({
                       retries: parseInt(e.target.value) || 1,
                     })
                   }
+                  className="glass-effect border-0 font-extralight hover-lift"
                 />
               </div>
 
-              <div className="flex items-center justify-between">
-                <Label>{t("task.waitForFeedback")}</Label>
+              <div className="flex items-center justify-between stagger-item">
+                <Label className="font-extralight text-sm">
+                  {t("task.waitForFeedback")}
+                </Label>
                 <Switch
                   checked={editedTask.waitForFeedback}
                   onCheckedChange={(checked) =>
