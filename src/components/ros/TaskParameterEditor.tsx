@@ -156,16 +156,28 @@ export function TaskParameterEditor({
     sensor_reading: {
       icon: Compass,
       name: "Sensor Reading",
-      description: "Read and process sensor data",
+      description:
+        "Read and process sensor data with comprehensive sensor support",
       parameters: {
-        sensorType: "lidar", // lidar, camera, imu, ultrasonic, temperature
+        sensorType: "lidar", // lidar, camera, imu, ultrasonic, temperature, pressure, humidity, gps, magnetometer, accelerometer, gyroscope, proximity, force, torque, encoders, current, voltage
         topic: "/scan",
         duration: 1.0,
         samplingRate: 10,
-        filterType: "none", // none, low_pass, high_pass, kalman
+        filterType: "none", // none, low_pass, high_pass, kalman, median, gaussian
         threshold: 0.5,
-        units: "meters",
+        units: "meters", // meters, degrees, celsius, pascal, amperes, volts, rpm, newtons
         logData: true,
+        dataFormat: "json", // json, csv, rosbag, binary
+        processingMode: "real_time", // real_time, batch, triggered
+        calibrationRequired: false,
+        autoCalibrate: true,
+        // Sensor-specific parameters
+        rangeMin: 0.1,
+        rangeMax: 10.0,
+        fieldOfView: 270, // degrees for lidar/camera
+        resolution: 0.01, // meters or degrees
+        noiseFilter: true,
+        outlierRemoval: true,
       },
     },
     ai_processing: {
