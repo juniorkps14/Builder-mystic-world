@@ -1200,24 +1200,132 @@ export function TaskParameterEditor({
 
                   {/* Obstacle Regions in Costmap */}
                   <div>
-                    <Label className="text-sm">
-                      Known Obstacle Regions (Costmap Coordinates)
-                    </Label>
-                    <div className="p-3 bg-muted rounded-lg">
-                      <p className="text-xs text-muted-foreground mb-2">
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="text-sm">
+                        Known Obstacle Regions (Costmap Coordinates)
+                      </Label>
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={loadCostmapRegions}
+                        className="h-7"
+                      >
+                        📊 Load from Costmap
+                      </Button>
+                    </div>
+
+                    <div className="p-3 bg-muted rounded-lg space-y-3">
+                      <p className="text-xs text-muted-foreground">
                         Define specific areas in the costmap where obstacles are
                         known to exist
                       </p>
-                      <div className="grid grid-cols-4 gap-2 text-xs">
-                        <Input placeholder="X1" className="h-7" />
-                        <Input placeholder="Y1" className="h-7" />
-                        <Input placeholder="X2" className="h-7" />
-                        <Input placeholder="Y2" className="h-7" />
+
+                      {/* Add New Region Form */}
+                      <div className="grid grid-cols-5 gap-2 text-xs">
+                        <Input
+                          placeholder="X1"
+                          type="number"
+                          step="0.1"
+                          value={newRegion.x1}
+                          onChange={(e) =>
+                            setNewRegion({
+                              ...newRegion,
+                              x1: parseFloat(e.target.value) || 0,
+                            })
+                          }
+                          className="h-7"
+                        />
+                        <Input
+                          placeholder="Y1"
+                          type="number"
+                          step="0.1"
+                          value={newRegion.y1}
+                          onChange={(e) =>
+                            setNewRegion({
+                              ...newRegion,
+                              y1: parseFloat(e.target.value) || 0,
+                            })
+                          }
+                          className="h-7"
+                        />
+                        <Input
+                          placeholder="X2"
+                          type="number"
+                          step="0.1"
+                          value={newRegion.x2}
+                          onChange={(e) =>
+                            setNewRegion({
+                              ...newRegion,
+                              x2: parseFloat(e.target.value) || 0,
+                            })
+                          }
+                          className="h-7"
+                        />
+                        <Input
+                          placeholder="Y2"
+                          type="number"
+                          step="0.1"
+                          value={newRegion.y2}
+                          onChange={(e) =>
+                            setNewRegion({
+                              ...newRegion,
+                              y2: parseFloat(e.target.value) || 0,
+                            })
+                          }
+                          className="h-7"
+                        />
+                        <Input
+                          placeholder="Region Name"
+                          value={newRegion.name}
+                          onChange={(e) =>
+                            setNewRegion({ ...newRegion, name: e.target.value })
+                          }
+                          className="h-7"
+                        />
                       </div>
-                      <Button size="sm" variant="outline" className="mt-2 h-7">
+
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={addObstacleRegion}
+                        className="h-7"
+                      >
                         <Plus className="h-3 w-3 mr-1" />
                         Add Region
                       </Button>
+
+                      {/* Display Current Regions */}
+                      {obstacleRegions.length > 0 && (
+                        <div className="space-y-2">
+                          <Label className="text-xs font-semibold">
+                            Current Obstacle Regions:
+                          </Label>
+                          {obstacleRegions.map((region, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center justify-between p-2 bg-background rounded border"
+                            >
+                              <div className="text-xs">
+                                <span className="font-medium">
+                                  {region.name || `Region ${index + 1}`}
+                                </span>
+                                <span className="text-muted-foreground ml-2">
+                                  ({region.x1}, {region.y1}) → ({region.x2},{" "}
+                                  {region.y2})
+                                </span>
+                              </div>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => removeObstacleRegion(index)}
+                                className="h-6 w-6 p-0 hover:bg-destructive hover:text-destructive-foreground"
+                              >
+                                ×
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
 
