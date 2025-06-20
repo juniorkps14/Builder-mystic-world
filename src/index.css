@@ -271,26 +271,26 @@
 
   /* Floating Elements */
   .float-animation {
-    animation: float 3s ease-in-out infinite;
+    animation: float 6s ease-in-out infinite;
   }
 
   .float-delay-1 {
-    animation: float 3s ease-in-out infinite;
-    animation-delay: 0.5s;
+    animation: float 6s ease-in-out infinite;
+    animation-delay: 1s;
   }
 
   .float-delay-2 {
-    animation: float 3s ease-in-out infinite;
-    animation-delay: 1s;
+    animation: float 6s ease-in-out infinite;
+    animation-delay: 2s;
   }
 
   /* Glow Effects */
   .glow-blue {
-    animation: glow 2s ease-in-out infinite alternate;
+    animation: glow 4s ease-in-out infinite alternate;
   }
 
   .glow-on-hover:hover {
-    animation: glow 1s ease-in-out;
+    animation: glow 2s ease-in-out;
   }
 
   /* Shimmer Loading Effect */
