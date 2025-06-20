@@ -139,6 +139,58 @@ export function TaskParameterEditor({
         onFailure: "retry",
       },
     },
+    move_with_obstacle_check: {
+      icon: Shield,
+      name: "Move with Obstacle Check",
+      description:
+        "Intelligent movement with real-time obstacle detection and conditional navigation",
+      parameters: {
+        movementMode: "intelligent_nav", // intelligent_nav, adaptive_nav, safe_nav
+        position: { x: 0, y: 0 },
+        orientation: { yaw: 0 }, // Only yaw for 2D movement (angular_z)
+        speed: 1.0,
+        acceleration: 0.5,
+        // Enhanced Obstacle Detection
+        obstacleCheckMode: "continuous", // continuous, periodic, trigger_based
+        checkInterval: 0.1, // seconds for periodic checking
+        obstacleRegions: [], // Predefined obstacle regions from costmap
+        costmapSource: "global_costmap", // global_costmap, local_costmap, custom
+        loadCostmapRegions: true,
+        // Movement Conditions
+        enableConditionalMovement: true,
+        movementConditions: [
+          {
+            condition: "obstacle_ahead",
+            action: "circumnavigate",
+            distance: 2.0,
+          },
+          {
+            condition: "path_blocked",
+            action: "alternative_route",
+            timeout: 5.0,
+          },
+          {
+            condition: "dynamic_obstacle",
+            action: "wait_and_retry",
+            maxWait: 10.0,
+          },
+        ],
+        // Safety Parameters
+        safetyDistance: 0.8,
+        emergencyStopDistance: 0.3,
+        maxDetourDistance: 5.0,
+        // Behavioral Settings
+        aggressiveness: "moderate", // conservative, moderate, aggressive
+        patienceLevel: 5.0, // seconds to wait for obstacles
+        learningEnabled: true, // Learn from previous obstacle encounters
+        adaptiveSpeed: true, // Adjust speed based on obstacle density
+        // Success Criteria
+        goalTolerance: { xy: 0.1, yaw: 5 }, // yaw in degrees
+        onObstacleDetected: "smart_avoid",
+        onPathBlocked: "find_alternative",
+        onGoalReached: "continue",
+      },
+    },
     manipulation: {
       icon: Hand,
       name: "Arm Manipulation",
