@@ -216,34 +216,63 @@ export function Sidebar() {
   const location = useLocation();
   const { t, language, setLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const sidebarWidth = isCollapsed ? "w-16" : "w-64";
 
   return (
-    <div className="flex h-full w-64 flex-col border-r border-border bg-sidebar">
-      <div className="p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <Activity className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <div>
-            <h2 className="text-lg font-bold text-sidebar-foreground">
-              {t("app.name")}
-            </h2>
-            <p className="text-xs text-sidebar-foreground/60">
-              {t("app.subtitle")}
-            </p>
-          </div>
-        </div>
+    <TooltipProvider>
+      <div className={cn(
+        "flex h-full flex-col border-r border-border/50 sidebar-glass transition-all duration-300 ease-in-out",
+        sidebarWidth
+      )}>
+        {/* Header with toggle button */}
+        <div className="p-4 relative">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="absolute -right-3 top-4 h-6 w-6 rounded-full bg-background/80 backdrop-blur-sm border border-border/50 hover:bg-background z-50 shadow-md"
+          >
+            {isCollapsed ? (
+              <ChevronRight className="h-3 w-3" />
+            ) : (
+              <ChevronLeft className="h-3 w-3" />
+            )}
+          </Button>
+
+          {!isCollapsed ? (
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg">
+                <Bot className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <div>
+                <h2 className="text-lg font-medium text-sidebar-foreground">
+                  {t('app.name')}
+                </h2>
+                <p className="text-xs text-sidebar-foreground/60">
+                  {t('app.subtitle')}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-center mb-6">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg">
+                <Bot className="h-6 w-6 text-primary-foreground" />
+              </div>
+            </div>
+          )}
 
         {/* Quick Status */}
         <div className="bg-sidebar-accent rounded-lg p-3 mb-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-sidebar-accent-foreground">
-              {t("app.systemStatus")}
+              {t('app.systemStatus')}
             </span>
             <div className="ros-status-indicator ros-status-active" />
           </div>
           <div className="text-xs text-sidebar-accent-foreground/70">
-            {t("app.allSystemsOperational")}
+            {t('app.allSystemsOperational')}
           </div>
         </div>
       </div>
@@ -332,17 +361,15 @@ export function Sidebar() {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <Languages className="h-4 w-4 text-sidebar-foreground" />
-            <span className="text-sm font-medium text-sidebar-foreground">
-              Language
-            </span>
+            <span className="text-sm font-medium text-sidebar-foreground">Language</span>
           </div>
           <Select value={language} onValueChange={setLanguage}>
             <SelectTrigger className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="en">{t("language.english")}</SelectItem>
-              <SelectItem value="th">{t("language.thai")}</SelectItem>
+              <SelectItem value="en">{t('language.english')}</SelectItem>
+              <SelectItem value="th">{t('language.thai')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -350,18 +377,10 @@ export function Sidebar() {
         {/* Theme Selector */}
         <div>
           <div className="flex items-center gap-2 mb-2">
-            {theme === "light" && (
-              <Sun className="h-4 w-4 text-sidebar-foreground" />
-            )}
-            {theme === "dark" && (
-              <Moon className="h-4 w-4 text-sidebar-foreground" />
-            )}
-            {theme === "system" && (
-              <Monitor className="h-4 w-4 text-sidebar-foreground" />
-            )}
-            <span className="text-sm font-medium text-sidebar-foreground">
-              Theme
-            </span>
+            {theme === 'light' && <Sun className="h-4 w-4 text-sidebar-foreground" />}
+            {theme === 'dark' && <Moon className="h-4 w-4 text-sidebar-foreground" />}
+            {theme === 'system' && <Monitor className="h-4 w-4 text-sidebar-foreground" />}
+            <span className="text-sm font-medium text-sidebar-foreground">Theme</span>
           </div>
           <Select value={theme} onValueChange={setTheme}>
             <SelectTrigger className="w-full">
@@ -371,19 +390,19 @@ export function Sidebar() {
               <SelectItem value="light">
                 <div className="flex items-center gap-2">
                   <Sun className="h-4 w-4" />
-                  {t("theme.light")}
+                  {t('theme.light')}
                 </div>
               </SelectItem>
               <SelectItem value="dark">
                 <div className="flex items-center gap-2">
                   <Moon className="h-4 w-4" />
-                  {t("theme.dark")}
+                  {t('theme.dark')}
                 </div>
               </SelectItem>
               <SelectItem value="system">
                 <div className="flex items-center gap-2">
                   <Monitor className="h-4 w-4" />
-                  {t("theme.system")}
+                  {t('theme.system')}
                 </div>
               </SelectItem>
             </SelectContent>
@@ -399,7 +418,7 @@ export function Sidebar() {
         >
           <Link to="/about">
             <FileText className="h-4 w-4" />
-            {t("nav.about")}
+            {t('nav.about')}
           </Link>
         </Button>
         <Button
@@ -409,7 +428,7 @@ export function Sidebar() {
         >
           <Link to="/settings">
             <Settings className="h-4 w-4" />
-            {t("nav.settings")}
+            {t('nav.settings')}
           </Link>
         </Button>
       </div>
