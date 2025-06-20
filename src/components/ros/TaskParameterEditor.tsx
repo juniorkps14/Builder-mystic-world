@@ -921,7 +921,7 @@ export function TaskParameterEditor({
           <TabsContent value="basic" className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Task Name</Label>
+                <Label>{t("task.taskName")}</Label>
                 <Input
                   value={editedTask.name}
                   onChange={(e) =>
@@ -931,7 +931,7 @@ export function TaskParameterEditor({
               </div>
 
               <div className="space-y-2">
-                <Label>Task Type</Label>
+                <Label>{t("task.taskType")}</Label>
                 <Select
                   value={editedTask.type}
                   onValueChange={(value) =>
