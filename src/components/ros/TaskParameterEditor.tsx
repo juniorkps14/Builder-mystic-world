@@ -48,6 +48,7 @@ import {
   Code,
   Navigation,
   Target,
+  RotateCcw,
 } from "lucide-react";
 
 interface TaskParameterEditorProps {
