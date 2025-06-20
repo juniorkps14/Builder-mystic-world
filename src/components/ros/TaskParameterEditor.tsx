@@ -936,18 +936,23 @@ export function TaskParameterEditor({
           {/* Basic Settings */}
           <TabsContent value="basic" className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>{t("task.taskName")}</Label>
+              <div className="space-y-2 stagger-item">
+                <Label className="font-extralight text-sm">
+                  {t("task.taskName")}
+                </Label>
                 <Input
                   value={editedTask.name}
                   onChange={(e) =>
                     setEditedTask({ ...editedTask, name: e.target.value })
                   }
+                  className="glass-effect border-0 font-extralight hover-lift transition-all duration-300"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label>{t("task.taskType")}</Label>
+              <div className="space-y-2 stagger-item">
+                <Label className="font-extralight text-sm">
+                  {t("task.taskType")}
+                </Label>
                 <Select
                   value={editedTask.type}
                   onValueChange={(value) =>
@@ -1315,7 +1320,7 @@ export function TaskParameterEditor({
                         onClick={loadCostmapRegions}
                         className="h-7"
                       >
-                        📊 Load from Costmap
+                        ��� Load from Costmap
                       </Button>
                     </div>
 
