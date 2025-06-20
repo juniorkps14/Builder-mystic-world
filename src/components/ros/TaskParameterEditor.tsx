@@ -1454,27 +1454,30 @@ export function TaskParameterEditor({
               <Card className="p-4">
                 <h4 className="font-semibold mb-3 flex items-center gap-2">
                   <Shield className="h-4 w-4" />
-                  Intelligent Movement Conditions
+                  Intelligent Movement with Obstacle Detection
                 </h4>
 
                 <div className="space-y-4">
                   {/* Movement Mode Selection */}
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
                     {[
                       {
-                        mode: "intelligent_nav",
-                        title: "Intelligent Nav",
-                        desc: "AI-powered obstacle avoidance",
+                        mode: "move_to_position",
+                        title: "Move to Position",
+                        desc: "Direct movement to specific coordinates",
+                        icon: Target,
                       },
                       {
-                        mode: "adaptive_nav",
-                        title: "Adaptive Nav",
-                        desc: "Learning from environment",
+                        mode: "manual_relative",
+                        title: "Manual Relative",
+                        desc: "Relative movement from current position",
+                        icon: Move3D,
                       },
                       {
-                        mode: "safe_nav",
-                        title: "Safe Nav",
-                        desc: "Conservative movement",
+                        mode: "pattern_movement",
+                        title: "Pattern Movement",
+                        desc: "Follow predefined waypoint patterns",
+                        icon: Navigation,
                       },
                     ].map((option) => (
                       <Card
@@ -1488,154 +1491,445 @@ export function TaskParameterEditor({
                           handleParameterChange("movementMode", option.mode)
                         }
                       >
-                        <div className="text-sm font-medium">
-                          {option.title}
+                        <div className="flex items-center gap-2 mb-2">
+                          <option.icon className="h-4 w-4 text-primary" />
+                          <span className="font-medium text-sm">
+                            {option.title}
+                          </span>
                         </div>
-                        <div className="text-xs text-muted-foreground">
+                        <p className="text-xs text-muted-foreground">
                           {option.desc}
-                        </div>
+                        </p>
                       </Card>
                     ))}
                   </div>
 
-                  {/* 2D Navigation Parameters (X, Y, Yaw) */}
-                  <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                  {/* Move to Position Mode */}
+                  {mergedParams.movementMode === "move_to_position" && (
+                    <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                      <Label className="text-sm font-semibold mb-3 block">
+                        Target Position & Orientation
+                      </Label>
+                      <div className="grid grid-cols-3 gap-3">
+                        <div>
+                          <Label className="text-xs">X Position (m)</Label>
+                          <Input
+                            type="number"
+                            step="0.1"
+                            value={mergedParams.position?.x || 0}
+                            onChange={(e) =>
+                              handleNestedParameterChange(
+                                "position",
+                                "x",
+                                parseFloat(e.target.value) || 0,
+                              )
+                            }
+                            className="h-8"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Y Position (m)</Label>
+                          <Input
+                            type="number"
+                            step="0.1"
+                            value={mergedParams.position?.y || 0}
+                            onChange={(e) =>
+                              handleNestedParameterChange(
+                                "position",
+                                "y",
+                                parseFloat(e.target.value) || 0,
+                              )
+                            }
+                            className="h-8"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Yaw Angle (degrees)</Label>
+                          <Input
+                            type="number"
+                            step="1"
+                            min="-180"
+                            max="180"
+                            value={mergedParams.orientation?.yaw || 0}
+                            onChange={(e) =>
+                              handleNestedParameterChange(
+                                "orientation",
+                                "yaw",
+                                parseFloat(e.target.value) || 0,
+                              )
+                            }
+                            className="h-8"
+                          />
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        💡 Yaw: 0° = forward, 90° = left, -90° = right, 180° =
+                        backward
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Manual Relative Mode */}
+                  {mergedParams.movementMode === "manual_relative" && (
+                    <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded-lg">
+                      <Label className="text-sm font-semibold mb-3 block">
+                        Relative Movement (from current position)
+                      </Label>
+                      <div className="grid grid-cols-3 gap-3">
+                        <div>
+                          <Label className="text-xs">X Distance (m)</Label>
+                          <Input
+                            type="number"
+                            step="0.1"
+                            value={mergedParams.relativeDistance?.x || 0}
+                            onChange={(e) =>
+                              handleNestedParameterChange(
+                                "relativeDistance",
+                                "x",
+                                parseFloat(e.target.value) || 0,
+                              )
+                            }
+                            className="h-8"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Y Distance (m)</Label>
+                          <Input
+                            type="number"
+                            step="0.1"
+                            value={mergedParams.relativeDistance?.y || 0}
+                            onChange={(e) =>
+                              handleNestedParameterChange(
+                                "relativeDistance",
+                                "y",
+                                parseFloat(e.target.value) || 0,
+                              )
+                            }
+                            className="h-8"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">
+                            Yaw Change (degrees)
+                          </Label>
+                          <Input
+                            type="number"
+                            step="1"
+                            value={mergedParams.relativeDistance?.yaw || 0}
+                            onChange={(e) =>
+                              handleNestedParameterChange(
+                                "relativeDistance",
+                                "yaw",
+                                parseFloat(e.target.value) || 0,
+                              )
+                            }
+                            className="h-8"
+                          />
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        💡 Positive X = forward, Positive Y = left, Positive Yaw
+                        = counter-clockwise
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Pattern Movement Mode */}
+                  {mergedParams.movementMode === "pattern_movement" && (
+                    <div className="p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg space-y-4">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-sm font-semibold">
+                          Movement Pattern Configuration
+                        </Label>
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={
+                              mergedParams.enablePatternMovement || false
+                            }
+                            onCheckedChange={(checked) =>
+                              handleParameterChange(
+                                "enablePatternMovement",
+                                checked,
+                              )
+                            }
+                          />
+                          <Label className="text-xs">
+                            Enable Pattern Movement
+                          </Label>
+                        </div>
+                      </div>
+
+                      {mergedParams.enablePatternMovement && (
+                        <>
+                          {/* Pattern Presets */}
+                          <div>
+                            <Label className="text-sm mb-2 block">
+                              Quick Pattern Presets
+                            </Label>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => loadPatternPreset("square")}
+                                className="h-8"
+                              >
+                                ⬜ Square
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => loadPatternPreset("circular")}
+                                className="h-8"
+                              >
+                                ⭕ Circle
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => loadPatternPreset("patrol")}
+                                className="h-8"
+                              >
+                                🔍 Patrol
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setMovementPattern([])}
+                                className="h-8"
+                              >
+                                🗑️ Clear
+                              </Button>
+                            </div>
+                          </div>
+
+                          {/* Add New Waypoint */}
+                          <div>
+                            <Label className="text-sm mb-2 block">
+                              Add Waypoint
+                            </Label>
+                            <div className="grid grid-cols-4 gap-2">
+                              <Input
+                                placeholder="X"
+                                type="number"
+                                step="0.1"
+                                value={newWaypoint.x}
+                                onChange={(e) =>
+                                  setNewWaypoint({
+                                    ...newWaypoint,
+                                    x: parseFloat(e.target.value) || 0,
+                                  })
+                                }
+                                className="h-8"
+                              />
+                              <Input
+                                placeholder="Y"
+                                type="number"
+                                step="0.1"
+                                value={newWaypoint.y}
+                                onChange={(e) =>
+                                  setNewWaypoint({
+                                    ...newWaypoint,
+                                    y: parseFloat(e.target.value) || 0,
+                                  })
+                                }
+                                className="h-8"
+                              />
+                              <Input
+                                placeholder="Yaw (°)"
+                                type="number"
+                                step="1"
+                                value={newWaypoint.yaw}
+                                onChange={(e) =>
+                                  setNewWaypoint({
+                                    ...newWaypoint,
+                                    yaw: parseFloat(e.target.value) || 0,
+                                  })
+                                }
+                                className="h-8"
+                              />
+                              <Input
+                                placeholder="Name"
+                                value={newWaypoint.name}
+                                onChange={(e) =>
+                                  setNewWaypoint({
+                                    ...newWaypoint,
+                                    name: e.target.value,
+                                  })
+                                }
+                                className="h-8"
+                              />
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={addWaypoint}
+                              className="mt-2 h-8"
+                            >
+                              <Plus className="h-3 w-3 mr-1" />
+                              Add Waypoint
+                            </Button>
+                          </div>
+
+                          {/* Current Waypoints */}
+                          {movementPattern.length > 0 && (
+                            <div>
+                              <Label className="text-sm font-semibold mb-2 block">
+                                Current Pattern ({movementPattern.length}{" "}
+                                waypoints)
+                              </Label>
+                              <div className="space-y-2 max-h-40 overflow-y-auto">
+                                {movementPattern.map((waypoint, index) => (
+                                  <div
+                                    key={index}
+                                    className="flex items-center justify-between p-2 bg-background rounded border"
+                                  >
+                                    <div className="text-xs">
+                                      <span className="font-medium">
+                                        {index + 1}.{" "}
+                                        {waypoint.name ||
+                                          `Waypoint ${index + 1}`}
+                                      </span>
+                                      <span className="text-muted-foreground ml-2">
+                                        ({waypoint.x.toFixed(1)},{" "}
+                                        {waypoint.y.toFixed(1)}, {waypoint.yaw}
+                                        °)
+                                      </span>
+                                    </div>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={() => removeWaypoint(index)}
+                                      className="h-6 w-6 p-0 hover:bg-destructive hover:text-destructive-foreground"
+                                    >
+                                      ×
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Pattern Settings */}
+                          <div className="grid grid-cols-3 gap-3">
+                            <div>
+                              <Label className="text-xs">Pattern Repeat</Label>
+                              <Input
+                                type="number"
+                                min="1"
+                                value={mergedParams.patternRepeat || 1}
+                                onChange={(e) =>
+                                  handleParameterChange(
+                                    "patternRepeat",
+                                    parseInt(e.target.value) || 1,
+                                  )
+                                }
+                                className="h-8"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-xs">
+                                Wait at Waypoint (s)
+                              </Label>
+                              <Input
+                                type="number"
+                                step="0.5"
+                                value={mergedParams.waitAtWaypoint || 2.0}
+                                onChange={(e) =>
+                                  handleParameterChange(
+                                    "waitAtWaypoint",
+                                    parseFloat(e.target.value) || 2.0,
+                                  )
+                                }
+                                className="h-8"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-xs">
+                                Waypoint Tolerance (m)
+                              </Label>
+                              <Input
+                                type="number"
+                                step="0.01"
+                                value={mergedParams.waypointTolerance || 0.1}
+                                onChange={(e) =>
+                                  handleParameterChange(
+                                    "waypointTolerance",
+                                    parseFloat(e.target.value) || 0.1,
+                                  )
+                                }
+                                className="h-8"
+                              />
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Common Obstacle Detection Settings */}
+                  <div className="p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg">
                     <Label className="text-sm font-semibold mb-3 block">
-                      2D Navigation Target
+                      Obstacle Detection & Safety
                     </Label>
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-2 gap-3 mb-3">
                       <div>
-                        <Label className="text-xs">X Position (m)</Label>
+                        <Label className="text-xs">Detection Mode</Label>
+                        <Select
+                          value={mergedParams.obstacleCheckMode || "continuous"}
+                          onValueChange={(value) =>
+                            handleParameterChange("obstacleCheckMode", value)
+                          }
+                        >
+                          <SelectTrigger className="h-8">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="continuous">
+                              Continuous
+                            </SelectItem>
+                            <SelectItem value="periodic">Periodic</SelectItem>
+                            <SelectItem value="trigger_based">
+                              Trigger Based
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-xs">Safety Distance (m)</Label>
                         <Input
                           type="number"
                           step="0.1"
-                          value={mergedParams.position?.x || 0}
+                          value={mergedParams.safetyDistance || 0.8}
                           onChange={(e) =>
-                            handleNestedParameterChange(
-                              "position",
-                              "x",
-                              parseFloat(e.target.value) || 0,
-                            )
-                          }
-                          className="h-8"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Y Position (m)</Label>
-                        <Input
-                          type="number"
-                          step="0.1"
-                          value={mergedParams.position?.y || 0}
-                          onChange={(e) =>
-                            handleNestedParameterChange(
-                              "position",
-                              "y",
-                              parseFloat(e.target.value) || 0,
-                            )
-                          }
-                          className="h-8"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Yaw Angle (degrees)</Label>
-                        <Input
-                          type="number"
-                          step="1"
-                          min="-180"
-                          max="180"
-                          value={mergedParams.orientation?.yaw || 0}
-                          onChange={(e) =>
-                            handleNestedParameterChange(
-                              "orientation",
-                              "yaw",
-                              parseFloat(e.target.value) || 0,
+                            handleParameterChange(
+                              "safetyDistance",
+                              parseFloat(e.target.value) || 0.8,
                             )
                           }
                           className="h-8"
                         />
                       </div>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      💡 Yaw: 0° = facing forward, 90° = facing left, -90° =
-                      facing right, 180° = facing backward
-                    </p>
-                  </div>
 
-                  {/* Conditional Movement Rules */}
-                  <div className="p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg">
-                    <Label className="text-sm font-semibold mb-3 block">
-                      Movement Conditions & Actions
-                    </Label>
                     <div className="space-y-2 text-sm">
                       <div className="flex items-center justify-between p-2 bg-background rounded border">
                         <span>
-                          🚧 <strong>Obstacle Ahead</strong> (2.0m)
+                          🚧 <strong>Obstacle Ahead</strong>
                         </span>
-                        <Badge variant="outline">Circumnavigate</Badge>
+                        <Badge variant="outline">Smart Avoid</Badge>
                       </div>
                       <div className="flex items-center justify-between p-2 bg-background rounded border">
                         <span>
-                          🛑 <strong>Path Blocked</strong> (5.0s timeout)
+                          🛑 <strong>Path Blocked</strong>
                         </span>
-                        <Badge variant="outline">Alternative Route</Badge>
+                        <Badge variant="outline">Find Alternative</Badge>
                       </div>
                       <div className="flex items-center justify-between p-2 bg-background rounded border">
                         <span>
-                          🚶 <strong>Dynamic Obstacle</strong> (max wait 10.0s)
+                          🚶 <strong>Dynamic Obstacle</strong>
                         </span>
                         <Badge variant="outline">Wait & Retry</Badge>
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Behavior Settings */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <Label className="text-sm">Aggressiveness Level</Label>
-                      <Select
-                        value={mergedParams.aggressiveness || "moderate"}
-                        onValueChange={(value) =>
-                          handleParameterChange("aggressiveness", value)
-                        }
-                      >
-                        <SelectTrigger className="h-8">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="conservative">
-                            🐌 Conservative
-                          </SelectItem>
-                          <SelectItem value="moderate">⚖️ Moderate</SelectItem>
-                          <SelectItem value="aggressive">
-                            🚀 Aggressive
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label className="text-sm">Costmap Source</Label>
-                      <Select
-                        value={mergedParams.costmapSource || "global_costmap"}
-                        onValueChange={(value) =>
-                          handleParameterChange("costmapSource", value)
-                        }
-                      >
-                        <SelectTrigger className="h-8">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="global_costmap">
-                            Global Costmap
-                          </SelectItem>
-                          <SelectItem value="local_costmap">
-                            Local Costmap
-                          </SelectItem>
-                          <SelectItem value="sensor_fusion">
-                            Sensor Fusion
-                          </SelectItem>
-                          <SelectItem value="custom">Custom</SelectItem>
-                        </SelectContent>
-                      </Select>
                     </div>
                   </div>
                 </div>
