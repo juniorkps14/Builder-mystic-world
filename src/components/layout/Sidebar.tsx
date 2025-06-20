@@ -384,60 +384,64 @@ export function Sidebar() {
 
         {/* Bottom Settings */}
         {!isCollapsed && (
-          <div className="p-6 border-t border-sidebar-border/30 space-y-4">
+          <div className="p-6 border-t border-sidebar-border/30 space-y-4 fade-in-up">
             {/* Language Selector */}
-            <div>
+            <div className="hover-lift">
               <div className="flex items-center gap-2 mb-2">
-                <Languages className="h-4 w-4 text-sidebar-foreground/70" />
-                <span className="text-sm font-light text-sidebar-foreground">
+                <Languages className="h-4 w-4 text-sidebar-foreground/70 hover-rotate" />
+                <span className="text-sm font-extralight text-sidebar-foreground">
                   ภาษา
                 </span>
               </div>
               <Select value={language} onValueChange={setLanguage}>
-                <SelectTrigger className="w-full glass-effect border-0">
+                <SelectTrigger className="w-full glass-effect border-0 hover-scale font-extralight">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="glass-effect">
-                  <SelectItem value="en">{t("language.english")}</SelectItem>
-                  <SelectItem value="th">{t("language.thai")}</SelectItem>
+                  <SelectItem value="en" className="font-extralight">
+                    {t("language.english")}
+                  </SelectItem>
+                  <SelectItem value="th" className="font-extralight">
+                    {t("language.thai")}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Theme Selector */}
-            <div>
+            <div className="hover-lift">
               <div className="flex items-center gap-2 mb-2">
                 {theme === "light" && (
-                  <Sun className="h-4 w-4 text-sidebar-foreground/70" />
+                  <Sun className="h-4 w-4 text-sidebar-foreground/70 spin-slow" />
                 )}
                 {theme === "dark" && (
-                  <Moon className="h-4 w-4 text-sidebar-foreground/70" />
+                  <Moon className="h-4 w-4 text-sidebar-foreground/70 float-delay-2" />
                 )}
                 {theme === "system" && (
-                  <Monitor className="h-4 w-4 text-sidebar-foreground/70" />
+                  <Monitor className="h-4 w-4 text-sidebar-foreground/70 pulse-soft" />
                 )}
-                <span className="text-sm font-light text-sidebar-foreground">
+                <span className="text-sm font-extralight text-sidebar-foreground">
                   ธีม
                 </span>
               </div>
               <Select value={theme} onValueChange={setTheme}>
-                <SelectTrigger className="w-full glass-effect border-0">
+                <SelectTrigger className="w-full glass-effect border-0 hover-scale font-extralight">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="glass-effect">
-                  <SelectItem value="light">
+                  <SelectItem value="light" className="font-extralight">
                     <div className="flex items-center gap-2">
                       <Sun className="h-4 w-4" />
                       {t("theme.light")}
                     </div>
                   </SelectItem>
-                  <SelectItem value="dark">
+                  <SelectItem value="dark" className="font-extralight">
                     <div className="flex items-center gap-2">
                       <Moon className="h-4 w-4" />
                       {t("theme.dark")}
                     </div>
                   </SelectItem>
-                  <SelectItem value="system">
+                  <SelectItem value="system" className="font-extralight">
                     <div className="flex items-center gap-2">
                       <Monitor className="h-4 w-4" />
                       {t("theme.system")}
@@ -452,21 +456,21 @@ export function Sidebar() {
             <div className="space-y-2">
               <Button
                 variant="ghost"
-                className="w-full justify-start gap-3 text-sidebar-foreground/80 hover:bg-sidebar-accent/50 font-light"
+                className="w-full justify-start gap-3 text-sidebar-foreground/80 hover:bg-sidebar-accent/50 font-extralight hover-lift"
                 asChild
               >
                 <Link to="/about">
-                  <FileText className="h-4 w-4" />
+                  <FileText className="h-4 w-4 hover-rotate" />
                   {t("nav.about")}
                 </Link>
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start gap-3 text-sidebar-foreground/80 hover:bg-sidebar-accent/50 font-light"
+                className="w-full justify-start gap-3 text-sidebar-foreground/80 hover:bg-sidebar-accent/50 font-extralight hover-lift"
                 asChild
               >
                 <Link to="/settings">
-                  <Settings className="h-4 w-4" />
+                  <Settings className="h-4 w-4 spin-reverse" />
                   {t("nav.settings")}
                 </Link>
               </Button>
