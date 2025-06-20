@@ -1362,6 +1362,199 @@ export function TaskParameterEditor({
               </Card>
             )}
 
+            {/* Move with Obstacle Check Configuration */}
+            {editedTask.type === "move_with_obstacle_check" && (
+              <Card className="p-4">
+                <h4 className="font-semibold mb-3 flex items-center gap-2">
+                  <Shield className="h-4 w-4" />
+                  Intelligent Movement Conditions
+                </h4>
+
+                <div className="space-y-4">
+                  {/* Movement Mode Selection */}
+                  <div className="grid grid-cols-3 gap-3">
+                    {[
+                      {
+                        mode: "intelligent_nav",
+                        title: "Intelligent Nav",
+                        desc: "AI-powered obstacle avoidance",
+                      },
+                      {
+                        mode: "adaptive_nav",
+                        title: "Adaptive Nav",
+                        desc: "Learning from environment",
+                      },
+                      {
+                        mode: "safe_nav",
+                        title: "Safe Nav",
+                        desc: "Conservative movement",
+                      },
+                    ].map((option) => (
+                      <Card
+                        key={option.mode}
+                        className={`p-3 cursor-pointer transition-all ${
+                          mergedParams.movementMode === option.mode
+                            ? "ring-2 ring-primary bg-primary/5"
+                            : "hover:bg-accent"
+                        }`}
+                        onClick={() =>
+                          handleParameterChange("movementMode", option.mode)
+                        }
+                      >
+                        <div className="text-sm font-medium">
+                          {option.title}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {option.desc}
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+
+                  {/* 2D Navigation Parameters (X, Y, Yaw) */}
+                  <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                    <Label className="text-sm font-semibold mb-3 block">
+                      2D Navigation Target
+                    </Label>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div>
+                        <Label className="text-xs">X Position (m)</Label>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          value={mergedParams.position?.x || 0}
+                          onChange={(e) =>
+                            handleNestedParameterChange(
+                              "position",
+                              "x",
+                              parseFloat(e.target.value) || 0,
+                            )
+                          }
+                          className="h-8"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Y Position (m)</Label>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          value={mergedParams.position?.y || 0}
+                          onChange={(e) =>
+                            handleNestedParameterChange(
+                              "position",
+                              "y",
+                              parseFloat(e.target.value) || 0,
+                            )
+                          }
+                          className="h-8"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Yaw Angle (degrees)</Label>
+                        <Input
+                          type="number"
+                          step="1"
+                          min="-180"
+                          max="180"
+                          value={mergedParams.orientation?.yaw || 0}
+                          onChange={(e) =>
+                            handleNestedParameterChange(
+                              "orientation",
+                              "yaw",
+                              parseFloat(e.target.value) || 0,
+                            )
+                          }
+                          className="h-8"
+                        />
+                      </div>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      💡 Yaw: 0° = facing forward, 90° = facing left, -90° =
+                      facing right, 180° = facing backward
+                    </p>
+                  </div>
+
+                  {/* Conditional Movement Rules */}
+                  <div className="p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg">
+                    <Label className="text-sm font-semibold mb-3 block">
+                      Movement Conditions & Actions
+                    </Label>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center justify-between p-2 bg-background rounded border">
+                        <span>
+                          🚧 <strong>Obstacle Ahead</strong> (2.0m)
+                        </span>
+                        <Badge variant="outline">Circumnavigate</Badge>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-background rounded border">
+                        <span>
+                          🛑 <strong>Path Blocked</strong> (5.0s timeout)
+                        </span>
+                        <Badge variant="outline">Alternative Route</Badge>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-background rounded border">
+                        <span>
+                          🚶 <strong>Dynamic Obstacle</strong> (max wait 10.0s)
+                        </span>
+                        <Badge variant="outline">Wait & Retry</Badge>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Behavior Settings */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-sm">Aggressiveness Level</Label>
+                      <Select
+                        value={mergedParams.aggressiveness || "moderate"}
+                        onValueChange={(value) =>
+                          handleParameterChange("aggressiveness", value)
+                        }
+                      >
+                        <SelectTrigger className="h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="conservative">
+                            🐌 Conservative
+                          </SelectItem>
+                          <SelectItem value="moderate">⚖️ Moderate</SelectItem>
+                          <SelectItem value="aggressive">
+                            🚀 Aggressive
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-sm">Costmap Source</Label>
+                      <Select
+                        value={mergedParams.costmapSource || "global_costmap"}
+                        onValueChange={(value) =>
+                          handleParameterChange("costmapSource", value)
+                        }
+                      >
+                        <SelectTrigger className="h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="global_costmap">
+                            Global Costmap
+                          </SelectItem>
+                          <SelectItem value="local_costmap">
+                            Local Costmap
+                          </SelectItem>
+                          <SelectItem value="sensor_fusion">
+                            Sensor Fusion
+                          </SelectItem>
+                          <SelectItem value="custom">Custom</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            )}
+
             <div className="space-y-4">
               {Object.entries(mergedParams)
                 .filter(
