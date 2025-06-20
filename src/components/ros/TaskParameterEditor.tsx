@@ -269,9 +269,9 @@ export function TaskParameterEditor({
     },
     sensor_reading: {
       icon: Compass,
-      name: "Sensor Reading",
+      name: "📡 การอ่านเซ็นเซอร์",
       description:
-        "Read and process sensor data with comprehensive sensor support",
+        "อ่านและประมวลผลข้อมูลเซ็นเซอร์พร้อมการรองรับเซ็นเซอร์หลากหลาย",
       parameters: {
         sensorType: "lidar", // lidar, camera, imu, ultrasonic, temperature, pressure, humidity, gps, magnetometer, accelerometer, gyroscope, proximity, force, torque, encoders, current, voltage
         topic: "/scan",
