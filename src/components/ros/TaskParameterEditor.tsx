@@ -490,6 +490,72 @@ export function TaskParameterEditor({
     console.log("Loaded costmap regions:", predefinedRegions);
   };
 
+  // Handle waypoint management for pattern movement
+  const addWaypoint = () => {
+    if (newWaypoint.name.trim() === "") {
+      newWaypoint.name = `Waypoint ${movementPattern.length + 1}`;
+    }
+
+    const waypoint = { ...newWaypoint };
+    const updatedPattern = [...movementPattern, waypoint];
+    setMovementPattern(updatedPattern);
+
+    // Update task parameters
+    handleParameterChange("movementPattern", updatedPattern);
+
+    // Reset form
+    setNewWaypoint({ x: 0, y: 0, yaw: 0, name: "" });
+    console.log("Added waypoint:", waypoint);
+  };
+
+  const removeWaypoint = (index: number) => {
+    const updatedPattern = movementPattern.filter((_, i) => i !== index);
+    setMovementPattern(updatedPattern);
+    handleParameterChange("movementPattern", updatedPattern);
+  };
+
+  const loadPatternPreset = (patternType: string) => {
+    let preset: Array<{ x: number; y: number; yaw: number; name: string }> = [];
+
+    switch (patternType) {
+      case "square":
+        preset = [
+          { x: 0, y: 0, yaw: 0, name: "Start Point" },
+          { x: 2, y: 0, yaw: 90, name: "Right Side" },
+          { x: 2, y: 2, yaw: 180, name: "Top Right" },
+          { x: 0, y: 2, yaw: -90, name: "Top Left" },
+          { x: 0, y: 0, yaw: 0, name: "Back to Start" },
+        ];
+        break;
+      case "circular":
+        const radius = 2;
+        for (let i = 0; i < 8; i++) {
+          const angle = (i * 45 * Math.PI) / 180; // Convert to radians
+          preset.push({
+            x: radius * Math.cos(angle),
+            y: radius * Math.sin(angle),
+            yaw: (i * 45 + 90) % 360, // Face tangent to circle
+            name: `Circle Point ${i + 1}`,
+          });
+        }
+        break;
+      case "patrol":
+        preset = [
+          { x: 0, y: 0, yaw: 0, name: "Base" },
+          { x: 5, y: 0, yaw: 90, name: "Checkpoint A" },
+          { x: 5, y: 3, yaw: 180, name: "Checkpoint B" },
+          { x: -2, y: 3, yaw: -90, name: "Checkpoint C" },
+          { x: -2, y: -2, yaw: 0, name: "Checkpoint D" },
+          { x: 0, y: 0, yaw: 0, name: "Return to Base" },
+        ];
+        break;
+    }
+
+    setMovementPattern(preset);
+    handleParameterChange("movementPattern", preset);
+    console.log(`Loaded ${patternType} pattern:`, preset);
+  };
+
   const handleSave = () => {
     // Ensure all parameters are properly merged
     const finalTask = {
