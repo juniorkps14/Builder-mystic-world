@@ -248,7 +248,10 @@ export function SubtaskCard({
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div>
                 <span className="text-muted-foreground">Type:</span>
-                <p className="font-mono text-xs">{subtask.type}</p>
+                <p className="font-medium text-xs">
+                  {taskTypeNames[subtask.type as keyof typeof taskTypeNames] ||
+                    subtask.type}
+                </p>
               </div>
               <div>
                 <span className="text-muted-foreground">Duration:</span>
