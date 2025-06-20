@@ -335,6 +335,9 @@ export function SubtaskCard({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="movement">🚗 Robot Movement</SelectItem>
+                    <SelectItem value="move_with_obstacle_check">
+                      🛡️ Move with Obstacle Check
+                    </SelectItem>
                     <SelectItem value="manipulation">
                       🦾 Arm Manipulation
                     </SelectItem>
