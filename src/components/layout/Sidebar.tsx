@@ -323,14 +323,14 @@ export function Sidebar() {
 
           {/* Quick Status */}
           {!isCollapsed && (
-            <div className="glass-effect rounded-xl p-4 mb-6">
+            <div className="glass-effect rounded-xl p-4 mb-6 hover-lift fade-in-up">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-light text-sidebar-accent-foreground">
+                <span className="text-sm font-extralight text-sidebar-accent-foreground">
                   {t("app.systemStatus")}
                 </span>
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-lg shadow-green-500/50" />
+                <div className="w-3 h-3 rounded-full bg-green-500 pulse-glow shadow-lg shadow-green-500/50 float-delay-1" />
               </div>
-              <div className="text-xs text-sidebar-accent-foreground/80 font-light">
+              <div className="text-xs text-sidebar-accent-foreground/80 font-extralight">
                 {t("app.allSystemsOperational")}
               </div>
             </div>
