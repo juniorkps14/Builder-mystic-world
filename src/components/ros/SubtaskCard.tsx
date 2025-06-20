@@ -356,6 +356,8 @@ export function SubtaskCard({
                       📊 Data Logging
                     </SelectItem>
                     <SelectItem value="maintenance">🔧 Maintenance</SelectItem>
+                    <SelectItem value="retry">🔄 Retry Control</SelectItem>
+                    <SelectItem value="checkpoint">📍 Checkpoint</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
