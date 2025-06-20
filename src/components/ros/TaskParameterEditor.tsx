@@ -1574,6 +1574,24 @@ export function TaskParameterEditor({
                       "costmapSettings",
                       "dynamicObstacleSettings",
                       "emergencyBehaviors",
+                      // Move with obstacle check params
+                      "obstacleCheckMode",
+                      "checkInterval",
+                      "costmapSource",
+                      "loadCostmapRegions",
+                      "enableConditionalMovement",
+                      "movementConditions",
+                      "aggressiveness",
+                      "patienceLevel",
+                      "learningEnabled",
+                      "adaptiveSpeed",
+                      "maxDetourDistance",
+                      "emergencyStopDistance",
+                      "onObstacleDetected",
+                      "onPathBlocked",
+                      "onGoalReached",
+                      "position",
+                      "orientation", // These are handled in special sections
                     ].includes(key),
                 )
                 .map(([key, value]) => renderParameterField(key, value))}
