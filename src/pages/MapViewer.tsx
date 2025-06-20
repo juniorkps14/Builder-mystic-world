@@ -272,19 +272,22 @@ const MapViewer = () => {
       drawMap();
 
       // Simulate robot movement
-      setRobotState((prev) => ({
-        ...prev,
-        position: {
+      setRobotState((prev) => {
+        const newPosition = {
           ...prev.position,
           x: prev.position.x + (Math.random() - 0.5) * 0.02,
           y: prev.position.y + (Math.random() - 0.5) * 0.02,
-        },
-        laserScan: generateLaserScan(),
-      }));
-    }, 100);
+        };
+        return {
+          ...prev,
+          position: newPosition,
+          laserScan: generateLaserScan(newPosition),
+        };
+      });
+    }, 500); // Reduced frequency to prevent performance issues
 
     return () => clearInterval(interval);
-  }, [layerVisibility, viewState, robotState.position.theta]);
+  }, [layerVisibility, viewState, generateLaserScan]);
 
   const handleCanvasClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
     if (navigationMode === "view") return;
