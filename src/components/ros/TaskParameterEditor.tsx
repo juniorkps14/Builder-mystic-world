@@ -898,13 +898,18 @@ export function TaskParameterEditor({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-3">
-            {taskTypeInfo && <taskTypeInfo.icon className="h-6 w-6" />}
-            {t("task.configureTask")}: {editedTask.name}
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto glass-effect border-0 scale-in">
+        <DialogHeader className="fade-in-up">
+          <DialogTitle className="flex items-center gap-3 font-extralight text-xl">
+            {taskTypeInfo && (
+              <taskTypeInfo.icon className="h-6 w-6 float-animation text-primary" />
+            )}
+            {t("task.configureTask")}:{" "}
+            <span className="gradient-animate bg-clip-text text-transparent">
+              {editedTask.name}
+            </span>
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="font-extralight text-base">
             {taskTypeInfo?.description || t("task.configureTask")}
           </DialogDescription>
         </DialogHeader>
