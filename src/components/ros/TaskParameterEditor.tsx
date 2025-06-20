@@ -518,6 +518,68 @@ export function TaskParameterEditor({
         language: ["en-US", "th-TH", "zh-CN", "ja-JP", "ko-KR"],
         logFormat: ["csv", "json", "rosbag", "txt"],
         filterType: ["blur", "sharpen", "edge_enhance", "none"],
+        // Obstacle detection options
+        obstacleDetectionMode: ["dynamic", "static", "predictive", "none"],
+        avoidanceStrategy: [
+          "circumnavigate",
+          "wait",
+          "alternative_route",
+          "stop",
+          "slow_down",
+        ],
+        obstacleTypes: [
+          "static",
+          "dynamic",
+          "human",
+          "vehicle",
+          "robot",
+          "unknown",
+        ],
+        predictionModel: ["linear", "polynomial", "kalman", "neural"],
+        // Retry options
+        retryType: [
+          "restart_from_here",
+          "retry_last_action",
+          "retry_sequence",
+          "retry_from_checkpoint",
+        ],
+        retryCondition: ["on_failure", "manual", "conditional", "timeout"],
+        onMaxRetries: [
+          "abort",
+          "manual_intervention",
+          "skip",
+          "alternative_method",
+        ],
+        // Checkpoint options
+        checkpointType: [
+          "save_state",
+          "recovery_point",
+          "progress_marker",
+          "milestone",
+        ],
+        dataTypes: [
+          "position",
+          "task_state",
+          "sensor_data",
+          "variables",
+          "parameters",
+        ],
+        backupLocation: ["local", "cloud", "both", "network_drive"],
+        // Sensor options
+        units: [
+          "meters",
+          "degrees",
+          "celsius",
+          "pascal",
+          "amperes",
+          "volts",
+          "rpm",
+          "newtons",
+          "lux",
+          "decibels",
+        ],
+        processingMode: ["real_time", "batch", "triggered", "continuous"],
+        dataFormat: ["json", "csv", "rosbag", "binary", "xml"],
       };
 
       if (selectOptions[key as keyof typeof selectOptions]) {
