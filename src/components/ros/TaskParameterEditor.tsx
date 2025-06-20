@@ -91,9 +91,9 @@ export function TaskParameterEditor({
   const taskTypes = {
     movement: {
       icon: Move3D,
-      name: "Robot Movement",
+      name: "🚗 การเคลื่อนที่ของหุ่นยนต์",
       description:
-        "Control robot position and orientation with multiple movement modes",
+        "ควบคุมตำแหน่งและการหมุนของหุ่นยนต์ด้วยโหมดการเคลื่อนที่หลากหลาย",
       parameters: {
         movementMode: "auto_nav", // auto_nav, move_to_position, manual_relative
         position: { x: 0, y: 0, z: 0 },
@@ -1299,7 +1299,7 @@ export function TaskParameterEditor({
                         onClick={loadCostmapRegions}
                         className="h-7"
                       >
-                        �� Load from Costmap
+                        📊 Load from Costmap
                       </Button>
                     </div>
 
