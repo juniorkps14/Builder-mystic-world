@@ -152,9 +152,9 @@ export function TaskParameterEditor({
     },
     move_with_obstacle_check: {
       icon: Shield,
-      name: "Move with Obstacle Check",
+      name: "🛡️ เคลื่อนที่พร้อมตรวจสิ่งกีดขวาง",
       description:
-        "Intelligent movement with real-time obstacle detection and conditional navigation",
+        "การเคลื่อนที่อัจฉริยะพร้อมการตรวจจับสิ่งกีดขวางแบบเรียลไทม์",
       parameters: {
         movementMode: "move_to_position", // move_to_position, manual_relative, pattern_movement
         // Single position movement
