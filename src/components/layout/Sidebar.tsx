@@ -300,22 +300,22 @@ export function Sidebar() {
         {/* Header */}
         <div className="p-6">
           {!isCollapsed ? (
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-xl shadow-primary/20">
+            <div className="flex items-center gap-3 mb-6 slide-in-left">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-xl shadow-primary/20 hover-lift glow-on-hover float-animation">
                 <Bot className="h-7 w-7 text-primary-foreground" />
               </div>
-              <div>
-                <h2 className="text-xl font-light text-sidebar-foreground">
+              <div className="fade-in-up">
+                <h2 className="text-xl font-extralight text-sidebar-foreground">
                   {t("app.name")}
                 </h2>
-                <p className="text-xs text-sidebar-foreground/70 font-light">
+                <p className="text-xs text-sidebar-foreground/70 font-extralight">
                   {t("app.subtitle")}
                 </p>
               </div>
             </div>
           ) : (
-            <div className="flex justify-center mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-xl shadow-primary/20">
+            <div className="flex justify-center mb-6 scale-in">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-xl shadow-primary/20 hover-lift glow-on-hover float-animation">
                 <Bot className="h-7 w-7 text-primary-foreground" />
               </div>
             </div>
