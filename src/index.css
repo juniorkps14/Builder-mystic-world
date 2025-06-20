@@ -104,7 +104,8 @@
   }
 
   body {
-    @apply bg-background text-foreground font-mono;
+    @apply bg-background text-foreground;
+    font-family: "Kanit", "Inter", sans-serif;
   }
 
   /* Custom scrollbar for ROS interface */
