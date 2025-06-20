@@ -321,7 +321,10 @@ export function TaskCard({
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
               <div>
                 <span className="text-muted-foreground">Type:</span>
-                <p className="font-mono">{task.type}</p>
+                <p className="font-medium">
+                  {taskTypeNames[task.type as keyof typeof taskTypeNames] ||
+                    task.type}
+                </p>
               </div>
               <div>
                 <span className="text-muted-foreground">Timeout:</span>
