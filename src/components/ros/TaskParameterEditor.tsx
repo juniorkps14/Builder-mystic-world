@@ -782,6 +782,8 @@ export function TaskParameterEditor({
           "wait",
         ],
         onPathBlocked: ["find_alternative", "wait", "abort", "manual_control"],
+        // Pattern movement options
+        patternType: ["waypoints", "circular", "square", "patrol", "custom"],
       };
 
       if (selectOptions[key as keyof typeof selectOptions]) {
