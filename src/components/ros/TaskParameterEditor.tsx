@@ -903,10 +903,10 @@ export function TaskParameterEditor({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
             {taskTypeInfo && <taskTypeInfo.icon className="h-6 w-6" />}
-            Configure Task: {editedTask.name}
+            {t("task.configureTask")}: {editedTask.name}
           </DialogTitle>
           <DialogDescription>
-            {taskTypeInfo?.description || "Configure parameters for this task"}
+            {taskTypeInfo?.description || t("task.configureTask")}
           </DialogDescription>
         </DialogHeader>
 
