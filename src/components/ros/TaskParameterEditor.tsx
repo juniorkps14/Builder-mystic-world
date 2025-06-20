@@ -560,7 +560,7 @@ export function TaskParameterEditor({
     // Ensure all parameters are properly merged
     const finalTask = {
       ...editedTask,
-      parameters: { ...mergedParams, obstacleRegions },
+      parameters: { ...mergedParams, obstacleRegions, movementPattern },
     };
     console.log("Saving task with parameters:", finalTask);
     onSave(finalTask);
