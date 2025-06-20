@@ -366,14 +366,24 @@ export function Sidebar() {
 
           {/* Quick Status */}
           {!isCollapsed && (
-            <div className="glass-effect rounded-xl p-4 mb-6 hover-lift fade-in-up">
-              <div className="flex items-center justify-between mb-2">
+            <div className="glass-effect rounded-2xl p-5 mb-6 hover-lift fade-in-up border border-white/10">
+              <div className="flex items-center justify-between mb-3">
                 <span className="text-sm font-extralight text-sidebar-accent-foreground">
                   {t("app.systemStatus")}
                 </span>
-                <div className="w-3 h-3 rounded-full bg-green-500 pulse-glow shadow-lg shadow-green-500/50 float-delay-1" />
+                <div className="relative">
+                  <div className="w-3 h-3 rounded-full bg-emerald-400 shadow-lg shadow-emerald-400/30" />
+                  <div
+                    className="absolute inset-0 w-3 h-3 rounded-full bg-emerald-400 animate-ping opacity-20"
+                    style={{ animationDuration: "3s" }}
+                  />
+                  <div
+                    className="absolute -inset-1 w-5 h-5 rounded-full bg-emerald-400/10 animate-pulse"
+                    style={{ animationDuration: "4s" }}
+                  />
+                </div>
               </div>
-              <div className="text-xs text-sidebar-accent-foreground/80 font-extralight">
+              <div className="text-xs text-sidebar-accent-foreground/80 font-extralight leading-relaxed">
                 {t("app.allSystemsOperational")}
               </div>
             </div>
