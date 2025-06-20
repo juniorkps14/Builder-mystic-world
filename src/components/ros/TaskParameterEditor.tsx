@@ -76,6 +76,15 @@ export function TaskParameterEditor({
     y2: 0,
     name: "",
   });
+  const [movementPattern, setMovementPattern] = useState<
+    Array<{ x: number; y: number; yaw: number; name: string }>
+  >([]);
+  const [newWaypoint, setNewWaypoint] = useState({
+    x: 0,
+    y: 0,
+    yaw: 0,
+    name: "",
+  });
 
   const taskTypes = {
     movement: {
