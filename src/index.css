@@ -106,6 +106,42 @@
   body {
     @apply bg-background text-foreground;
     font-family: "Kanit", "Inter", sans-serif;
+    font-weight: 300; /* Lighter default weight */
+  }
+
+  /* Lighten all font weights globally */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 400; /* Reduced from bold */
+  }
+
+  .font-bold {
+    font-weight: 500; /* Reduced bold */
+  }
+
+  .font-semibold {
+    font-weight: 400; /* Reduced semibold */
+  }
+
+  .font-medium {
+    font-weight: 350; /* Reduced medium */
+  }
+
+  /* Add beautiful transparency effects */
+  .glass-effect {
+    @apply backdrop-blur-md bg-white/20 dark:bg-black/20 border border-white/30 dark:border-white/10;
+  }
+
+  .card-glass {
+    @apply backdrop-blur-sm bg-white/80 dark:bg-black/40 border border-white/50 dark:border-white/10;
+  }
+
+  .sidebar-glass {
+    @apply backdrop-blur-lg bg-white/95 dark:bg-black/90 border-r border-white/30 dark:border-white/10;
   }
 
   /* Custom scrollbar for ROS interface */
