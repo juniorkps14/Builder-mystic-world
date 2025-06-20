@@ -956,7 +956,7 @@ export function TaskParameterEditor({
             </div>
 
             <div className="space-y-2">
-              <Label>Description</Label>
+              <Label>{t("task.description")}</Label>
               <Textarea
                 value={editedTask.description}
                 onChange={(e) =>
@@ -968,7 +968,7 @@ export function TaskParameterEditor({
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="space-y-2">
-                <Label>Timeout (seconds)</Label>
+                <Label>{t("task.timeout")} (วินาที)</Label>
                 <Input
                   type="number"
                   value={editedTask.timeout}
