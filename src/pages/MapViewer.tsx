@@ -289,6 +289,77 @@ const MapViewer = () => {
     return () => clearInterval(interval);
   }, [layerVisibility, viewState, generateLaserScan]);
 
+  // Canvas resize handling
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    let timeoutId: NodeJS.Timeout;
+    let isResizing = false;
+
+    const updateCanvasSize = () => {
+      if (isResizing) return;
+
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        if (!canvas.parentElement) return;
+
+        const rect = canvas.parentElement.getBoundingClientRect();
+        if (rect && rect.width > 0 && rect.height > 0) {
+          const newWidth = Math.floor(rect.width);
+          const newHeight = Math.floor(rect.height);
+
+          if (canvas.width !== newWidth || canvas.height !== newHeight) {
+            canvas.width = newWidth;
+            canvas.height = newHeight;
+            requestAnimationFrame(() => drawMap());
+          }
+        }
+        isResizing = false;
+      }, 150);
+    };
+
+    // Initial size setup
+    updateCanvasSize();
+
+    let resizeObserver: ResizeObserver | null = null;
+
+    try {
+      resizeObserver = new ResizeObserver((entries) => {
+        if (isResizing) return;
+        isResizing = true;
+        requestAnimationFrame(updateCanvasSize);
+      });
+
+      if (canvas.parentElement) {
+        resizeObserver.observe(canvas.parentElement, { box: "border-box" });
+      }
+    } catch (error) {
+      console.warn(
+        "ResizeObserver not supported, using window resize fallback",
+      );
+      const handleResize = () => {
+        if (!isResizing) {
+          isResizing = true;
+          updateCanvasSize();
+        }
+      };
+      window.addEventListener("resize", handleResize, { passive: true });
+
+      return () => {
+        clearTimeout(timeoutId);
+        window.removeEventListener("resize", handleResize);
+      };
+    }
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+    };
+  }, []);
+
   const handleCanvasClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
     if (navigationMode === "view") return;
 
