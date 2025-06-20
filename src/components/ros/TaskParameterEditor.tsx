@@ -987,16 +987,175 @@ export function TaskParameterEditor({
               </Card>
             )}
 
+            {/* Obstacle Detection Configuration for Movement Tasks */}
+            {editedTask.type === "movement" && (
+              <Card className="p-4">
+                <h4 className="font-semibold mb-3 flex items-center gap-2">
+                  <Shield className="h-4 w-4" />
+                  Obstacle Detection & Avoidance
+                </h4>
+
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-sm">Detection Mode</Label>
+                      <Select
+                        value={mergedParams.obstacleDetectionMode || "dynamic"}
+                        onValueChange={(value) =>
+                          handleParameterChange("obstacleDetectionMode", value)
+                        }
+                      >
+                        <SelectTrigger className="h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="dynamic">
+                            Dynamic Detection
+                          </SelectItem>
+                          <SelectItem value="static">Static Only</SelectItem>
+                          <SelectItem value="predictive">Predictive</SelectItem>
+                          <SelectItem value="none">Disabled</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label className="text-sm">Avoidance Strategy</Label>
+                      <Select
+                        value={
+                          mergedParams.avoidanceStrategy || "circumnavigate"
+                        }
+                        onValueChange={(value) =>
+                          handleParameterChange("avoidanceStrategy", value)
+                        }
+                      >
+                        <SelectTrigger className="h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="circumnavigate">
+                            Go Around
+                          </SelectItem>
+                          <SelectItem value="wait">Wait</SelectItem>
+                          <SelectItem value="alternative_route">
+                            Alternative Route
+                          </SelectItem>
+                          <SelectItem value="stop">Emergency Stop</SelectItem>
+                          <SelectItem value="slow_down">Slow Down</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-sm">Safety Distance (m)</Label>
+                      <Input
+                        type="number"
+                        step="0.1"
+                        value={mergedParams.safetyDistance || 0.5}
+                        onChange={(e) =>
+                          handleParameterChange(
+                            "safetyDistance",
+                            parseFloat(e.target.value) || 0.5,
+                          )
+                        }
+                        className="h-8"
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-sm">Detection Range (m)</Label>
+                      <Input
+                        type="number"
+                        step="0.5"
+                        value={mergedParams.obstacleDetectionRange || 5.0}
+                        onChange={(e) =>
+                          handleParameterChange(
+                            "obstacleDetectionRange",
+                            parseFloat(e.target.value) || 5.0,
+                          )
+                        }
+                        className="h-8"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Obstacle Regions in Costmap */}
+                  <div>
+                    <Label className="text-sm">
+                      Known Obstacle Regions (Costmap Coordinates)
+                    </Label>
+                    <div className="p-3 bg-muted rounded-lg">
+                      <p className="text-xs text-muted-foreground mb-2">
+                        Define specific areas in the costmap where obstacles are
+                        known to exist
+                      </p>
+                      <div className="grid grid-cols-4 gap-2 text-xs">
+                        <Input placeholder="X1" className="h-7" />
+                        <Input placeholder="Y1" className="h-7" />
+                        <Input placeholder="X2" className="h-7" />
+                        <Input placeholder="Y2" className="h-7" />
+                      </div>
+                      <Button size="sm" variant="outline" className="mt-2 h-7">
+                        <Plus className="h-3 w-3 mr-1" />
+                        Add Region
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Obstacle Types */}
+                  <div>
+                    <Label className="text-sm">Obstacle Types to Detect</Label>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {["static", "dynamic", "human", "vehicle", "robot"].map(
+                        (type) => (
+                          <div
+                            key={type}
+                            className="flex items-center space-x-2"
+                          >
+                            <input
+                              type="checkbox"
+                              id={`obstacle-${type}`}
+                              defaultChecked={
+                                type === "static" || type === "dynamic"
+                              }
+                              className="rounded"
+                            />
+                            <Label
+                              htmlFor={`obstacle-${type}`}
+                              className="text-xs"
+                            >
+                              {type.charAt(0).toUpperCase() + type.slice(1)}
+                            </Label>
+                          </div>
+                        ),
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            )}
+
             <div className="space-y-4">
               {Object.entries(mergedParams)
                 .filter(
                   ([key]) =>
-                    // Filter out mode-specific params that are handled above
+                    // Filter out mode-specific and obstacle params that are handled above
                     ![
                       "movementMode",
                       "relativeDistance",
                       "plannerType",
                       "useCostmap",
+                      "obstacleDetectionMode",
+                      "avoidanceStrategy",
+                      "safetyDistance",
+                      "obstacleDetectionRange",
+                      "obstacleRegions",
+                      "obstacleTypes",
+                      "costmapSettings",
+                      "dynamicObstacleSettings",
+                      "emergencyBehaviors",
                     ].includes(key),
                 )
                 .map(([key, value]) => renderParameterField(key, value))}
