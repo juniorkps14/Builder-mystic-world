@@ -106,29 +106,37 @@
   body {
     @apply bg-background text-foreground;
     font-family: "Kanit", "Inter", sans-serif;
-    font-weight: 300; /* Lighter default weight */
+    font-weight: 200; /* Ultra light default weight */
   }
 
-  /* Lighten all font weights globally */
+  /* Ultra lighten all font weights globally */
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    font-weight: 400; /* Reduced from bold */
+    font-weight: 300; /* Extra light headings */
   }
 
   .font-bold {
-    font-weight: 500; /* Reduced bold */
+    font-weight: 400; /* Light bold */
   }
 
   .font-semibold {
-    font-weight: 400; /* Reduced semibold */
+    font-weight: 300; /* Light semibold */
   }
 
   .font-medium {
-    font-weight: 350; /* Reduced medium */
+    font-weight: 250; /* Ultra light medium */
+  }
+
+  .font-light {
+    font-weight: 200; /* Extra light */
+  }
+
+  .font-extralight {
+    font-weight: 100; /* Ultra light */
   }
 
   /* Add beautiful transparency effects */
