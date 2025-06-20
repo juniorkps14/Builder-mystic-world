@@ -643,6 +643,23 @@ export function TaskParameterEditor({
         ],
         processingMode: ["real_time", "batch", "triggered", "continuous"],
         dataFormat: ["json", "csv", "rosbag", "binary", "xml"],
+        // Move with obstacle check options
+        obstacleCheckMode: ["continuous", "periodic", "trigger_based"],
+        costmapSource: [
+          "global_costmap",
+          "local_costmap",
+          "custom",
+          "sensor_fusion",
+        ],
+        aggressiveness: ["conservative", "moderate", "aggressive"],
+        onObstacleDetected: [
+          "smart_avoid",
+          "stop",
+          "slow_down",
+          "alternative_route",
+          "wait",
+        ],
+        onPathBlocked: ["find_alternative", "wait", "abort", "manual_control"],
       };
 
       if (selectOptions[key as keyof typeof selectOptions]) {
