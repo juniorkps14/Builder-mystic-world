@@ -792,13 +792,20 @@ export function EnhancedSequenceManager() {
                 <h3 className="text-xl font-semibold mb-2">No Tasks</h3>
                 <p className="text-muted-foreground mb-4">
                   {activeSequence
-                    ? "This sequence has no tasks yet."
+                    ? "This sequence has no tasks yet. Create a task and use the 'Advanced Edit' button to configure parameters."
                     : "Select a sequence to view tasks."}
                 </p>
                 <Button onClick={createNewTask} className="gap-2">
                   <Plus className="h-4 w-4" />
                   Add First Task
                 </Button>
+                {activeSequence && (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    💡 After adding a task, click the blue "Advanced Edit"
+                    button to configure movement modes, parameters, and
+                    conditional logic
+                  </p>
+                )}
               </Card>
             ) : (
               <div className="space-y-4">
