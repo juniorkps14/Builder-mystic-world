@@ -912,9 +912,9 @@ export function TaskParameterEditor({
 
         <Tabs defaultValue="basic" className="space-y-4">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="basic">Basic Settings</TabsTrigger>
-            <TabsTrigger value="parameters">Parameters</TabsTrigger>
-            <TabsTrigger value="advanced">Advanced</TabsTrigger>
+            <TabsTrigger value="basic">{t("task.basicSettings")}</TabsTrigger>
+            <TabsTrigger value="parameters">{t("task.parameters")}</TabsTrigger>
+            <TabsTrigger value="advanced">{t("task.advanced")}</TabsTrigger>
           </TabsList>
 
           {/* Basic Settings */}
