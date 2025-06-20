@@ -561,8 +561,10 @@ export function EnhancedSequenceManager() {
         taskIds: [...activeSequence.taskIds, newTask.id],
       });
     }
+    // Auto-open parameter editor for new tasks
     setSelectedTask(newTask);
     setShowTaskEditor(true);
+    addLog(`Created new task: ${newTask.name} - Opening parameter editor`);
   };
 
   const currentTasks = getSequenceTasks(activeSequence);
