@@ -296,13 +296,24 @@ export function TaskCard({
               size="sm"
               variant="ghost"
               onClick={() => setIsEditing(!isEditing)}
+              title="Quick Edit (Basic)"
             >
               <Settings className="h-4 w-4" />
             </Button>
-            <Button size="sm" variant="ghost" onClick={() => onDuplicate(task)}>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => onDuplicate(task)}
+              title="Duplicate Task"
+            >
               <Copy className="h-4 w-4" />
             </Button>
-            <Button size="sm" variant="ghost" onClick={() => onDelete(task.id)}>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => onDelete(task.id)}
+              title="Delete Task"
+            >
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>
