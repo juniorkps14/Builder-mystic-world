@@ -225,9 +225,9 @@ export function Sidebar() {
       <Link
         to={item.href}
         className={cn(
-          "flex items-center justify-between rounded-xl p-3 text-sm transition-all duration-200 group relative overflow-hidden",
+          "flex items-center justify-between rounded-xl p-3 text-sm transition-all duration-300 group relative overflow-hidden hover-lift",
           isActive
-            ? "bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20 shadow-sm"
+            ? "bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20 shadow-lg glow-blue"
             : "text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground border border-transparent hover:border-sidebar-accent/30",
           isCollapsed ? "justify-center" : "",
         )}
@@ -235,29 +235,38 @@ export function Sidebar() {
         <div className="flex items-center gap-3">
           <div
             className={cn(
-              "relative p-2 rounded-lg transition-all duration-200",
-              isActive ? item.bgColor : "group-hover:" + item.bgColor,
+              "relative p-2 rounded-lg transition-all duration-300 hover-scale",
+              isActive
+                ? item.bgColor + " shadow-lg"
+                : "group-hover:" + item.bgColor,
             )}
           >
             <item.icon
               className={cn(
-                "h-4 w-4 transition-all duration-200",
-                isActive ? item.color : "group-hover:" + item.color,
+                "h-4 w-4 transition-all duration-300",
+                isActive
+                  ? item.color + " hover-rotate"
+                  : "group-hover:" + item.color,
               )}
             />
           </div>
           {!isCollapsed && (
-            <span className="font-light">{t(item.titleKey)}</span>
+            <span className="font-extralight">{t(item.titleKey)}</span>
           )}
         </div>
         {!isCollapsed && item.badge && (
           <Badge
             variant={isActive ? "default" : "secondary"}
-            className="text-xs bg-gradient-to-r from-primary/80 to-primary/60 text-white border-0 shadow-sm"
+            className="text-xs gradient-animate text-white border-0 shadow-lg hover-bounce font-extralight"
           >
             {item.badge}
           </Badge>
         )}
+
+        {/* Shimmer effect on hover */}
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="shimmer absolute inset-0 rounded-xl" />
+        </div>
       </Link>
     );
 
