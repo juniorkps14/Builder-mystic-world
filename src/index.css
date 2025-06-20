@@ -400,11 +400,11 @@
 
   /* Loading Spinner */
   .spin-slow {
-    animation: rotate360 3s linear infinite;
+    animation: rotate360 8s linear infinite;
   }
 
   .spin-reverse {
-    animation: rotate360 2s linear infinite reverse;
+    animation: rotate360 6s linear infinite reverse;
   }
 
   /* Pulse Variants */
