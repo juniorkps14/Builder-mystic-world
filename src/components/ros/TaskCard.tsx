@@ -146,6 +146,8 @@ export function TaskCard({
     voice_command: "Voice Command",
     data_logging: "Data Logging",
     maintenance: "Maintenance",
+    retry: "Retry Control",
+    checkpoint: "Checkpoint",
     // Legacy types for backwards compatibility
     ros_service: "ROS Service Call",
     ros_action: "ROS Action",
