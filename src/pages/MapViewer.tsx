@@ -113,7 +113,7 @@ const RVizMapViewer = () => {
       type: "RobotModel",
       enabled: true,
       alpha: 1.0,
-      icon: Cube,
+      icon: Box,
       config: { urdfTopic: "/robot_description" },
     },
     {
