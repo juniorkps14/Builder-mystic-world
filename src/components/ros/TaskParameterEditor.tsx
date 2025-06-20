@@ -214,8 +214,8 @@ export function TaskParameterEditor({
     },
     manipulation: {
       icon: Hand,
-      name: "Arm Manipulation",
-      description: "Control robotic arm movements with conditional logic",
+      name: "🦾 การควบคุมแขนกล",
+      description: "ควบคุมการเคลื่อนไหวของแขนกลพร้อมตรรกะเงื่อนไข",
       parameters: {
         manipulationMode: "position_control", // position_control, joint_control, cartesian_path
         targetPosition: { x: 0.5, y: 0, z: 0.3 },
