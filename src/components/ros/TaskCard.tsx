@@ -405,16 +405,30 @@ export function TaskCard({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="ros_service">
-                      ROS Service Call
+                    <SelectItem value="movement">🚗 Robot Movement</SelectItem>
+                    <SelectItem value="manipulation">
+                      🦾 Arm Manipulation
                     </SelectItem>
-                    <SelectItem value="ros_action">ROS Action</SelectItem>
-                    <SelectItem value="movement">Robot Movement</SelectItem>
+                    <SelectItem value="vision">👁️ Vision Processing</SelectItem>
                     <SelectItem value="sensor_reading">
-                      Sensor Reading
+                      📡 Sensor Reading
                     </SelectItem>
-                    <SelectItem value="custom_script">Custom Script</SelectItem>
-                    <SelectItem value="wait">Wait/Delay</SelectItem>
+                    <SelectItem value="ai_processing">
+                      🧠 AI Processing
+                    </SelectItem>
+                    <SelectItem value="safety_check">
+                      🛡️ Safety Check
+                    </SelectItem>
+                    <SelectItem value="communication">
+                      📡 Communication
+                    </SelectItem>
+                    <SelectItem value="voice_command">
+                      🎤 Voice Command
+                    </SelectItem>
+                    <SelectItem value="data_logging">
+                      📊 Data Logging
+                    </SelectItem>
+                    <SelectItem value="maintenance">🔧 Maintenance</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
