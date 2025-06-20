@@ -959,14 +959,18 @@ export function TaskParameterEditor({
                     setEditedTask({ ...editedTask, type: value })
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="glass-effect border-0 font-extralight hover-lift">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="glass-effect border-0">
                     {Object.entries(taskTypes).map(([key, info]) => (
-                      <SelectItem key={key} value={key}>
+                      <SelectItem
+                        key={key}
+                        value={key}
+                        className="font-extralight hover-scale"
+                      >
                         <div className="flex items-center gap-2">
-                          <info.icon className="h-4 w-4" />
+                          <info.icon className="h-4 w-4 hover-rotate" />
                           {info.name}
                         </div>
                       </SelectItem>
@@ -1320,7 +1324,7 @@ export function TaskParameterEditor({
                         onClick={loadCostmapRegions}
                         className="h-7"
                       >
-                        ��� Load from Costmap
+                        📊 Load from Costmap
                       </Button>
                     </div>
 
