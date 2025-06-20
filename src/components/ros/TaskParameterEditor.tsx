@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dialog";
 import { Task } from "./TaskCard";
 import { ConditionalLogicEditor } from "./ConditionalLogicEditor";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Move3D,
   Settings,
