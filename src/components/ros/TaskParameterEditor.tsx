@@ -66,6 +66,7 @@ export function TaskParameterEditor({
   onClose,
   onSave,
 }: TaskParameterEditorProps) {
+  const { t } = useLanguage();
   const [editedTask, setEditedTask] = useState<Task>(task);
   const [obstacleRegions, setObstacleRegions] = useState<
     Array<{ x1: number; y1: number; x2: number; y2: number; name: string }>
