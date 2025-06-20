@@ -706,10 +706,15 @@ export function EnhancedSequenceManager() {
               <Settings className="h-4 w-4" />
               Edit
             </Button>
-            <Button onClick={createNewTask} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Add Task
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button onClick={createNewTask} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Add Task
+              </Button>
+              <div className="text-xs text-muted-foreground">
+                💡 New tasks will auto-open the parameter editor
+              </div>
+            </div>
 
             <Separator orientation="vertical" className="h-8" />
 
