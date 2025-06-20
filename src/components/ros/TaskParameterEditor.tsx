@@ -86,7 +86,7 @@ export function TaskParameterEditor({
       parameters: {
         movementMode: "auto_nav", // auto_nav, move_to_position, manual_relative
         position: { x: 0, y: 0, z: 0 },
-        orientation: { roll: 0, pitch: 0, yaw: 0 },
+        orientation: { yaw: 0 }, // For 2D navigation robots (angular_z in radians, displayed as degrees)
         relativeDistance: { x: 2.1, y: 0, z: 0 },
         targetFrame: "map", // map, base_link, odom
         speed: 1.0,
