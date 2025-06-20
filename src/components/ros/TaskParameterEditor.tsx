@@ -145,9 +145,19 @@ export function TaskParameterEditor({
       description:
         "Intelligent movement with real-time obstacle detection and conditional navigation",
       parameters: {
-        movementMode: "intelligent_nav", // intelligent_nav, adaptive_nav, safe_nav
+        movementMode: "move_to_position", // move_to_position, manual_relative, pattern_movement
+        // Single position movement
         position: { x: 0, y: 0 },
         orientation: { yaw: 0 }, // Only yaw for 2D movement (angular_z)
+        // Manual relative movement
+        relativeDistance: { x: 0, y: 0, yaw: 0 },
+        // Pattern/Multiple waypoints movement
+        enablePatternMovement: false,
+        movementPattern: [], // Array of waypoints
+        patternType: "waypoints", // waypoints, circular, square, custom
+        patternRepeat: 1, // Number of times to repeat pattern
+        waitAtWaypoint: 2.0, // seconds to wait at each waypoint
+        waypointTolerance: 0.1, // meters
         speed: 1.0,
         acceleration: 0.5,
         // Enhanced Obstacle Detection
