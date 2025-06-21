@@ -96,6 +96,60 @@ const translations = {
     "io.sensors": "Sensor Configuration",
     "io.imu": "IMU Configuration",
 
+    // Navigation
+    "navigation.title": "Navigation System",
+    "navigation.goalSetting": "Navigation Goal",
+    "navigation.currentPosition": "Current Position",
+    "navigation.status": "Navigation Status",
+    "navigation.startNavigation": "Start Navigation",
+    "navigation.cancelGoal": "Cancel Goal",
+    "navigation.statistics": "Navigation Statistics",
+    "navigation.recentGoals": "Recent Goals",
+
+    // System Monitor
+    "system.title": "System Monitor",
+    "system.cpu": "CPU Usage",
+    "system.memory": "Memory Usage",
+    "system.storage": "Storage",
+    "system.power": "Power Status",
+    "system.rosSystem": "ROS System",
+    "system.network": "Network",
+    "system.processes": "Process Monitor",
+
+    // Nodes
+    "nodes.title": "ROS Nodes",
+    "nodes.totalNodes": "Total Nodes",
+    "nodes.running": "Running",
+    "nodes.stopped": "Stopped",
+    "nodes.error": "Error",
+    "nodes.nodeDetails": "Node Details",
+    "nodes.quickActions": "Quick Actions",
+
+    // Topics
+    "topics.title": "ROS Topics",
+    "topics.totalTopics": "Total Topics",
+    "topics.active": "Active",
+    "topics.bandwidth": "Bandwidth",
+    "topics.messageInspector": "Message Inspector",
+    "topics.liveMessages": "Live Messages",
+
+    // Services
+    "services.title": "ROS Services",
+    "services.totalServices": "Total Services",
+    "services.totalCalls": "Total Calls",
+    "services.successRate": "Success Rate",
+    "services.serviceCaller": "Service Caller",
+    "services.callHistory": "Call History",
+
+    // Microcontroller Connections
+    "mcu.title": "Microcontroller Connections",
+    "mcu.totalControllers": "Total Controllers",
+    "mcu.connected": "Connected",
+    "mcu.powerUsage": "Power Usage",
+    "mcu.addConnection": "Add Connection",
+    "mcu.connectionDetails": "Connection Details",
+    "mcu.quickActions": "Quick Actions",
+
     // Task Management
     "task.addTask": "Add Task",
     "task.editTask": "Edit Task",
@@ -219,7 +273,7 @@ const translations = {
     "nav.logs": "บันทึก",
     "nav.terminal": "เทอร์มินัล",
     "nav.about": "เกี่ยวกับ",
-    "nav.settings": "การตั้งค่า",
+    "nav.settings": "การตั้งค���า",
 
     // Common
     "common.save": "บันทึก",
@@ -256,7 +310,7 @@ const translations = {
 
     // Robotic Arm
     "arm.title": "ควบคุมแขนกล",
-    "arm.joints": "��วบคุมข้อต่อ",
+    "arm.joints": "ควบคุมข้อต่อ",
     "arm.endEffector": "ปลายแขน",
     "arm.position": "ตำแหน่ง",
     "arm.orientation": "การหมุน",
@@ -283,6 +337,60 @@ const translations = {
     "io.arms": "การตั้งค่าแขนกล",
     "io.sensors": "การตั้งค่าเซ็นเซอร์",
     "io.imu": "การตั้งค่า IMU",
+
+    // Navigation
+    "navigation.title": "ระบบนำทาง",
+    "navigation.goalSetting": "จุดหมายการนำทาง",
+    "navigation.currentPosition": "ตำแหน่งปัจจุบัน",
+    "navigation.status": "สถานะการนำทาง",
+    "navigation.startNavigation": "เริ่มการนำทาง",
+    "navigation.cancelGoal": "ยกเลิกจุดหมาย",
+    "navigation.statistics": "สถิติการนำทาง",
+    "navigation.recentGoals": "จุดหมายล่าสุด",
+
+    // System Monitor
+    "system.title": "ตรวจสอบระบบ",
+    "system.cpu": "การใช้งาน CPU",
+    "system.memory": "การใช้งานหน่วยความจำ",
+    "system.storage": "พื้นที่จัดเก็บ",
+    "system.power": "สถานะพลังงาน",
+    "system.rosSystem": "ระบบ ROS",
+    "system.network": "เครือข่าย",
+    "system.processes": "ตรวจสอบกระบวนการ",
+
+    // Nodes
+    "nodes.title": "โหนด ROS",
+    "nodes.totalNodes": "โหนดทั้งหมด",
+    "nodes.running": "กำลังทำงาน",
+    "nodes.stopped": "หยุดทำงาน",
+    "nodes.error": "ข้อผิดพลาด",
+    "nodes.nodeDetails": "รายละเอียดโหนด",
+    "nodes.quickActions": "การดำเนินการด่วน",
+
+    // Topics
+    "topics.title": "หัวข้อ ROS",
+    "topics.totalTopics": "หัวข้อทั้งหมด",
+    "topics.active": "ใช้งานอยู่",
+    "topics.bandwidth": "แบนด์วิดท์",
+    "topics.messageInspector": "ตรวจสอบข้อความ",
+    "topics.liveMessages": "ข้อความสด",
+
+    // Services
+    "services.title": "บริการ ROS",
+    "services.totalServices": "บริการทั้งหมด",
+    "services.totalCalls": "การเรียกทั้งหมด",
+    "services.successRate": "อัตราความสำเร็จ",
+    "services.serviceCaller": "เรียกบริการ",
+    "services.callHistory": "ประวัติการเรียก",
+
+    // Microcontroller Connections
+    "mcu.title": "การเชื่อมต่อไมโครคอนโทรลเลอร์",
+    "mcu.totalControllers": "คอนโทรลเลอร์ทั้งหมด",
+    "mcu.connected": "เชื่อมต่อแล้ว",
+    "mcu.powerUsage": "การใช้พลังงาน",
+    "mcu.addConnection": "เพิ่มการเชื่อมต่อ",
+    "mcu.connectionDetails": "รายละเอียดการเชื่อมต่อ",
+    "mcu.quickActions": "การดำเนินการด่วน",
 
     // Task Management
     "task.addTask": "เพิ่มงาน",
@@ -312,7 +420,7 @@ const translations = {
     "movement.aiProcessing": "การประมวลผล AI",
     "movement.safetyCheck": "การตรวจสอบความปลอดภัย",
     "movement.communication": "การสื่อสาร",
-    "movement.voiceCommand": "คำสั่งเสียง",
+    "movement.voiceCommand": "คำสั่ง��สียง",
     "movement.dataLogging": "การบันทึกข้อมูล",
     "movement.maintenance": "การบำรุงรักษา",
     "movement.retryControl": "การควบคุมลองใหม่",
@@ -344,14 +452,14 @@ const translations = {
 
     // Obstacle Detection
     "obstacle.detectionMode": "โหมดการตรวจจับ",
-    "obstacle.avoidanceStrategy": "กลยุทธ์การหลีกเลี่ยง",
+    "obstacle.avoidanceStrategy": "กลยุทธ์การห��ีกเลี่ยง",
     "obstacle.safetyDistance": "ระยะห่างปลอดภัย",
     "obstacle.detectionRange": "ระยะการตรวจจับ",
     "obstacle.knownRegions": "พื้นที่สิ่งกีดขวางที่ทราบ",
-    "obstacle.loadFromCostmap": "โหลดจาก Costmap",
+    "obstacle.loadFromCostmap": "โหลด��าก Costmap",
     "obstacle.addRegion": "เพิ่มพื้นที่",
     "obstacle.regionName": "ชื่อพื้นที่",
-    "obstacle.currentRegions": "พื้นที่สิ่งกีดขวางปัจจุบัน",
+    "obstacle.currentRegions": "พื้นที่สิ่งกีดขวางปัจ��ุบัน",
     "obstacle.continuous": "ต่อเนื่อง",
     "obstacle.periodic": "เป็นช่วงๆ",
     "obstacle.triggerBased": "ตามสัญญาณ",
