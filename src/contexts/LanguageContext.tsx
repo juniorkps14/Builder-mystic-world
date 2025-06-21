@@ -30,6 +30,7 @@ const translations = {
     "nav.parameters": "Parameters",
     "nav.logs": "Logs",
     "nav.terminal": "Terminal",
+    "nav.microcontrollers": "Microcontrollers",
     "nav.about": "About",
     "nav.settings": "Settings",
 
@@ -272,8 +273,9 @@ const translations = {
     "nav.parameters": "พารามิเตอร์",
     "nav.logs": "บันทึก",
     "nav.terminal": "เทอร์มินัล",
+    "nav.microcontrollers": "ไมโครคอนโทรลเลอร์",
     "nav.about": "เกี่ยวกับ",
-    "nav.settings": "การตั้งค���า",
+    "nav.settings": "การตั้งค่า",
 
     // Common
     "common.save": "บันทึก",
@@ -407,7 +409,7 @@ const translations = {
     "task.waitForFeedback": "รอการตอบกลับ",
     "task.feedbackTimeout": "เวลาหมดอายุการตอบกลับ",
     "task.basicSettings": "การตั้งค่าพื้นฐาน",
-    "task.parameters": "พารามิเตอร์",
+    "task.parameters": "พา��ามิเตอร์",
     "task.advanced": "ขั้นสูง",
     "task.configureTask": "ตั้งค่างาน",
 
@@ -420,7 +422,7 @@ const translations = {
     "movement.aiProcessing": "การประมวลผล AI",
     "movement.safetyCheck": "การตรวจสอบความปลอดภัย",
     "movement.communication": "การสื่อสาร",
-    "movement.voiceCommand": "คำสั่ง��สียง",
+    "movement.voiceCommand": "คำสั่งเสียง",
     "movement.dataLogging": "การบันทึกข้อมูล",
     "movement.maintenance": "การบำรุงรักษา",
     "movement.retryControl": "การควบคุมลองใหม่",
@@ -484,7 +486,8 @@ const translations = {
     "pattern.waitAtWaypoint": "รอที่จุดหมาย",
     "pattern.waypointTolerance": "ค่าคลาดเคลื่อนจุดหมาย",
     "pattern.targetPosition": "ตำแหน่งเป้าหมายและการหมุน",
-    "pattern.relativeMovement": "การเคลื่อนที่แบบสัมพัทธ์ (จากตำแหน่งปัจจุบัน)",
+    "pattern.relativeMovement":
+      "การเ���ลื่อนที่แบบสัมพัทธ์ (จากตำแหน่งปัจจุบัน)",
     "pattern.xPosition": "ตำแหน่ง X",
     "pattern.yPosition": "ตำแหน่ง Y",
     "pattern.yawAngle": "มุม Yaw",

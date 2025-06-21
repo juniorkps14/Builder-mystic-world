@@ -195,6 +195,14 @@ const rosItems = [
     bgColor: "bg-gray-50 dark:bg-gray-950/30",
   },
   {
+    titleKey: "mcu.title",
+    icon: Smartphone,
+    href: "/microcontroller-connections",
+    badge: "ใหม่",
+    color: "text-pink-500",
+    bgColor: "bg-pink-50 dark:bg-pink-950/30",
+  },
+  {
     titleKey: "nav.logs",
     icon: FileText,
     href: "/logs",
