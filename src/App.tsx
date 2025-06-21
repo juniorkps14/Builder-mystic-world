@@ -28,6 +28,7 @@ import Logs from "./pages/Logs";
 import Terminal from "./pages/Terminal";
 import About from "./pages/About";
 import Settings from "./pages/Settings";
+import MicrocontrollerConnections from "./pages/MicrocontrollerConnections";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -69,6 +70,10 @@ const App = () => (
                       <Route path="/parameters" element={<Parameters />} />
                       <Route path="/logs" element={<Logs />} />
                       <Route path="/terminal" element={<Terminal />} />
+                      <Route
+                        path="/microcontroller-connections"
+                        element={<MicrocontrollerConnections />}
+                      />
                       <Route path="/about" element={<About />} />
                       <Route path="/settings" element={<Settings />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
