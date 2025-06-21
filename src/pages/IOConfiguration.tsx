@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -26,40 +27,409 @@ import {
   RefreshCw,
   Download,
   Upload,
+  Gauge,
+  Camera,
+  Radar,
+  Thermometer,
+  AlertTriangle,
+  CheckCircle,
 } from "lucide-react";
 
 const IOConfiguration = () => {
   const { t } = useLanguage();
 
-  // Pin configurations
+  // Enhanced pin configurations with more categories
   const [pinConfigs, setPinConfigs] = useState({
-    wheels: {
-      front_left_pwm: { pin: 3, mode: "PWM", enabled: true },
-      front_left_dir: { pin: 4, mode: "GPIO", enabled: true },
-      front_right_pwm: { pin: 5, mode: "PWM", enabled: true },
-      front_right_dir: { pin: 6, mode: "GPIO", enabled: true },
-      rear_left_pwm: { pin: 9, mode: "PWM", enabled: true },
-      rear_left_dir: { pin: 10, mode: "GPIO", enabled: true },
-      rear_right_pwm: { pin: 11, mode: "PWM", enabled: true },
-      rear_right_dir: { pin: 12, mode: "GPIO", enabled: true },
+    locomotion: {
+      description: "Wheel Motors and Drive System",
+      icon: Circle,
+      pins: {
+        front_left_pwm: {
+          pin: 3,
+          mode: "PWM",
+          enabled: true,
+          voltage: "12V",
+          current: "2.5A",
+        },
+        front_left_dir: {
+          pin: 4,
+          mode: "GPIO",
+          enabled: true,
+          voltage: "5V",
+          current: "0.1A",
+        },
+        front_right_pwm: {
+          pin: 5,
+          mode: "PWM",
+          enabled: true,
+          voltage: "12V",
+          current: "2.5A",
+        },
+        front_right_dir: {
+          pin: 6,
+          mode: "GPIO",
+          enabled: true,
+          voltage: "5V",
+          current: "0.1A",
+        },
+        rear_left_pwm: {
+          pin: 9,
+          mode: "PWM",
+          enabled: true,
+          voltage: "12V",
+          current: "2.5A",
+        },
+        rear_left_dir: {
+          pin: 10,
+          mode: "GPIO",
+          enabled: true,
+          voltage: "5V",
+          current: "0.1A",
+        },
+        rear_right_pwm: {
+          pin: 11,
+          mode: "PWM",
+          enabled: true,
+          voltage: "12V",
+          current: "2.5A",
+        },
+        rear_right_dir: {
+          pin: 12,
+          mode: "GPIO",
+          enabled: true,
+          voltage: "5V",
+          current: "0.1A",
+        },
+      },
     },
-    arms: {
-      base_pwm: { pin: 13, mode: "PWM", enabled: true },
-      base_dir: { pin: 14, mode: "GPIO", enabled: true },
-      shoulder_pwm: { pin: 15, mode: "PWM", enabled: true },
-      shoulder_dir: { pin: 16, mode: "GPIO", enabled: true },
-      elbow_pwm: { pin: 17, mode: "PWM", enabled: true },
-      elbow_dir: { pin: 18, mode: "GPIO", enabled: true },
-      gripper_pwm: { pin: 19, mode: "PWM", enabled: true },
-      gripper_sensor: { pin: 20, mode: "ADC", enabled: true },
+    manipulation: {
+      description: "Robotic Arm and End Effector",
+      icon: Activity,
+      pins: {
+        base_pwm: {
+          pin: 13,
+          mode: "PWM",
+          enabled: true,
+          voltage: "24V",
+          current: "1.8A",
+        },
+        base_dir: {
+          pin: 14,
+          mode: "GPIO",
+          enabled: true,
+          voltage: "5V",
+          current: "0.1A",
+        },
+        shoulder_pwm: {
+          pin: 15,
+          mode: "PWM",
+          enabled: true,
+          voltage: "24V",
+          current: "1.5A",
+        },
+        shoulder_dir: {
+          pin: 16,
+          mode: "GPIO",
+          enabled: true,
+          voltage: "5V",
+          current: "0.1A",
+        },
+        elbow_pwm: {
+          pin: 17,
+          mode: "PWM",
+          enabled: true,
+          voltage: "24V",
+          current: "1.2A",
+        },
+        elbow_dir: {
+          pin: 18,
+          mode: "GPIO",
+          enabled: true,
+          voltage: "5V",
+          current: "0.1A",
+        },
+        wrist_pwm: {
+          pin: 19,
+          mode: "PWM",
+          enabled: true,
+          voltage: "12V",
+          current: "0.8A",
+        },
+        gripper_pwm: {
+          pin: 20,
+          mode: "PWM",
+          enabled: true,
+          voltage: "12V",
+          current: "1.0A",
+        },
+        gripper_sensor: {
+          pin: 21,
+          mode: "ADC",
+          enabled: true,
+          voltage: "3.3V",
+          current: "0.05A",
+        },
+      },
     },
-    sensors: {
-      imu_sda: { pin: 21, mode: "I2C", enabled: true },
-      imu_scl: { pin: 22, mode: "I2C", enabled: true },
-      encoder_a: { pin: 23, mode: "ENCODER", enabled: true },
-      encoder_b: { pin: 24, mode: "ENCODER", enabled: true },
-      lidar_tx: { pin: 25, mode: "UART", enabled: true },
-      lidar_rx: { pin: 26, mode: "UART", enabled: true },
+    navigation_sensors: {
+      description: "Position and Orientation Sensors",
+      icon: Compass,
+      pins: {
+        imu_sda: {
+          pin: 22,
+          mode: "I2C",
+          enabled: true,
+          voltage: "3.3V",
+          current: "0.02A",
+        },
+        imu_scl: {
+          pin: 23,
+          mode: "I2C",
+          enabled: true,
+          voltage: "3.3V",
+          current: "0.02A",
+        },
+        gps_tx: {
+          pin: 24,
+          mode: "UART",
+          enabled: true,
+          voltage: "3.3V",
+          current: "0.03A",
+        },
+        gps_rx: {
+          pin: 25,
+          mode: "UART",
+          enabled: true,
+          voltage: "3.3V",
+          current: "0.03A",
+        },
+        magnetometer_sda: {
+          pin: 26,
+          mode: "I2C",
+          enabled: false,
+          voltage: "3.3V",
+          current: "0.01A",
+        },
+        magnetometer_scl: {
+          pin: 27,
+          mode: "I2C",
+          enabled: false,
+          voltage: "3.3V",
+          current: "0.01A",
+        },
+      },
+    },
+    proximity_sensors: {
+      description: "Distance and Obstacle Detection",
+      icon: Radar,
+      pins: {
+        lidar_tx: {
+          pin: 28,
+          mode: "UART",
+          enabled: true,
+          voltage: "5V",
+          current: "0.8A",
+        },
+        lidar_rx: {
+          pin: 29,
+          mode: "UART",
+          enabled: true,
+          voltage: "5V",
+          current: "0.8A",
+        },
+        ultrasonic_trig: {
+          pin: 30,
+          mode: "GPIO",
+          enabled: true,
+          voltage: "5V",
+          current: "0.02A",
+        },
+        ultrasonic_echo: {
+          pin: 31,
+          mode: "GPIO",
+          enabled: true,
+          voltage: "5V",
+          current: "0.02A",
+        },
+        front_ir: {
+          pin: 32,
+          mode: "ADC",
+          enabled: true,
+          voltage: "5V",
+          current: "0.05A",
+        },
+        rear_ir: {
+          pin: 33,
+          mode: "ADC",
+          enabled: true,
+          voltage: "5V",
+          current: "0.05A",
+        },
+      },
+    },
+    vision_system: {
+      description: "Cameras and Vision Processing",
+      icon: Camera,
+      pins: {
+        camera_power: {
+          pin: 34,
+          mode: "GPIO",
+          enabled: true,
+          voltage: "5V",
+          current: "0.5A",
+        },
+        camera_i2c_sda: {
+          pin: 35,
+          mode: "I2C",
+          enabled: true,
+          voltage: "3.3V",
+          current: "0.1A",
+        },
+        camera_i2c_scl: {
+          pin: 36,
+          mode: "I2C",
+          enabled: true,
+          voltage: "3.3V",
+          current: "0.1A",
+        },
+        depth_camera_usb: {
+          pin: 37,
+          mode: "USB",
+          enabled: false,
+          voltage: "5V",
+          current: "1.2A",
+        },
+        led_ring_pwm: {
+          pin: 38,
+          mode: "PWM",
+          enabled: true,
+          voltage: "12V",
+          current: "0.3A",
+        },
+      },
+    },
+    environmental: {
+      description: "Environmental Monitoring",
+      icon: Thermometer,
+      pins: {
+        temp_sensor: {
+          pin: 39,
+          mode: "ADC",
+          enabled: true,
+          voltage: "3.3V",
+          current: "0.01A",
+        },
+        humidity_sensor: {
+          pin: 40,
+          mode: "ADC",
+          enabled: true,
+          voltage: "3.3V",
+          current: "0.01A",
+        },
+        pressure_sda: {
+          pin: 41,
+          mode: "I2C",
+          enabled: false,
+          voltage: "3.3V",
+          current: "0.02A",
+        },
+        pressure_scl: {
+          pin: 42,
+          mode: "I2C",
+          enabled: false,
+          voltage: "3.3V",
+          current: "0.02A",
+        },
+        gas_sensor: {
+          pin: 43,
+          mode: "ADC",
+          enabled: false,
+          voltage: "5V",
+          current: "0.15A",
+        },
+      },
+    },
+    feedback_encoders: {
+      description: "Position Feedback Systems",
+      icon: Gauge,
+      pins: {
+        wheel_encoder_a: {
+          pin: 44,
+          mode: "ENCODER",
+          enabled: true,
+          voltage: "5V",
+          current: "0.02A",
+        },
+        wheel_encoder_b: {
+          pin: 45,
+          mode: "ENCODER",
+          enabled: true,
+          voltage: "5V",
+          current: "0.02A",
+        },
+        arm_encoder_a: {
+          pin: 46,
+          mode: "ENCODER",
+          enabled: true,
+          voltage: "5V",
+          current: "0.02A",
+        },
+        arm_encoder_b: {
+          pin: 47,
+          mode: "ENCODER",
+          enabled: true,
+          voltage: "5V",
+          current: "0.02A",
+        },
+        linear_encoder: {
+          pin: 48,
+          mode: "ADC",
+          enabled: false,
+          voltage: "5V",
+          current: "0.05A",
+        },
+      },
+    },
+    power_management: {
+      description: "Power Control and Monitoring",
+      icon: Zap,
+      pins: {
+        main_power_sense: {
+          pin: 49,
+          mode: "ADC",
+          enabled: true,
+          voltage: "3.3V",
+          current: "0.01A",
+        },
+        battery_voltage: {
+          pin: 50,
+          mode: "ADC",
+          enabled: true,
+          voltage: "3.3V",
+          current: "0.01A",
+        },
+        current_sensor: {
+          pin: 51,
+          mode: "ADC",
+          enabled: true,
+          voltage: "5V",
+          current: "0.02A",
+        },
+        emergency_stop: {
+          pin: 52,
+          mode: "GPIO",
+          enabled: true,
+          voltage: "24V",
+          current: "0.1A",
+        },
+        power_relay: {
+          pin: 53,
+          mode: "GPIO",
+          enabled: true,
+          voltage: "12V",
+          current: "0.2A",
+        },
+      },
     },
   });
 
@@ -169,18 +539,23 @@ const IOConfiguration = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">{t("io.title")}</h1>
-        <p className="text-muted-foreground">
+    <div className="space-y-6 p-4 md:p-6">
+      <div className="space-y-2">
+        <h1 className="text-2xl md:text-3xl font-extralight flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-primary/10 float-animation">
+            <Settings className="h-6 w-6 md:h-8 w-8 text-primary" />
+          </div>
+          {t("io.title")}
+        </h1>
+        <p className="text-muted-foreground text-sm md:text-base">
           Configure hardware pins, PID parameters, and kinematics for all robot
-          components
+          components with organized functional categories
         </p>
       </div>
 
       {/* Action Buttons */}
-      <div className="flex gap-2">
-        <Button onClick={saveConfiguration} className="gap-2">
+      <div className="flex flex-col sm:flex-row gap-2">
+        <Button onClick={saveConfiguration} className="gap-2 hover-lift">
           <Save className="h-4 w-4" />
           {t("common.save")} Configuration
         </Button>
@@ -199,108 +574,212 @@ const IOConfiguration = () => {
       </div>
 
       <Tabs defaultValue="pins" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="pins" className="gap-2">
-            <Zap className="h-4 w-4" />
-            {t("io.pins")}
+        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+          <TabsTrigger
+            value="pins"
+            className="gap-1 md:gap-2 text-xs md:text-sm"
+          >
+            <Zap className="h-3 w-3 md:h-4 md:w-4" />
+            <span className="hidden sm:inline">{t("io.pins")}</span>
+            <span className="sm:hidden">Pins</span>
           </TabsTrigger>
-          <TabsTrigger value="pid" className="gap-2">
-            <Settings className="h-4 w-4" />
-            {t("io.pid")}
+          <TabsTrigger
+            value="pid"
+            className="gap-1 md:gap-2 text-xs md:text-sm"
+          >
+            <Settings className="h-3 w-3 md:h-4 md:w-4" />
+            <span className="hidden sm:inline">{t("io.pid")}</span>
+            <span className="sm:hidden">PID</span>
           </TabsTrigger>
-          <TabsTrigger value="kinematics" className="gap-2">
-            <Cpu className="h-4 w-4" />
-            {t("io.kinematics")}
+          <TabsTrigger
+            value="kinematics"
+            className="gap-1 md:gap-2 text-xs md:text-sm"
+          >
+            <Cpu className="h-3 w-3 md:h-4 md:w-4" />
+            <span className="hidden sm:inline">{t("io.kinematics")}</span>
+            <span className="sm:hidden">Kinematics</span>
           </TabsTrigger>
-          <TabsTrigger value="imu" className="gap-2">
-            <Compass className="h-4 w-4" />
-            {t("io.imu")}
+          <TabsTrigger
+            value="imu"
+            className="gap-1 md:gap-2 text-xs md:text-sm"
+          >
+            <Compass className="h-3 w-3 md:h-4 md:w-4" />
+            <span className="hidden sm:inline">{t("io.imu")}</span>
+            <span className="sm:hidden">IMU</span>
           </TabsTrigger>
         </TabsList>
 
         {/* Pin Configuration */}
         <TabsContent value="pins" className="space-y-4">
-          {Object.entries(pinConfigs).map(([category, pins]) => (
-            <Card key={category} className="p-6">
-              <h3 className="text-lg font-semibold mb-4 capitalize flex items-center gap-2">
-                {category === "wheels" && <Circle className="h-5 w-5" />}
-                {category === "arms" && <Activity className="h-5 w-5" />}
-                {category === "sensors" && <Compass className="h-5 w-5" />}
-                {t(`io.${category}`)}
-              </h3>
+          <ScrollArea className="h-[800px]">
+            <div className="space-y-4">
+              {Object.entries(pinConfigs).map(
+                ([category, categoryData], categoryIndex) => {
+                  const IconComponent = categoryData.icon;
+                  const enabledPins = Object.values(categoryData.pins).filter(
+                    (pin) => pin.enabled,
+                  ).length;
+                  const totalPins = Object.keys(categoryData.pins).length;
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {Object.entries(pins).map(([pinName, config]) => (
-                  <div
-                    key={pinName}
-                    className="p-4 border rounded-lg space-y-3"
-                  >
-                    <div className="flex items-center justify-between">
-                      <Label className="font-medium capitalize">
-                        {pinName.replace(/_/g, " ")}
-                      </Label>
-                      <Switch
-                        checked={config.enabled}
-                        onCheckedChange={(enabled) =>
-                          updatePinConfig(category, pinName, "enabled", enabled)
-                        }
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <div>
-                        <Label className="text-xs">Pin Number</Label>
-                        <Input
-                          type="number"
-                          value={config.pin}
-                          onChange={(e) =>
-                            updatePinConfig(
-                              category,
-                              pinName,
-                              "pin",
-                              parseInt(e.target.value),
-                            )
-                          }
-                          disabled={!config.enabled}
-                          className="h-8"
-                        />
-                      </div>
-
-                      <div>
-                        <Label className="text-xs">Mode</Label>
-                        <Select
-                          value={config.mode}
-                          onValueChange={(value) =>
-                            updatePinConfig(category, pinName, "mode", value)
-                          }
-                          disabled={!config.enabled}
-                        >
-                          <SelectTrigger className="h-8">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="GPIO">GPIO</SelectItem>
-                            <SelectItem value="PWM">PWM</SelectItem>
-                            <SelectItem value="ADC">ADC</SelectItem>
-                            <SelectItem value="I2C">I2C</SelectItem>
-                            <SelectItem value="UART">UART</SelectItem>
-                            <SelectItem value="ENCODER">ENCODER</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    <Badge
-                      variant={config.enabled ? "default" : "secondary"}
-                      className="w-full justify-center"
+                  return (
+                    <Card
+                      key={category}
+                      className={`p-4 md:p-6 hover-lift stagger-item`}
+                      style={{ animationDelay: `${categoryIndex * 0.1}s` }}
                     >
-                      {config.enabled ? "Enabled" : "Disabled"}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          ))}
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-lg bg-primary/10">
+                            <IconComponent className="h-5 w-5 text-primary" />
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-light capitalize">
+                              {category.replace(/_/g, " ")}
+                            </h3>
+                            <p className="text-xs text-muted-foreground">
+                              {categoryData.description}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="text-xs">
+                            {enabledPins}/{totalPins} Active
+                          </Badge>
+                          {enabledPins === totalPins ? (
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          ) : enabledPins > 0 ? (
+                            <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                          ) : (
+                            <Circle className="h-4 w-4 text-muted-foreground" />
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        {Object.entries(categoryData.pins).map(
+                          ([pinName, config], pinIndex) => (
+                            <div
+                              key={pinName}
+                              className={`p-3 border rounded-lg space-y-3 transition-all hover:shadow-md ${
+                                config.enabled
+                                  ? "bg-gradient-to-br from-background to-primary/5"
+                                  : "bg-muted/20"
+                              }`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <Label className="font-medium text-sm capitalize">
+                                  {pinName.replace(/_/g, " ")}
+                                </Label>
+                                <Switch
+                                  checked={config.enabled}
+                                  onCheckedChange={(enabled) =>
+                                    updatePinConfig(
+                                      category,
+                                      pinName,
+                                      "enabled",
+                                      enabled,
+                                    )
+                                  }
+                                />
+                              </div>
+
+                              <div className="space-y-2">
+                                <div>
+                                  <Label className="text-xs text-muted-foreground">
+                                    Pin Number
+                                  </Label>
+                                  <Input
+                                    type="number"
+                                    value={config.pin}
+                                    onChange={(e) =>
+                                      updatePinConfig(
+                                        category,
+                                        pinName,
+                                        "pin",
+                                        parseInt(e.target.value),
+                                      )
+                                    }
+                                    disabled={!config.enabled}
+                                    className="h-8 text-xs font-mono"
+                                  />
+                                </div>
+
+                                <div>
+                                  <Label className="text-xs text-muted-foreground">
+                                    Mode
+                                  </Label>
+                                  <Select
+                                    value={config.mode}
+                                    onValueChange={(value) =>
+                                      updatePinConfig(
+                                        category,
+                                        pinName,
+                                        "mode",
+                                        value,
+                                      )
+                                    }
+                                    disabled={!config.enabled}
+                                  >
+                                    <SelectTrigger className="h-8 text-xs">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="GPIO">GPIO</SelectItem>
+                                      <SelectItem value="PWM">PWM</SelectItem>
+                                      <SelectItem value="ADC">ADC</SelectItem>
+                                      <SelectItem value="I2C">I2C</SelectItem>
+                                      <SelectItem value="UART">UART</SelectItem>
+                                      <SelectItem value="ENCODER">
+                                        ENCODER
+                                      </SelectItem>
+                                      <SelectItem value="USB">USB</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-2">
+                                  <div>
+                                    <Label className="text-xs text-muted-foreground">
+                                      Voltage
+                                    </Label>
+                                    <div className="text-xs font-mono bg-muted px-2 py-1 rounded">
+                                      {config.voltage}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <Label className="text-xs text-muted-foreground">
+                                      Current
+                                    </Label>
+                                    <div className="text-xs font-mono bg-muted px-2 py-1 rounded">
+                                      {config.current}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center justify-between">
+                                <Badge
+                                  variant={
+                                    config.enabled ? "default" : "secondary"
+                                  }
+                                  className="text-xs"
+                                >
+                                  {config.enabled ? "Active" : "Disabled"}
+                                </Badge>
+                                <Badge variant="outline" className="text-xs">
+                                  Pin {config.pin}
+                                </Badge>
+                              </div>
+                            </div>
+                          ),
+                        )}
+                      </div>
+                    </Card>
+                  );
+                },
+              )}
+            </div>
+          </ScrollArea>
         </TabsContent>
 
         {/* PID Parameters */}
