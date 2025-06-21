@@ -39,6 +39,7 @@ interface WheelConfig {
     [key: string]: {
       motorPin: number;
       directionPin?: number;
+      motorPin2?: number; // For dual PWM mode
       encoderA: number;
       encoderB: number;
       enabled: boolean;
@@ -64,32 +65,36 @@ const WheelConfiguration = () => {
       front_left: {
         motorPin: 3,
         directionPin: 4,
+        motorPin2: 5, // For dual PWM
         encoderA: 2,
-        encoderB: 5,
+        encoderB: 6,
         enabled: true,
         inverted: false,
       },
       front_right: {
-        motorPin: 6,
-        directionPin: 7,
-        encoderA: 8,
-        encoderB: 9,
+        motorPin: 7,
+        directionPin: 8,
+        motorPin2: 9, // For dual PWM
+        encoderA: 10,
+        encoderB: 11,
         enabled: true,
         inverted: true,
       },
       rear_left: {
-        motorPin: 10,
-        directionPin: 11,
-        encoderA: 12,
-        encoderB: 13,
+        motorPin: 12,
+        directionPin: 13,
+        motorPin2: 14, // For dual PWM
+        encoderA: 15,
+        encoderB: 16,
         enabled: true,
         inverted: false,
       },
       rear_right: {
-        motorPin: 14,
-        directionPin: 15,
-        encoderA: 16,
-        encoderB: 17,
+        motorPin: 17,
+        directionPin: 18,
+        motorPin2: 19, // For dual PWM
+        encoderA: 20,
+        encoderB: 21,
         enabled: true,
         inverted: true,
       },
@@ -178,12 +183,15 @@ const WheelConfiguration = () => {
     const newWheels: any = {};
 
     wheelNames.forEach((name, index) => {
+      const basePin = 3 + index * 5; // Increased spacing for dual PWM
       newWheels[name] = {
-        motorPin: 3 + index * 4,
+        motorPin: basePin,
         directionPin:
-          wheelConfig.driveType === "pwm_dir" ? 4 + index * 4 : undefined,
-        encoderA: 2 + index * 4,
-        encoderB: 5 + index * 4,
+          wheelConfig.driveType === "pwm_dir" ? basePin + 1 : undefined,
+        motorPin2:
+          wheelConfig.driveType === "pwm_both" ? basePin + 1 : undefined, // Second PWM pin for dual PWM
+        encoderA: basePin + 2,
+        encoderB: basePin + 3,
         enabled: true,
         inverted: name.includes("right"),
       };
@@ -469,44 +477,84 @@ const WheelConfiguration = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <div>
-                    <Label className="text-xs text-muted-foreground">
-                      Motor Pin
-                    </Label>
-                    <Input
-                      type="number"
-                      value={wheel.motorPin}
-                      onChange={(e) =>
-                        updateWheelPin(
-                          wheelName,
-                          "motorPin",
-                          parseInt(e.target.value),
-                        )
-                      }
-                      disabled={!wheel.enabled}
-                      className="h-8 text-xs"
-                    />
-                  </div>
-
-                  {wheelConfig.driveType === "pwm_dir" && (
-                    <div>
-                      <Label className="text-xs text-muted-foreground">
-                        Direction Pin
-                      </Label>
-                      <Input
-                        type="number"
-                        value={wheel.directionPin || 0}
-                        onChange={(e) =>
-                          updateWheelPin(
-                            wheelName,
-                            "directionPin",
-                            parseInt(e.target.value),
-                          )
-                        }
-                        disabled={!wheel.enabled}
-                        className="h-8 text-xs"
-                      />
-                    </div>
+                  {wheelConfig.driveType === "pwm_dir" ? (
+                    <>
+                      <div>
+                        <Label className="text-xs text-muted-foreground">
+                          Motor PWM Pin
+                        </Label>
+                        <Input
+                          type="number"
+                          value={wheel.motorPin}
+                          onChange={(e) =>
+                            updateWheelPin(
+                              wheelName,
+                              "motorPin",
+                              parseInt(e.target.value),
+                            )
+                          }
+                          disabled={!wheel.enabled}
+                          className="h-8 text-xs"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs text-muted-foreground">
+                          Direction Pin
+                        </Label>
+                        <Input
+                          type="number"
+                          value={wheel.directionPin || 0}
+                          onChange={(e) =>
+                            updateWheelPin(
+                              wheelName,
+                              "directionPin",
+                              parseInt(e.target.value),
+                            )
+                          }
+                          disabled={!wheel.enabled}
+                          className="h-8 text-xs"
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div>
+                        <Label className="text-xs text-muted-foreground">
+                          Motor PWM 1 (Forward)
+                        </Label>
+                        <Input
+                          type="number"
+                          value={wheel.motorPin}
+                          onChange={(e) =>
+                            updateWheelPin(
+                              wheelName,
+                              "motorPin",
+                              parseInt(e.target.value),
+                            )
+                          }
+                          disabled={!wheel.enabled}
+                          className="h-8 text-xs"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs text-muted-foreground">
+                          Motor PWM 2 (Reverse)
+                        </Label>
+                        <Input
+                          type="number"
+                          value={wheel.motorPin2 || 0}
+                          onChange={(e) =>
+                            updateWheelPin(
+                              wheelName,
+                              "motorPin2",
+                              parseInt(e.target.value),
+                            )
+                          }
+                          disabled={!wheel.enabled}
+                          className="h-8 text-xs"
+                        />
+                      </div>
+                    </>
                   )}
 
                   <div className="grid grid-cols-2 gap-2">

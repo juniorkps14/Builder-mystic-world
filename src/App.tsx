@@ -30,6 +30,8 @@ import About from "./pages/About";
 import Settings from "./pages/Settings";
 import MicrocontrollerConnections from "./pages/MicrocontrollerConnections";
 import CodeDevelopment from "./pages/CodeDevelopment";
+import LogViewer from "./pages/LogViewer";
+import ROSTerminal from "./pages/ROSTerminal";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -69,8 +71,8 @@ const App = () => (
                       <Route path="/topics" element={<Topics />} />
                       <Route path="/services" element={<Services />} />
                       <Route path="/parameters" element={<Parameters />} />
-                      <Route path="/logs" element={<Logs />} />
-                      <Route path="/terminal" element={<Terminal />} />
+                      <Route path="/logs" element={<LogViewer />} />
+                      <Route path="/terminal" element={<ROSTerminal />} />
                       <Route
                         path="/microcontroller-connections"
                         element={<MicrocontrollerConnections />}
