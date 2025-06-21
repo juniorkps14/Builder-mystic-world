@@ -203,6 +203,14 @@ const rosItems = [
     bgColor: "bg-pink-50 dark:bg-pink-950/30",
   },
   {
+    titleKey: "nav.codeDevelopment",
+    icon: Terminal,
+    href: "/code-development",
+    badge: "Dev",
+    color: "text-purple-600",
+    bgColor: "bg-purple-50 dark:bg-purple-950/30",
+  },
+  {
     titleKey: "nav.logs",
     icon: FileText,
     href: "/logs",

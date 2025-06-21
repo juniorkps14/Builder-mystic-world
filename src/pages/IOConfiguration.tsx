@@ -34,6 +34,7 @@ import {
   AlertTriangle,
   CheckCircle,
 } from "lucide-react";
+import WheelConfiguration from "@/components/ros/WheelConfiguration";
 
 const IOConfiguration = () => {
   const { t } = useLanguage();
@@ -573,8 +574,16 @@ const IOConfiguration = () => {
         </Button>
       </div>
 
-      <Tabs defaultValue="pins" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+      <Tabs defaultValue="wheels" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5">
+          <TabsTrigger
+            value="wheels"
+            className="gap-1 md:gap-2 text-xs md:text-sm"
+          >
+            <Circle className="h-3 w-3 md:h-4 md:w-4" />
+            <span className="hidden sm:inline">Wheels</span>
+            <span className="sm:hidden">Wheels</span>
+          </TabsTrigger>
           <TabsTrigger
             value="pins"
             className="gap-1 md:gap-2 text-xs md:text-sm"
@@ -609,9 +618,59 @@ const IOConfiguration = () => {
           </TabsTrigger>
         </TabsList>
 
+        {/* Wheel Configuration */}
+        <TabsContent value="wheels" className="space-y-4">
+          <WheelConfiguration />
+        </TabsContent>
+
         {/* Pin Configuration */}
         <TabsContent value="pins" className="space-y-4">
-          <ScrollArea className="h-[800px]">
+          {/* USB Assignment Section */}
+          <Card className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/30">
+            <h3 className="text-lg font-light mb-4 flex items-center gap-2">
+              <Zap className="h-5 w-5 text-blue-500" />
+              USB Port Assignments
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {Object.entries(pinConfigs).map(([category, categoryData]) => {
+                const IconComponent = categoryData.icon;
+                return (
+                  <div
+                    key={category}
+                    className="p-3 bg-white/80 dark:bg-gray-800/80 rounded-lg border"
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <IconComponent className="h-4 w-4 text-primary" />
+                      <span className="font-medium text-sm capitalize">
+                        {category.replace(/_/g, " ")}
+                      </span>
+                    </div>
+                    <Select defaultValue="/dev/ttyUSB0">
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="/dev/ttyUSB0">USB Port 0</SelectItem>
+                        <SelectItem value="/dev/ttyUSB1">USB Port 1</SelectItem>
+                        <SelectItem value="/dev/ttyUSB2">USB Port 2</SelectItem>
+                        <SelectItem value="/dev/ttyACM0">ACM Port 0</SelectItem>
+                        <SelectItem value="/dev/ttyACM1">ACM Port 1</SelectItem>
+                        <SelectItem value="wifi:192.168.1.100">
+                          WiFi Device
+                        </SelectItem>
+                        <SelectItem value="ethernet:192.168.1.101">
+                          Ethernet
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                );
+              })}
+            </div>
+          </Card>
+
+          <ScrollArea className="h-[700px]">
             <div className="space-y-4">
               {Object.entries(pinConfigs).map(
                 ([category, categoryData], categoryIndex) => {

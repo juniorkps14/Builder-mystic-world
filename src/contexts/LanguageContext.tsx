@@ -31,6 +31,7 @@ const translations = {
     "nav.logs": "Logs",
     "nav.terminal": "Terminal",
     "nav.microcontrollers": "Microcontrollers",
+    "nav.codeDevelopment": "Code Development",
     "nav.about": "About",
     "nav.settings": "Settings",
 
@@ -264,7 +265,7 @@ const translations = {
     "nav.roboticArm": "แขนกล",
     "nav.holonomic": "ระบบล้อโฮโลโนมิก",
     "nav.ioConfig": "ตั้งค่า I/O",
-    "nav.features": "จัดการฟีเจอร์",
+    "nav.features": "จัดการฟีเจ��ร์",
     "nav.tfTree": "แผนผัง TF",
     "nav.mapView": "แสดงแผนที่",
     "nav.nodes": "โหนด",
@@ -274,6 +275,7 @@ const translations = {
     "nav.logs": "บันทึก",
     "nav.terminal": "เทอร์มินัล",
     "nav.microcontrollers": "ไมโครคอนโทรลเลอร์",
+    "nav.codeDevelopment": "การพัฒนาโค้ด",
     "nav.about": "เกี่ยวกับ",
     "nav.settings": "การตั้งค่า",
 
@@ -409,7 +411,7 @@ const translations = {
     "task.waitForFeedback": "รอการตอบกลับ",
     "task.feedbackTimeout": "เวลาหมดอายุการตอบกลับ",
     "task.basicSettings": "การตั้งค่าพื้นฐาน",
-    "task.parameters": "พา��ามิเตอร์",
+    "task.parameters": "พารามิเตอร์",
     "task.advanced": "ขั้นสูง",
     "task.configureTask": "ตั้งค่างาน",
 
@@ -483,11 +485,10 @@ const translations = {
     "pattern.currentPattern": "รูปแบบปัจจุบัน",
     "pattern.waypoints": "จุดหมาย",
     "pattern.patternRepeat": "ทำซ้ำรูปแบบ",
-    "pattern.waitAtWaypoint": "รอที่จุดหมาย",
+    "pattern.waitAtWaypoint": "รอที่จุดห��าย",
     "pattern.waypointTolerance": "ค่าคลาดเคลื่อนจุดหมาย",
     "pattern.targetPosition": "ตำแหน่งเป้าหมายและการหมุน",
-    "pattern.relativeMovement":
-      "การเ���ลื่อนที่แบบสัมพัทธ์ (จากตำแหน่งปัจจุบัน)",
+    "pattern.relativeMovement": "การเคลื่อนที่แบบสัมพัทธ์ (จากตำแหน่งปัจจุบัน)",
     "pattern.xPosition": "ตำแหน่ง X",
     "pattern.yPosition": "ตำแหน่ง Y",
     "pattern.yawAngle": "มุม Yaw",

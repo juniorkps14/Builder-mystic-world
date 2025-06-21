@@ -29,6 +29,7 @@ import Terminal from "./pages/Terminal";
 import About from "./pages/About";
 import Settings from "./pages/Settings";
 import MicrocontrollerConnections from "./pages/MicrocontrollerConnections";
+import CodeDevelopment from "./pages/CodeDevelopment";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -73,6 +74,10 @@ const App = () => (
                       <Route
                         path="/microcontroller-connections"
                         element={<MicrocontrollerConnections />}
+                      />
+                      <Route
+                        path="/code-development"
+                        element={<CodeDevelopment />}
                       />
                       <Route path="/about" element={<About />} />
                       <Route path="/settings" element={<Settings />} />

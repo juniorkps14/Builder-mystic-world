@@ -52,9 +52,19 @@ interface MicrocontrollerConnection {
   functions: string[];
   powerConsumption: number;
   firmware: string;
-  routes: {
-    topic: string;
-    direction: "publish" | "subscribe" | "bidirectional";
+  serialConfig: {
+    baudRate: number;
+    dataBits: 8 | 7 | 6 | 5;
+    stopBits: 1 | 2;
+    parity: "none" | "even" | "odd";
+    flowControl: "none" | "hardware" | "software";
+    timeout: number;
+    reconnectInterval: number;
+  };
+  commands: {
+    command: string;
+    description: string;
+    parameters: string[];
     frequency: number;
     enabled: boolean;
   }[];
@@ -78,22 +88,34 @@ const MicrocontrollerConnections = () => {
       functions: ["Motor Control", "Encoder Reading", "Emergency Stop"],
       powerConsumption: 2.3,
       firmware: "v2.1.4",
-      routes: [
+      serialConfig: {
+        baudRate: 115200,
+        dataBits: 8,
+        stopBits: 1,
+        parity: "none",
+        flowControl: "none",
+        timeout: 1000,
+        reconnectInterval: 5000,
+      },
+      commands: [
         {
-          topic: "/cmd_vel",
-          direction: "subscribe",
+          command: "MOVE",
+          description: "Move robot with velocity",
+          parameters: ["linear_x", "linear_y", "angular_z"],
           frequency: 20,
           enabled: true,
         },
         {
-          topic: "/odom",
-          direction: "publish",
+          command: "GET_ODOM",
+          description: "Get odometry data",
+          parameters: [],
           frequency: 50,
           enabled: true,
         },
         {
-          topic: "/emergency_stop",
-          direction: "bidirectional",
+          command: "EMERGENCY_STOP",
+          description: "Emergency stop command",
+          parameters: [],
           frequency: 10,
           enabled: true,
         },
@@ -112,22 +134,34 @@ const MicrocontrollerConnections = () => {
       functions: ["IMU Data", "Environmental Sensors", "Camera Control"],
       powerConsumption: 1.8,
       firmware: "v1.3.2",
-      routes: [
+      serialConfig: {
+        baudRate: 9600,
+        dataBits: 8,
+        stopBits: 1,
+        parity: "none",
+        flowControl: "none",
+        timeout: 2000,
+        reconnectInterval: 3000,
+      },
+      commands: [
         {
-          topic: "/imu/data",
-          direction: "publish",
+          command: "GET_IMU",
+          description: "Get IMU sensor data",
+          parameters: [],
           frequency: 100,
           enabled: true,
         },
         {
-          topic: "/environment/temperature",
-          direction: "publish",
+          command: "GET_TEMP",
+          description: "Get temperature reading",
+          parameters: [],
           frequency: 1,
           enabled: true,
         },
         {
-          topic: "/camera/trigger",
-          direction: "subscribe",
+          command: "CAMERA_TRIGGER",
+          description: "Trigger camera capture",
+          parameters: ["mode"],
           frequency: 30,
           enabled: true,
         },
