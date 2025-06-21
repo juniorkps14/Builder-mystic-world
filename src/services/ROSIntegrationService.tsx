@@ -598,5 +598,3 @@ export const useROSService = () => {
 
   return { call, loading, error };
 };
-
-export default ROSIntegrationService;
