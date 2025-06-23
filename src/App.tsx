@@ -33,6 +33,7 @@ import MicrocontrollerConnections from "./pages/MicrocontrollerConnections";
 import CodeDevelopment from "./pages/CodeDevelopment";
 import LogViewer from "./pages/LogViewer";
 import ROSTerminal from "./pages/ROSTerminal";
+import SystemConfiguration from "./pages/SystemConfiguration";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -88,6 +89,10 @@ const App = () => (
                         <Route
                           path="/code-development"
                           element={<CodeDevelopment />}
+                        />
+                        <Route
+                          path="/system-configuration"
+                          element={<SystemConfiguration />}
                         />
                         <Route path="/about" element={<About />} />
                         <Route path="/settings" element={<Settings />} />

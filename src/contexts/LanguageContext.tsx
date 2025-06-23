@@ -32,6 +32,7 @@ const translations = {
     "nav.terminal": "ROS Terminal",
     "nav.microcontrollers": "Microcontrollers",
     "nav.codeDevelopment": "Code Development",
+    "nav.systemConfiguration": "System Configuration",
     "nav.about": "About",
     "nav.settings": "Settings",
 
@@ -257,7 +258,7 @@ const translations = {
     // Navigation
     "nav.dashboard": "แดชบอร์ด",
     "nav.robotControl": "ควบคุมหุ่นยนต์",
-    "nav.sequences": "ลำดับการทำงาน",
+    "nav.sequences": "ลำดับการทำงา���",
     "nav.cameras": "ฟีดกล้อง",
     "nav.sensors": "เซ็นเซอร์",
     "nav.navigation": "การนำทาง",
@@ -276,6 +277,7 @@ const translations = {
     "nav.terminal": "เทอร์มินัล ROS",
     "nav.microcontrollers": "ไมโครคอนโทรลเลอร์",
     "nav.codeDevelopment": "การพัฒนาโค้ด",
+    "nav.systemConfiguration": "การตั้งค่าระบบ",
     "nav.about": "เกี่ยวกับ",
     "nav.settings": "การตั้งค่า",
 
@@ -345,8 +347,8 @@ const translations = {
     // Navigation
     "navigation.title": "ระบบนำทาง",
     "navigation.goalSetting": "จุดหมายการนำทาง",
-    "navigation.currentPosition": "ตำแหน่งปัจจุบัน",
-    "navigation.status": "สถานะการนำทาง",
+    "navigation.currentPosition": "ตำแหน่งปัจจ���บัน",
+    "navigation.status": "สถ���นะการนำทาง",
     "navigation.startNavigation": "เริ่มการนำทาง",
     "navigation.cancelGoal": "ยกเลิกจุดหมาย",
     "navigation.statistics": "สถิติการนำทาง",
@@ -369,7 +371,7 @@ const translations = {
     "nodes.stopped": "หยุดทำงาน",
     "nodes.error": "ข้อผิดพลาด",
     "nodes.nodeDetails": "รายละเอียดโหนด",
-    "nodes.quickActions": "การดำเนินการด่���น",
+    "nodes.quickActions": "การดำเนินการด่วน",
 
     // Topics
     "topics.title": "หัวข้อ ROS",
@@ -442,7 +444,7 @@ const translations = {
     // Sequences
     "sequence.title": "การจัดการลำดับงานขั้นสูง",
     "sequence.subtitle": "สร้าง จัดการ และดำเนินการลำดับงานอัจฉริยะ",
-    "sequence.noTasks": "ไม่มีงาน",
+    "sequence.noTasks": "ไม่��ีงาน",
     "sequence.addFirstTask": "เพิ่มงานแรก",
     "sequence.createSequence": "สร้างลำดับงาน",
     "sequence.importSequence": "นำเข้า",
@@ -479,7 +481,7 @@ const translations = {
     "pattern.quickPresets": "รูปแบบสำเร็จรูป",
     "pattern.square": "สี่เหลี่ยม",
     "pattern.circle": "วงกลม",
-    "pattern.patrol": "ลาดตระเว��",
+    "pattern.patrol": "ลาดตระเวน",
     "pattern.clear": "ล้าง",
     "pattern.addWaypoint": "เพิ่มจุดหมาย",
     "pattern.currentPattern": "รูปแบบปัจจุบัน",

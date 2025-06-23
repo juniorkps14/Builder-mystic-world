@@ -211,6 +211,14 @@ const rosItems = [
     bgColor: "bg-purple-50 dark:bg-purple-950/30",
   },
   {
+    titleKey: "nav.systemConfiguration",
+    icon: Settings,
+    href: "/system-configuration",
+    badge: "Config",
+    color: "text-indigo-600",
+    bgColor: "bg-indigo-50 dark:bg-indigo-950/30",
+  },
+  {
     titleKey: "nav.logs",
     icon: FileText,
     href: "/logs",
