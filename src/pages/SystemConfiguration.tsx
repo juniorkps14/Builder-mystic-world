@@ -30,7 +30,7 @@ import { useROSIntegration } from "@/services/ROSIntegrationService";
 import {
   Settings,
   Wifi,
-  Robot,
+  Bot,
   Shield,
   Database,
   Monitor,
@@ -469,7 +469,7 @@ const SystemConfiguration = () => {
             ROS
           </TabsTrigger>
           <TabsTrigger value="robot" className="gap-1 text-xs">
-            <Robot className="h-3 w-3" />
+            <Bot className="h-3 w-3" />
             Robot
           </TabsTrigger>
           <TabsTrigger value="network" className="gap-1 text-xs">
@@ -638,7 +638,7 @@ const SystemConfiguration = () => {
         <TabsContent value="robot" className="space-y-4">
           <Card className="p-6">
             <h3 className="text-lg font-light mb-4 flex items-center gap-2">
-              <Robot className="h-5 w-5 text-primary" />
+              <Bot className="h-5 w-5 text-primary" />
               Robot Configuration
             </h3>
 
