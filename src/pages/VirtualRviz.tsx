@@ -1106,30 +1106,6 @@ const VirtualRviz: React.FC = () => {
               <span className="text-sm font-medium text-gray-800">RViz</span>
               <span className="text-xs text-gray-600">- Dino Core</span>
             </div>
-
-            {/* ROS Bridge Connection Controls */}
-            <div className="flex items-center gap-2 bg-white rounded px-2 py-1 border border-gray-300">
-              <div
-                className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}
-              />
-              <span className="text-xs text-gray-700">
-                {isConnected ? "ROS Connected" : "ROS Disconnected"}
-              </span>
-              <Button
-                variant={isConnected ? "destructive" : "default"}
-                size="sm"
-                onClick={() => {
-                  if (isConnected) {
-                    disconnectFromROS();
-                  } else {
-                    connectToROS();
-                  }
-                }}
-                className="h-6 px-2 text-xs"
-              >
-                {isConnected ? "Disconnect" : "Connect"}
-              </Button>
-            </div>
           </div>
 
           {/* Center - Global Frame Settings */}
