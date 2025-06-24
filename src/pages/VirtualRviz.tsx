@@ -178,6 +178,9 @@ const VirtualRviz: React.FC = () => {
   );
   const [fixedFrame, setFixedFrame] = useState("map");
   const [targetFrame, setTargetFrame] = useState("base_link");
+  const [rosConnectionUrl, setRosConnectionUrl] = useState(
+    "ws://localhost:9090",
+  );
 
   const [viewSettings, setViewSettings] = useState<ViewSettings>({
     backgroundColor: "#2a2a2a",
@@ -1057,87 +1060,205 @@ const VirtualRviz: React.FC = () => {
   ];
 
   return (
-    <div className="h-screen flex flex-col bg-background">
-      {/* RViz-style Header */}
-      <div className="border-b border-border/50 bg-background/95 backdrop-blur-sm">
-        <div className="flex items-center justify-between px-4 py-3">
+    <div className="h-screen flex flex-col bg-gray-100">
+      {/* RViz-style Header Bar */}
+      <div className="bg-gray-300 border-b border-gray-400 px-2 py-1">
+        <div className="flex items-center justify-between">
+          {/* Left side - App info and ROS Connection */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Box className="h-6 w-6 text-primary" />
-              <h1 className="text-xl font-semibold">{t("rviz.title")}</h1>
+              <Box className="h-5 w-5 text-blue-600" />
+              <span className="text-sm font-medium text-gray-800">RViz</span>
+              <span className="text-xs text-gray-600">- Dino Core</span>
             </div>
 
-            {/* Global Status */}
-            <div className="flex items-center gap-2">
+            {/* ROS Bridge Connection Controls */}
+            <div className="flex items-center gap-2 bg-white rounded px-2 py-1 border border-gray-300">
               <div
-                className={`w-2 h-2 rounded-full ${
-                  globalStatus === "ok"
-                    ? "bg-green-400"
-                    : globalStatus === "warn"
-                      ? "bg-yellow-400"
-                      : "bg-red-400"
-                }`}
+                className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}
               />
-              <Badge
-                variant={isConnected ? "default" : "secondary"}
-                className="text-xs"
+              <span className="text-xs text-gray-700">
+                {isConnected ? "ROS Connected" : "ROS Disconnected"}
+              </span>
+              <Button
+                variant={isConnected ? "destructive" : "default"}
+                size="sm"
+                onClick={() => {
+                  // Toggle ROS connection - this would use the ROSIntegrationService
+                  if (isConnected) {
+                    // Disconnect logic here
+                    toast({
+                      title: "ROS Bridge Disconnected",
+                      description:
+                        "Connection to ROS Bridge server has been closed",
+                      variant: "destructive",
+                    });
+                  } else {
+                    // Connect logic here
+                    toast({
+                      title: "ROS Bridge Connected",
+                      description:
+                        "Successfully connected to ROS Bridge server",
+                    });
+                  }
+                }}
+                className="h-6 px-2 text-xs"
               >
-                {isConnected ? "Connected" : "Disconnected"}
-              </Badge>
+                {isConnected ? "Disconnect" : "Connect"}
+              </Button>
             </div>
           </div>
 
-          {/* Top Controls */}
+          {/* Center - Global Frame Settings */}
+          <div className="flex items-center gap-4 bg-white rounded px-3 py-1 border border-gray-300">
+            <div className="flex items-center gap-2">
+              <Label className="text-xs text-gray-600">Fixed Frame:</Label>
+              <Input
+                value={fixedFrame}
+                onChange={(e) => setFixedFrame(e.target.value)}
+                className="h-6 w-24 text-xs font-mono"
+                placeholder="map"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Label className="text-xs text-gray-600">Target Frame:</Label>
+              <Input
+                value={targetFrame}
+                onChange={(e) => setTargetFrame(e.target.value)}
+                className="h-6 w-24 text-xs font-mono"
+                placeholder="base_link"
+              />
+            </div>
+          </div>
+
+          {/* Right side - Controls */}
           <div className="flex items-center gap-2">
+            {/* FPS Control */}
+            <div className="flex items-center gap-2 bg-white rounded px-2 py-1 border border-gray-300">
+              <Label className="text-xs text-gray-600">FPS:</Label>
+              <Input
+                type="number"
+                value={fps}
+                onChange={(e) => setFps(parseInt(e.target.value) || 30)}
+                className="h-6 w-12 text-xs"
+                min="1"
+                max="120"
+              />
+            </div>
+
+            {/* Play/Pause */}
             <Button
               variant="outline"
               size="sm"
               onClick={() => setIsPlaying(!isPlaying)}
-              className="gap-2"
+              className="gap-1 h-6 px-2"
             >
               {isPlaying ? (
-                <Pause className="h-4 w-4" />
+                <Pause className="h-3 w-3" />
               ) : (
-                <Play className="h-4 w-4" />
+                <Play className="h-3 w-3" />
               )}
-              {isPlaying ? "Pause" : "Play"}
+              <span className="text-xs">{isPlaying ? "Pause" : "Play"}</span>
             </Button>
 
+            {/* View Controls */}
+            <div className="flex items-center gap-1">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={resetCamera}
+                className="h-6 px-2"
+              >
+                <RotateCcw className="h-3 w-3" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  setCameraPosition((prev) => ({ ...prev, z: prev.z * 0.8 }))
+                }
+                className="h-6 px-2"
+              >
+                <ZoomIn className="h-3 w-3" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  setCameraPosition((prev) => ({ ...prev, z: prev.z * 1.2 }))
+                }
+                className="h-6 px-2"
+              >
+                <ZoomOut className="h-3 w-3" />
+              </Button>
+            </div>
+
+            {/* Global Options */}
             <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <Settings className="h-4 w-4" />
+                <Button variant="outline" size="sm" className="h-6 px-2">
+                  <Settings className="h-3 w-3" />
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="max-w-md">
                 <DialogHeader>
                   <DialogTitle>Global Options</DialogTitle>
+                  <DialogDescription>
+                    Configure global RViz settings
+                  </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
-                    <Label>Fixed Frame</Label>
+                    <Label>Background Color</Label>
                     <Input
-                      value={fixedFrame}
-                      onChange={(e) => setFixedFrame(e.target.value)}
-                      placeholder="map"
+                      type="color"
+                      value={viewSettings.backgroundColor}
+                      onChange={(e) =>
+                        setViewSettings((prev) => ({
+                          ...prev,
+                          backgroundColor: e.target.value,
+                        }))
+                      }
+                      className="mt-1"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label>Show Grid</Label>
+                    <Switch
+                      checked={viewSettings.gridEnabled}
+                      onCheckedChange={(checked) =>
+                        setViewSettings((prev) => ({
+                          ...prev,
+                          gridEnabled: checked,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label>Show Axes</Label>
+                    <Switch
+                      checked={viewSettings.axesEnabled}
+                      onCheckedChange={(checked) =>
+                        setViewSettings((prev) => ({
+                          ...prev,
+                          axesEnabled: checked,
+                        }))
+                      }
                     />
                   </div>
                   <div>
-                    <Label>Target Frame</Label>
-                    <Input
-                      value={targetFrame}
-                      onChange={(e) => setTargetFrame(e.target.value)}
-                      placeholder="base_link"
-                    />
-                  </div>
-                  <div>
-                    <Label>Frame Rate: {fps} Hz</Label>
+                    <Label>Grid Size: {viewSettings.gridSize}</Label>
                     <Slider
-                      value={[fps]}
-                      onValueChange={([value]) => setFps(value)}
-                      min={1}
-                      max={60}
-                      step={1}
+                      value={[viewSettings.gridSize]}
+                      onValueChange={([value]) =>
+                        setViewSettings((prev) => ({
+                          ...prev,
+                          gridSize: value,
+                        }))
+                      }
+                      min={5}
+                      max={50}
+                      step={5}
                       className="mt-2"
                     />
                   </div>
@@ -1148,19 +1269,22 @@ const VirtualRviz: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden bg-gray-200">
         {/* Left Panel - Displays */}
-        <div className="w-80 border-r border-border/50 bg-background/50 backdrop-blur-sm flex flex-col">
+        <div className="w-80 border-r border-gray-400 bg-gray-100 flex flex-col">
           {/* Displays Header */}
-          <div className="border-b border-border/50 p-3">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-sm">Displays</h3>
+          <div className="border-b border-gray-400 bg-gray-200 p-2">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-bold text-sm text-gray-800">Displays</h3>
               <Dialog
                 open={isAddDisplayOpen}
                 onOpenChange={setIsAddDisplayOpen}
               >
                 <DialogTrigger asChild>
-                  <Button size="sm" className="h-7">
+                  <Button
+                    size="sm"
+                    className="h-6 px-2 text-xs bg-gray-300 hover:bg-gray-400 text-gray-800 border border-gray-400"
+                  >
                     <Plus className="h-3 w-3 mr-1" />
                     Add
                   </Button>
@@ -1282,12 +1406,12 @@ const VirtualRviz: React.FC = () => {
           </div>
 
           {/* Displays Tree */}
-          <ScrollArea className="flex-1">
-            <div className="p-2">
+          <ScrollArea className="flex-1 bg-white">
+            <div className="p-1">
               {displayCategories.map((category) => (
-                <div key={category.name} className="mb-2">
+                <div key={category.name} className="mb-1">
                   <div
-                    className="flex items-center gap-2 p-2 hover:bg-accent/50 rounded cursor-pointer"
+                    className="flex items-center gap-1 p-1 hover:bg-blue-100 cursor-pointer text-sm"
                     onClick={() => {
                       setDisplayCategories((prev) =>
                         prev.map((cat) =>
@@ -1299,54 +1423,57 @@ const VirtualRviz: React.FC = () => {
                     }}
                   >
                     {category.expanded ? (
-                      <ChevronDown className="h-4 w-4" />
+                      <ChevronDown className="h-3 w-3 text-gray-600" />
                     ) : (
-                      <ChevronRight className="h-4 w-4" />
+                      <ChevronRight className="h-3 w-3 text-gray-600" />
                     )}
                     {category.expanded ? (
-                      <FolderOpen className="h-4 w-4 text-blue-500" />
+                      <FolderOpen className="h-3 w-3 text-blue-600" />
                     ) : (
-                      <Folder className="h-4 w-4 text-blue-500" />
+                      <Folder className="h-3 w-3 text-blue-600" />
                     )}
-                    <span className="text-sm font-medium">{category.name}</span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-sm font-medium text-gray-800">
+                      {category.name}
+                    </span>
+                    <span className="text-xs text-gray-500 ml-auto">
                       ({category.displays.length})
                     </span>
                   </div>
 
                   {category.expanded && (
-                    <div className="ml-6 space-y-1">
+                    <div className="ml-4 space-y-0">
                       {category.displays.map((display) => (
                         <div
                           key={display.id}
-                          className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-colors ${
+                          className={`flex items-center gap-1 p-1 cursor-pointer text-sm ${
                             selectedDisplay?.id === display.id
-                              ? "bg-primary/10 border border-primary/20"
-                              : "hover:bg-accent/50"
+                              ? "bg-blue-200 border-l-2 border-blue-500"
+                              : "hover:bg-gray-50"
                           }`}
                           onClick={() => setSelectedDisplay(display)}
                         >
-                          <Switch
+                          <input
+                            type="checkbox"
                             checked={display.enabled}
-                            onCheckedChange={() => toggleDisplay(display.id)}
-                            size="sm"
+                            onChange={() => toggleDisplay(display.id)}
+                            className="h-3 w-3"
                           />
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium truncate">
+                            <div className="flex items-center gap-1">
+                              <span className="text-sm truncate text-gray-800">
                                 {display.name}
                               </span>
                               {display.status === "ok" && (
-                                <CheckCircle className="h-3 w-3 text-green-500" />
+                                <div className="w-2 h-2 rounded-full bg-green-500" />
                               )}
                               {display.status === "warn" && (
-                                <AlertCircle className="h-3 w-3 text-yellow-500" />
+                                <div className="w-2 h-2 rounded-full bg-yellow-500" />
                               )}
                               {display.status === "error" && (
-                                <AlertCircle className="h-3 w-3 text-red-500" />
+                                <div className="w-2 h-2 rounded-full bg-red-500" />
                               )}
                             </div>
-                            <div className="text-xs text-muted-foreground truncate">
+                            <div className="text-xs text-gray-500 truncate">
                               {display.topic || display.type}
                             </div>
                           </div>
@@ -1357,9 +1484,9 @@ const VirtualRviz: React.FC = () => {
                               e.stopPropagation();
                               removeDisplay(display.id);
                             }}
-                            className="h-6 w-6 p-0 opacity-50 hover:opacity-100"
+                            className="h-4 w-4 p-0 opacity-50 hover:opacity-100"
                           >
-                            <Trash2 className="h-3 w-3" />
+                            <Trash2 className="h-2 w-2" />
                           </Button>
                         </div>
                       ))}
@@ -1453,48 +1580,8 @@ const VirtualRviz: React.FC = () => {
 
         {/* Main 3D Viewer */}
         <div className="flex-1 flex flex-col">
-          {/* Viewer Controls */}
-          <div className="border-b border-border/50 p-2 bg-background/50">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={resetCamera}>
-                  <RotateCcw className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    setCameraPosition((prev) => ({ ...prev, z: prev.z * 0.8 }))
-                  }
-                >
-                  <ZoomIn className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    setCameraPosition((prev) => ({ ...prev, z: prev.z * 1.2 }))
-                  }
-                >
-                  <ZoomOut className="h-4 w-4" />
-                </Button>
-                <Separator orientation="vertical" className="h-6" />
-                <span className="text-sm text-muted-foreground">
-                  Fixed Frame: {fixedFrame}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span>FPS: {fps}</span>
-                <div
-                  className={`w-2 h-2 rounded-full ${isPlaying ? "bg-green-400" : "bg-red-400"}`}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* 3D Canvas */}
-          <div className="flex-1 relative bg-gray-900">
+          {/* 3D Canvas - Full area like RViz */}
+          <div className="flex-1 relative bg-gray-600 border border-gray-400">
             <canvas
               ref={canvasRef}
               width={800}
@@ -1507,29 +1594,90 @@ const VirtualRviz: React.FC = () => {
               onWheel={handleWheel}
             />
 
-            {/* View Info Overlay */}
-            <div className="absolute bottom-4 left-4 bg-black/80 text-white p-2 rounded text-xs">
-              <div>
-                Camera: ({cameraPosition.x.toFixed(1)},{" "}
-                {cameraPosition.y.toFixed(1)}, {cameraPosition.z.toFixed(1)})
+            {/* RViz-style Status Bar at bottom */}
+            <div className="absolute bottom-0 left-0 right-0 bg-gray-300 border-t border-gray-400 px-2 py-1">
+              <div className="flex items-center justify-between text-xs text-gray-700">
+                <div className="flex items-center gap-4">
+                  <span>
+                    Camera: ({cameraPosition.x.toFixed(1)},{" "}
+                    {cameraPosition.y.toFixed(1)}, {cameraPosition.z.toFixed(1)}
+                    )
+                  </span>
+                  <span>
+                    Rotation: ({cameraPosition.rotX.toFixed(0)}°,{" "}
+                    {cameraPosition.rotY.toFixed(0)}°)
+                  </span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span>Fixed Frame: {fixedFrame}</span>
+                  <span>Target Frame: {targetFrame}</span>
+                  <div className="flex items-center gap-1">
+                    <div
+                      className={`w-2 h-2 rounded-full ${isPlaying ? "bg-green-500" : "bg-red-500"}`}
+                    />
+                    <span>
+                      {isPlaying ? "Running" : "Paused"} - {fps} Hz
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div>
-                Rotation: ({cameraPosition.rotX.toFixed(0)}°,{" "}
-                {cameraPosition.rotY.toFixed(0)}°)
+            </div>
+
+            {/* RViz-style coordinate overlay */}
+            <div className="absolute top-4 left-4 text-white text-sm font-mono">
+              <div className="bg-black/50 px-2 py-1 rounded">
+                <div className="text-red-400">
+                  X: {cameraPosition.x.toFixed(2)}
+                </div>
+                <div className="text-green-400">
+                  Y: {cameraPosition.y.toFixed(2)}
+                </div>
+                <div className="text-blue-400">
+                  Z: {cameraPosition.z.toFixed(2)}
+                </div>
               </div>
-              <div>Zoom: {((1 / cameraPosition.z) * 10).toFixed(1)}x</div>
+            </div>
+
+            {/* RViz-style view controls overlay */}
+            <div className="absolute top-4 right-4 flex flex-col gap-1">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={resetCamera}
+                className="bg-white/90 hover:bg-white"
+              >
+                <RotateCcw className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  setCameraPosition((prev) => ({ ...prev, z: prev.z * 0.8 }))
+                }
+                className="bg-white/90 hover:bg-white"
+              >
+                <ZoomIn className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  setCameraPosition((prev) => ({ ...prev, z: prev.z * 1.2 }))
+                }
+                className="bg-white/90 hover:bg-white"
+              >
+                <ZoomOut className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </div>
 
         {/* Right Panel - Properties */}
         {selectedDisplay && (
-          <div className="w-80 border-l border-border/50 bg-background/50 backdrop-blur-sm flex flex-col">
-            <div className="border-b border-border/50 p-3">
-              <h3 className="font-semibold text-sm">Properties</h3>
-              <p className="text-xs text-muted-foreground">
-                {selectedDisplay.name}
-              </p>
+          <div className="w-80 border-l border-gray-400 bg-gray-100 flex flex-col">
+            <div className="border-b border-gray-400 bg-gray-200 p-2">
+              <h3 className="font-bold text-sm text-gray-800">Properties</h3>
+              <p className="text-xs text-gray-600">{selectedDisplay.name}</p>
             </div>
 
             <ScrollArea className="flex-1 p-3">
