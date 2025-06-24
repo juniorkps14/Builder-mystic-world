@@ -66,7 +66,6 @@ import {
   Minimize,
   Target,
   Navigation,
-  Cube,
 } from "lucide-react";
 
 interface Display {
@@ -986,7 +985,7 @@ const VirtualRviz: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="flex items-center gap-2">
-                  <Cube className="h-5 w-5" />
+                  <Box className="h-5 w-5" />
                   {t("rviz.viewer3D")}
                 </CardTitle>
                 <CardDescription>
