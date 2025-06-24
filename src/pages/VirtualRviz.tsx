@@ -986,6 +986,41 @@ const VirtualRviz: React.FC = () => {
     });
   };
 
+  // ROS Connection Management
+  const connectToROS = useCallback(() => {
+    try {
+      // This would integrate with ROSIntegrationService
+      // connect(rosConnectionUrl);
+      toast({
+        title: "ROS Bridge Connected",
+        description: `Successfully connected to ${rosConnectionUrl}`,
+      });
+      setGlobalStatus("ok");
+    } catch (error) {
+      toast({
+        title: "Connection Failed",
+        description: "Failed to connect to ROS Bridge server",
+        variant: "destructive",
+      });
+      setGlobalStatus("error");
+    }
+  }, [rosConnectionUrl, toast]);
+
+  const disconnectFromROS = useCallback(() => {
+    try {
+      // This would integrate with ROSIntegrationService
+      // disconnect();
+      toast({
+        title: "ROS Bridge Disconnected",
+        description: "Connection to ROS Bridge server has been closed",
+        variant: "destructive",
+      });
+      setGlobalStatus("error");
+    } catch (error) {
+      console.error("Disconnection error:", error);
+    }
+  }, [toast]);
+
   const displayTypeOptions = [
     {
       value: "pointcloud",
@@ -1084,22 +1119,10 @@ const VirtualRviz: React.FC = () => {
                 variant={isConnected ? "destructive" : "default"}
                 size="sm"
                 onClick={() => {
-                  // Toggle ROS connection - this would use the ROSIntegrationService
                   if (isConnected) {
-                    // Disconnect logic here
-                    toast({
-                      title: "ROS Bridge Disconnected",
-                      description:
-                        "Connection to ROS Bridge server has been closed",
-                      variant: "destructive",
-                    });
+                    disconnectFromROS();
                   } else {
-                    // Connect logic here
-                    toast({
-                      title: "ROS Bridge Connected",
-                      description:
-                        "Successfully connected to ROS Bridge server",
-                    });
+                    connectToROS();
                   }
                 }}
                 className="h-6 px-2 text-xs"
