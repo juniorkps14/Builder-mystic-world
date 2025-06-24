@@ -38,6 +38,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Tree, TreeViewElement } from "@/components/ui/tree-view";
 import { useToast } from "@/hooks/use-toast";
 import {
   Eye,
@@ -66,6 +67,13 @@ import {
   Minimize,
   Target,
   Navigation,
+  ChevronRight,
+  ChevronDown,
+  Folder,
+  FolderOpen,
+  Info,
+  AlertCircle,
+  CheckCircle,
 } from "lucide-react";
 
 interface Display {
@@ -81,7 +89,14 @@ interface Display {
     | "laser_scan"
     | "occupancy_grid"
     | "path"
-    | "pose_array";
+    | "pose_array"
+    | "pose"
+    | "twist"
+    | "image"
+    | "camera_info"
+    | "joint_states"
+    | "imu"
+    | "odometry";
   topic: string;
   enabled: boolean;
   color: string;
@@ -90,6 +105,25 @@ interface Display {
   frame: string;
   queueSize: number;
   settings: Record<string, any>;
+  status: "ok" | "warn" | "error";
+  messageType: string;
+  frequency: number;
+  lastMessage?: any;
+}
+
+interface TopicInfo {
+  name: string;
+  type: string;
+  frequency: number;
+  bandwidth: number;
+  connections: number;
+}
+
+interface DisplayCategory {
+  name: string;
+  icon: any;
+  displays: Display[];
+  expanded: boolean;
 }
 
 interface ViewSettings {
@@ -120,6 +154,9 @@ const VirtualRviz: React.FC = () => {
   const { toast } = useToast();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [displays, setDisplays] = useState<Display[]>([]);
+  const [displayCategories, setDisplayCategories] = useState<DisplayCategory[]>(
+    [],
+  );
   const [selectedDisplay, setSelectedDisplay] = useState<Display | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [fps, setFps] = useState(30);
@@ -132,8 +169,15 @@ const VirtualRviz: React.FC = () => {
     useState<Display["type"]>("pointcloud");
   const [newDisplayTopic, setNewDisplayTopic] = useState("");
   const [newDisplayName, setNewDisplayName] = useState("");
-  const [availableTopics, setAvailableTopics] = useState<string[]>([]);
+  const [availableTopics, setAvailableTopics] = useState<TopicInfo[]>([]);
+  const [filteredTopics, setFilteredTopics] = useState<TopicInfo[]>([]);
+  const [topicFilter, setTopicFilter] = useState("");
   const [animationFrame, setAnimationFrame] = useState<number | null>(null);
+  const [globalStatus, setGlobalStatus] = useState<"ok" | "warn" | "error">(
+    "ok",
+  );
+  const [fixedFrame, setFixedFrame] = useState("map");
+  const [targetFrame, setTargetFrame] = useState("base_link");
 
   const [viewSettings, setViewSettings] = useState<ViewSettings>({
     backgroundColor: "#2a2a2a",
@@ -161,7 +205,7 @@ const VirtualRviz: React.FC = () => {
   const { isConnected, subscribe, getTopics, callService } =
     useROSIntegration();
 
-  // Initialize default displays
+  // Initialize RViz-like default displays with categories
   useEffect(() => {
     const defaultDisplays: Display[] = [
       {
@@ -175,26 +219,16 @@ const VirtualRviz: React.FC = () => {
         alpha: 0.8,
         frame: "map",
         queueSize: 1,
+        status: "ok",
+        messageType: "",
+        frequency: 0,
         settings: {
           cellSize: 1,
           cellCount: 10,
           lineWidth: 1,
-        },
-      },
-      {
-        id: "axes",
-        name: "Global Axes",
-        type: "axes",
-        topic: "",
-        enabled: true,
-        color: "#ffffff",
-        size: 1,
-        alpha: 1,
-        frame: "map",
-        queueSize: 1,
-        settings: {
-          length: 2,
-          radius: 0.1,
+          planeCellCount: 10,
+          normalCellCount: 0,
+          planeSize: 10,
         },
       },
       {
@@ -208,45 +242,197 @@ const VirtualRviz: React.FC = () => {
         alpha: 0.8,
         frame: "map",
         queueSize: 100,
+        status: "ok",
+        messageType: "tf2_msgs/TFMessage",
+        frequency: 10,
         settings: {
           showNames: true,
           showAxes: true,
           showArrows: true,
           frameTimeout: 15,
-        },
-      },
-      {
-        id: "robot_model",
-        name: "Robot Model",
-        type: "robot_model",
-        topic: "/robot_description",
-        enabled: true,
-        color: "#0088ff",
-        size: 1,
-        alpha: 1,
-        frame: "base_link",
-        queueSize: 1,
-        settings: {
-          visual: true,
-          collision: false,
-          showJoints: true,
+          markerAlpha: 1,
+          markerScale: 1,
         },
       },
     ];
 
+    const categories: DisplayCategory[] = [
+      {
+        name: "Built-in",
+        icon: Box,
+        displays: defaultDisplays.filter((d) => d.type === "grid"),
+        expanded: true,
+      },
+      {
+        name: "TF",
+        icon: Target,
+        displays: defaultDisplays.filter((d) => d.type === "tf"),
+        expanded: true,
+      },
+      {
+        name: "Navigation",
+        icon: Navigation,
+        displays: [],
+        expanded: false,
+      },
+      {
+        name: "Sensors",
+        icon: Zap,
+        displays: [],
+        expanded: false,
+      },
+      {
+        name: "Robot",
+        icon: Settings,
+        displays: [],
+        expanded: false,
+      },
+      {
+        name: "Visualization",
+        icon: Eye,
+        displays: [],
+        expanded: false,
+      },
+    ];
+
     setDisplays(defaultDisplays);
+    setDisplayCategories(categories);
   }, []);
 
-  // Load available topics
+  // Load available topics with detailed information
   useEffect(() => {
     if (!isConnected) return;
 
     const loadTopics = async () => {
       try {
-        const topics = await getTopics();
-        setAvailableTopics(topics || []);
+        // Mock topic data - in real implementation this would come from ROS
+        const topicsData: TopicInfo[] = [
+          {
+            name: "/scan",
+            type: "sensor_msgs/LaserScan",
+            frequency: 10,
+            bandwidth: 125,
+            connections: 1,
+          },
+          {
+            name: "/map",
+            type: "nav_msgs/OccupancyGrid",
+            frequency: 0,
+            bandwidth: 0,
+            connections: 1,
+          },
+          {
+            name: "/tf",
+            type: "tf2_msgs/TFMessage",
+            frequency: 100,
+            bandwidth: 50,
+            connections: 3,
+          },
+          {
+            name: "/tf_static",
+            type: "tf2_msgs/TFMessage",
+            frequency: 0,
+            bandwidth: 0,
+            connections: 2,
+          },
+          {
+            name: "/cmd_vel",
+            type: "geometry_msgs/Twist",
+            frequency: 10,
+            bandwidth: 25,
+            connections: 1,
+          },
+          {
+            name: "/odom",
+            type: "nav_msgs/Odometry",
+            frequency: 20,
+            bandwidth: 75,
+            connections: 2,
+          },
+          {
+            name: "/amcl_pose",
+            type: "geometry_msgs/PoseWithCovarianceStamped",
+            frequency: 2,
+            bandwidth: 15,
+            connections: 1,
+          },
+          {
+            name: "/move_base/goal",
+            type: "move_base_msgs/MoveBaseActionGoal",
+            frequency: 0,
+            bandwidth: 0,
+            connections: 1,
+          },
+          {
+            name: "/move_base/status",
+            type: "actionlib_msgs/GoalStatusArray",
+            frequency: 5,
+            bandwidth: 10,
+            connections: 1,
+          },
+          {
+            name: "/camera/image_raw",
+            type: "sensor_msgs/Image",
+            frequency: 30,
+            bandwidth: 2000,
+            connections: 1,
+          },
+          {
+            name: "/camera/camera_info",
+            type: "sensor_msgs/CameraInfo",
+            frequency: 30,
+            bandwidth: 50,
+            connections: 1,
+          },
+          {
+            name: "/joint_states",
+            type: "sensor_msgs/JointState",
+            frequency: 50,
+            bandwidth: 100,
+            connections: 1,
+          },
+          {
+            name: "/imu/data",
+            type: "sensor_msgs/Imu",
+            frequency: 100,
+            bandwidth: 200,
+            connections: 1,
+          },
+          {
+            name: "/pointcloud",
+            type: "sensor_msgs/PointCloud2",
+            frequency: 10,
+            bandwidth: 1500,
+            connections: 1,
+          },
+          {
+            name: "/visualization_marker",
+            type: "visualization_msgs/Marker",
+            frequency: 1,
+            bandwidth: 25,
+            connections: 1,
+          },
+          {
+            name: "/path",
+            type: "nav_msgs/Path",
+            frequency: 1,
+            bandwidth: 50,
+            connections: 1,
+          },
+          {
+            name: "/goal_markers",
+            type: "visualization_msgs/MarkerArray",
+            frequency: 1,
+            bandwidth: 30,
+            connections: 1,
+          },
+        ];
+
+        setAvailableTopics(topicsData);
+        setFilteredTopics(topicsData);
       } catch (error) {
         console.error("Failed to load topics:", error);
+        setGlobalStatus("error");
       }
     };
 
@@ -255,6 +441,21 @@ const VirtualRviz: React.FC = () => {
 
     return () => clearInterval(interval);
   }, [isConnected, getTopics]);
+
+  // Filter topics based on search
+  useEffect(() => {
+    if (!topicFilter) {
+      setFilteredTopics(availableTopics);
+    } else {
+      setFilteredTopics(
+        availableTopics.filter(
+          (topic) =>
+            topic.name.toLowerCase().includes(topicFilter.toLowerCase()) ||
+            topic.type.toLowerCase().includes(topicFilter.toLowerCase()),
+        ),
+      );
+    }
+  }, [topicFilter, availableTopics]);
 
   // 3D Rendering
   const render3D = useCallback(() => {
@@ -783,531 +984,935 @@ const VirtualRviz: React.FC = () => {
   };
 
   const displayTypeOptions = [
-    { value: "pointcloud", label: "PointCloud2" },
-    { value: "markers", label: "Markers" },
-    { value: "tf", label: "TF" },
-    { value: "robot_model", label: "Robot Model" },
-    { value: "grid", label: "Grid" },
-    { value: "axes", label: "Axes" },
-    { value: "laser_scan", label: "Laser Scan" },
-    { value: "occupancy_grid", label: "Occupancy Grid" },
-    { value: "path", label: "Path" },
-    { value: "pose_array", label: "Pose Array" },
+    {
+      value: "pointcloud",
+      label: "PointCloud2",
+      description: "Display 3D point cloud data (sensor_msgs/PointCloud2)",
+    },
+    {
+      value: "markers",
+      label: "Marker",
+      description: "Display 3D markers and shapes (visualization_msgs/Marker)",
+    },
+    {
+      value: "tf",
+      label: "TF",
+      description: "Display coordinate frame transforms (tf2_msgs/TFMessage)",
+    },
+    {
+      value: "robot_model",
+      label: "RobotModel",
+      description: "Display robot URDF model",
+    },
+    {
+      value: "grid",
+      label: "Grid",
+      description: "Display reference grid in fixed frame",
+    },
+    {
+      value: "axes",
+      label: "Axes",
+      description: "Display coordinate axes",
+    },
+    {
+      value: "laser_scan",
+      label: "LaserScan",
+      description: "Display 2D laser scan data (sensor_msgs/LaserScan)",
+    },
+    {
+      value: "occupancy_grid",
+      label: "Map",
+      description: "Display occupancy grid map (nav_msgs/OccupancyGrid)",
+    },
+    {
+      value: "path",
+      label: "Path",
+      description: "Display navigation path (nav_msgs/Path)",
+    },
+    {
+      value: "pose_array",
+      label: "PoseArray",
+      description: "Display array of poses (geometry_msgs/PoseArray)",
+    },
+    {
+      value: "pose",
+      label: "Pose",
+      description: "Display single pose (geometry_msgs/PoseStamped)",
+    },
+    {
+      value: "odometry",
+      label: "Odometry",
+      description: "Display odometry data (nav_msgs/Odometry)",
+    },
+    {
+      value: "image",
+      label: "Image",
+      description: "Display camera image (sensor_msgs/Image)",
+    },
+    {
+      value: "imu",
+      label: "IMU",
+      description: "Display IMU orientation (sensor_msgs/Imu)",
+    },
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-4xl font-extralight bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text text-transparent">
-            {t("rviz.title")}
-          </h1>
-          <p className="text-muted-foreground font-light mt-2">
-            {t("rviz.subtitle")}
-          </p>
+    <div className="h-screen flex flex-col bg-background">
+      {/* RViz-style Header */}
+      <div className="border-b border-border/50 bg-background/95 backdrop-blur-sm">
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Box className="h-6 w-6 text-primary" />
+              <h1 className="text-xl font-semibold">{t("rviz.title")}</h1>
+            </div>
+
+            {/* Global Status */}
+            <div className="flex items-center gap-2">
+              <div
+                className={`w-2 h-2 rounded-full ${
+                  globalStatus === "ok"
+                    ? "bg-green-400"
+                    : globalStatus === "warn"
+                      ? "bg-yellow-400"
+                      : "bg-red-400"
+                }`}
+              />
+              <Badge
+                variant={isConnected ? "default" : "secondary"}
+                className="text-xs"
+              >
+                {isConnected ? "Connected" : "Disconnected"}
+              </Badge>
+            </div>
+          </div>
+
+          {/* Top Controls */}
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsPlaying(!isPlaying)}
+              className="gap-2"
+            >
+              {isPlaying ? (
+                <Pause className="h-4 w-4" />
+              ) : (
+                <Play className="h-4 w-4" />
+              )}
+              {isPlaying ? "Pause" : "Play"}
+            </Button>
+
+            <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Global Options</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label>Fixed Frame</Label>
+                    <Input
+                      value={fixedFrame}
+                      onChange={(e) => setFixedFrame(e.target.value)}
+                      placeholder="map"
+                    />
+                  </div>
+                  <div>
+                    <Label>Target Frame</Label>
+                    <Input
+                      value={targetFrame}
+                      onChange={(e) => setTargetFrame(e.target.value)}
+                      placeholder="base_link"
+                    />
+                  </div>
+                  <div>
+                    <Label>Frame Rate: {fps} Hz</Label>
+                    <Slider
+                      value={[fps]}
+                      onValueChange={([value]) => setFps(value)}
+                      min={1}
+                      max={60}
+                      step={1}
+                      className="mt-2"
+                    />
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left Panel - Displays */}
+        <div className="w-80 border-r border-border/50 bg-background/50 backdrop-blur-sm flex flex-col">
+          {/* Displays Header */}
+          <div className="border-b border-border/50 p-3">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-sm">Displays</h3>
+              <Dialog
+                open={isAddDisplayOpen}
+                onOpenChange={setIsAddDisplayOpen}
+              >
+                <DialogTrigger asChild>
+                  <Button size="sm" className="h-7">
+                    <Plus className="h-3 w-3 mr-1" />
+                    Add
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>Add Display</DialogTitle>
+                    <DialogDescription>
+                      Choose a display type and topic to visualize ROS data
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Display Types */}
+                    <div className="space-y-3">
+                      <Label>Display Type</Label>
+                      <ScrollArea className="h-60 border rounded-md">
+                        <div className="p-2">
+                          {displayTypeOptions.map((option) => (
+                            <div
+                              key={option.value}
+                              className={`p-2 rounded cursor-pointer hover:bg-accent ${
+                                newDisplayType === option.value
+                                  ? "bg-primary/10 border border-primary"
+                                  : ""
+                              }`}
+                              onClick={() =>
+                                setNewDisplayType(
+                                  option.value as Display["type"],
+                                )
+                              }
+                            >
+                              <div className="font-medium text-sm">
+                                {option.label}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                {option.description}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </ScrollArea>
+                    </div>
+
+                    {/* Topics */}
+                    <div className="space-y-3">
+                      <Label>Available Topics</Label>
+                      <Input
+                        placeholder="Filter topics..."
+                        value={topicFilter}
+                        onChange={(e) => setTopicFilter(e.target.value)}
+                        className="h-8"
+                      />
+                      <ScrollArea className="h-52 border rounded-md">
+                        <div className="p-2">
+                          {filteredTopics.map((topic) => (
+                            <div
+                              key={topic.name}
+                              className={`p-2 rounded cursor-pointer hover:bg-accent ${
+                                newDisplayTopic === topic.name
+                                  ? "bg-primary/10 border border-primary"
+                                  : ""
+                              }`}
+                              onClick={() => {
+                                setNewDisplayTopic(topic.name);
+                                if (!newDisplayName) {
+                                  setNewDisplayName(
+                                    topic.name.replace("/", ""),
+                                  );
+                                }
+                              }}
+                            >
+                              <div className="font-medium text-sm">
+                                {topic.name}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                {topic.type}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                {topic.frequency > 0
+                                  ? `${topic.frequency} Hz`
+                                  : "Latched"}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </ScrollArea>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div>
+                      <Label>Display Name</Label>
+                      <Input
+                        value={newDisplayName}
+                        onChange={(e) => setNewDisplayName(e.target.value)}
+                        placeholder="Enter display name"
+                      />
+                    </div>
+                  </div>
+
+                  <DialogFooter>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsAddDisplayOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={addDisplay}
+                      disabled={!newDisplayName || !newDisplayTopic}
+                    >
+                      OK
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
+
+          {/* Displays Tree */}
+          <ScrollArea className="flex-1">
+            <div className="p-2">
+              {displayCategories.map((category) => (
+                <div key={category.name} className="mb-2">
+                  <div
+                    className="flex items-center gap-2 p-2 hover:bg-accent/50 rounded cursor-pointer"
+                    onClick={() => {
+                      setDisplayCategories((prev) =>
+                        prev.map((cat) =>
+                          cat.name === category.name
+                            ? { ...cat, expanded: !cat.expanded }
+                            : cat,
+                        ),
+                      );
+                    }}
+                  >
+                    {category.expanded ? (
+                      <ChevronDown className="h-4 w-4" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4" />
+                    )}
+                    {category.expanded ? (
+                      <FolderOpen className="h-4 w-4 text-blue-500" />
+                    ) : (
+                      <Folder className="h-4 w-4 text-blue-500" />
+                    )}
+                    <span className="text-sm font-medium">{category.name}</span>
+                    <span className="text-xs text-muted-foreground">
+                      ({category.displays.length})
+                    </span>
+                  </div>
+
+                  {category.expanded && (
+                    <div className="ml-6 space-y-1">
+                      {category.displays.map((display) => (
+                        <div
+                          key={display.id}
+                          className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-colors ${
+                            selectedDisplay?.id === display.id
+                              ? "bg-primary/10 border border-primary/20"
+                              : "hover:bg-accent/50"
+                          }`}
+                          onClick={() => setSelectedDisplay(display)}
+                        >
+                          <Switch
+                            checked={display.enabled}
+                            onCheckedChange={() => toggleDisplay(display.id)}
+                            size="sm"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium truncate">
+                                {display.name}
+                              </span>
+                              {display.status === "ok" && (
+                                <CheckCircle className="h-3 w-3 text-green-500" />
+                              )}
+                              {display.status === "warn" && (
+                                <AlertCircle className="h-3 w-3 text-yellow-500" />
+                              )}
+                              {display.status === "error" && (
+                                <AlertCircle className="h-3 w-3 text-red-500" />
+                              )}
+                            </div>
+                            <div className="text-xs text-muted-foreground truncate">
+                              {display.topic || display.type}
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeDisplay(display.id);
+                            }}
+                            className="h-6 w-6 p-0 opacity-50 hover:opacity-100"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ))}
+
+                      {/* Show unassigned displays */}
+                      {displays
+                        .filter(
+                          (d) =>
+                            !category.displays.some((cd) => cd.id === d.id),
+                        )
+                        .filter((d) => {
+                          if (category.name === "Built-in")
+                            return ["grid", "axes"].includes(d.type);
+                          if (category.name === "TF") return d.type === "tf";
+                          if (category.name === "Navigation")
+                            return [
+                              "path",
+                              "pose",
+                              "pose_array",
+                              "occupancy_grid",
+                            ].includes(d.type);
+                          if (category.name === "Sensors")
+                            return [
+                              "laser_scan",
+                              "pointcloud",
+                              "imu",
+                              "image",
+                            ].includes(d.type);
+                          if (category.name === "Robot")
+                            return ["robot_model", "joint_states"].includes(
+                              d.type,
+                            );
+                          if (category.name === "Visualization")
+                            return ["markers"].includes(d.type);
+                          return false;
+                        })
+                        .map((display) => (
+                          <div
+                            key={display.id}
+                            className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-colors ${
+                              selectedDisplay?.id === display.id
+                                ? "bg-primary/10 border border-primary/20"
+                                : "hover:bg-accent/50"
+                            }`}
+                            onClick={() => setSelectedDisplay(display)}
+                          >
+                            <Switch
+                              checked={display.enabled}
+                              onCheckedChange={() => toggleDisplay(display.id)}
+                              size="sm"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-medium truncate">
+                                  {display.name}
+                                </span>
+                                {display.status === "ok" && (
+                                  <CheckCircle className="h-3 w-3 text-green-500" />
+                                )}
+                                {display.status === "warn" && (
+                                  <AlertCircle className="h-3 w-3 text-yellow-500" />
+                                )}
+                                {display.status === "error" && (
+                                  <AlertCircle className="h-3 w-3 text-red-500" />
+                                )}
+                              </div>
+                              <div className="text-xs text-muted-foreground truncate">
+                                {display.topic || display.type}
+                              </div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                removeDisplay(display.id);
+                              }}
+                              className="h-6 w-6 p-0 opacity-50 hover:opacity-100"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Badge
-            variant={isConnected ? "default" : "secondary"}
-            className="gap-2"
-          >
-            <div
-              className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-400" : "bg-gray-400"}`}
-            />
-            {isConnected ? t("common.connected") : t("common.disconnected")}
-          </Badge>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsPlaying(!isPlaying)}
-            className="gap-2"
-          >
-            {isPlaying ? (
-              <Pause className="h-4 w-4" />
-            ) : (
-              <Play className="h-4 w-4" />
-            )}
-            {isPlaying ? t("common.pause") : t("common.start")}
-          </Button>
-
-          <Dialog open={isAddDisplayOpen} onOpenChange={setIsAddDisplayOpen}>
-            <DialogTrigger asChild>
-              <Button className="gap-2">
-                <Plus className="h-4 w-4" />
-                {t("rviz.addDisplay")}
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>{t("rviz.addNewDisplay")}</DialogTitle>
-                <DialogDescription>
-                  {t("rviz.addDisplayDescription")}
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="displayName">{t("rviz.displayName")}</Label>
-                  <Input
-                    id="displayName"
-                    value={newDisplayName}
-                    onChange={(e) => setNewDisplayName(e.target.value)}
-                    placeholder={t("rviz.enterDisplayName")}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="displayType">{t("rviz.displayType")}</Label>
-                  <Select
-                    value={newDisplayType}
-                    onValueChange={(value) =>
-                      setNewDisplayType(value as Display["type"])
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {displayTypeOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="displayTopic">{t("rviz.topic")}</Label>
-                  <Select
-                    value={newDisplayTopic}
-                    onValueChange={setNewDisplayTopic}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t("rviz.selectTopic")} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableTopics.map((topic) => (
-                        <SelectItem key={topic} value={topic}>
-                          {topic}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <DialogFooter>
+        {/* Main 3D Viewer */}
+        <div className="flex-1 flex flex-col">
+          {/* Viewer Controls */}
+          <div className="border-b border-border/50 p-2 bg-background/50">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={resetCamera}>
+                  <RotateCcw className="h-4 w-4" />
+                </Button>
                 <Button
                   variant="outline"
-                  onClick={() => setIsAddDisplayOpen(false)}
+                  size="sm"
+                  onClick={() =>
+                    setCameraPosition((prev) => ({ ...prev, z: prev.z * 0.8 }))
+                  }
                 >
-                  {t("common.cancel")}
+                  <ZoomIn className="h-4 w-4" />
                 </Button>
                 <Button
-                  onClick={addDisplay}
-                  disabled={!newDisplayName || !newDisplayTopic}
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setCameraPosition((prev) => ({ ...prev, z: prev.z * 1.2 }))
+                  }
                 >
-                  {t("common.add")}
+                  <ZoomOut className="h-4 w-4" />
                 </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
+                <Separator orientation="vertical" className="h-6" />
+                <span className="text-sm text-muted-foreground">
+                  Fixed Frame: {fixedFrame}
+                </span>
+              </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Displays Panel */}
-        <Card className="lg:col-span-1 glass-effect">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Eye className="h-5 w-5" />
-              {t("rviz.displays")}
-            </CardTitle>
-            <CardDescription>{t("rviz.manageDisplays")}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ScrollArea className="h-[500px]">
-              <div className="space-y-2">
-                {displays.map((display) => (
-                  <div
-                    key={display.id}
-                    className={`p-3 rounded-lg border cursor-pointer transition-all duration-200 hover:bg-accent/50 ${
-                      selectedDisplay?.id === display.id
-                        ? "border-primary bg-primary/10"
-                        : "border-border"
-                    }`}
-                    onClick={() => setSelectedDisplay(display)}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>FPS: {fps}</span>
+                <div
+                  className={`w-2 h-2 rounded-full ${isPlaying ? "bg-green-400" : "bg-red-400"}`}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 3D Canvas */}
+          <div className="flex-1 relative bg-gray-900">
+            <canvas
+              ref={canvasRef}
+              width={800}
+              height={600}
+              className="w-full h-full cursor-move"
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onWheel={handleWheel}
+            />
+
+            {/* View Info Overlay */}
+            <div className="absolute bottom-4 left-4 bg-black/80 text-white p-2 rounded text-xs">
+              <div>
+                Camera: ({cameraPosition.x.toFixed(1)},{" "}
+                {cameraPosition.y.toFixed(1)}, {cameraPosition.z.toFixed(1)})
+              </div>
+              <div>
+                Rotation: ({cameraPosition.rotX.toFixed(0)}°,{" "}
+                {cameraPosition.rotY.toFixed(0)}°)
+              </div>
+              <div>Zoom: {((1 / cameraPosition.z) * 10).toFixed(1)}x</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Panel - Properties */}
+        {selectedDisplay && (
+          <div className="w-80 border-l border-border/50 bg-background/50 backdrop-blur-sm flex flex-col">
+            <div className="border-b border-border/50 p-3">
+              <h3 className="font-semibold text-sm">Properties</h3>
+              <p className="text-xs text-muted-foreground">
+                {selectedDisplay.name}
+              </p>
+            </div>
+
+            <ScrollArea className="flex-1 p-3">
+              <div className="space-y-4">
+                {/* Status */}
+                <div className="space-y-2">
+                  <Label className="text-xs font-semibold">Status</Label>
+                  <div className="flex items-center gap-2">
+                    {selectedDisplay.status === "ok" && (
+                      <>
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                        <span className="text-sm">OK</span>
+                      </>
+                    )}
+                    {selectedDisplay.status === "warn" && (
+                      <>
+                        <AlertCircle className="h-4 w-4 text-yellow-500" />
+                        <span className="text-sm">Warning</span>
+                      </>
+                    )}
+                    {selectedDisplay.status === "error" && (
+                      <>
+                        <AlertCircle className="h-4 w-4 text-red-500" />
+                        <span className="text-sm">Error</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Basic Properties */}
+                <div className="space-y-3">
+                  <div>
+                    <Label className="text-xs">Display Name</Label>
+                    <Input
+                      value={selectedDisplay.name}
+                      onChange={(e) =>
+                        setDisplays((prev) =>
+                          prev.map((d) =>
+                            d.id === selectedDisplay.id
+                              ? { ...d, name: e.target.value }
+                              : d,
+                          ),
+                        )
+                      }
+                      className="h-8 text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <Label className="text-xs">Topic</Label>
+                    <Select
+                      value={selectedDisplay.topic}
+                      onValueChange={(value) =>
+                        setDisplays((prev) =>
+                          prev.map((d) =>
+                            d.id === selectedDisplay.id
+                              ? { ...d, topic: value }
+                              : d,
+                          ),
+                        )
+                      }
+                    >
+                      <SelectTrigger className="h-8 text-sm">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableTopics.map((topic) => (
+                          <SelectItem key={topic.name} value={topic.name}>
+                            <div>
+                              <div className="font-medium">{topic.name}</div>
+                              <div className="text-xs text-muted-foreground">
+                                {topic.type}
+                              </div>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {selectedDisplay.topic && (
+                    <div className="text-xs text-muted-foreground space-y-1">
+                      <div>Type: {selectedDisplay.messageType}</div>
+                      <div>
+                        Rate:{" "}
+                        {selectedDisplay.frequency > 0
+                          ? `${selectedDisplay.frequency} Hz`
+                          : "Latched"}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <Separator />
+
+                {/* Visual Properties */}
+                <div className="space-y-3">
+                  <Label className="text-xs font-semibold">Visual</Label>
+
+                  <div>
+                    <Label className="text-xs">Color</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        type="color"
+                        value={selectedDisplay.color}
+                        onChange={(e) =>
+                          setDisplays((prev) =>
+                            prev.map((d) =>
+                              d.id === selectedDisplay.id
+                                ? { ...d, color: e.target.value }
+                                : d,
+                            ),
+                          )
+                        }
+                        className="w-12 h-8 p-1"
+                      />
+                      <Input
+                        value={selectedDisplay.color}
+                        onChange={(e) =>
+                          setDisplays((prev) =>
+                            prev.map((d) =>
+                              d.id === selectedDisplay.id
+                                ? { ...d, color: e.target.value }
+                                : d,
+                            ),
+                          )
+                        }
+                        className="flex-1 h-8 text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-xs">
+                      Alpha: {(selectedDisplay.alpha * 100).toFixed(0)}%
+                    </Label>
+                    <Slider
+                      value={[selectedDisplay.alpha]}
+                      onValueChange={([value]) =>
+                        setDisplays((prev) =>
+                          prev.map((d) =>
+                            d.id === selectedDisplay.id
+                              ? { ...d, alpha: value }
+                              : d,
+                          ),
+                        )
+                      }
+                      min={0}
+                      max={1}
+                      step={0.01}
+                      className="mt-1"
+                    />
+                  </div>
+
+                  <div>
+                    <Label className="text-xs">
+                      Size: {selectedDisplay.size.toFixed(2)}
+                    </Label>
+                    <Slider
+                      value={[selectedDisplay.size]}
+                      onValueChange={([value]) =>
+                        setDisplays((prev) =>
+                          prev.map((d) =>
+                            d.id === selectedDisplay.id
+                              ? { ...d, size: value }
+                              : d,
+                          ),
+                        )
+                      }
+                      min={0.1}
+                      max={5}
+                      step={0.1}
+                      className="mt-1"
+                    />
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Frame */}
+                <div className="space-y-3">
+                  <Label className="text-xs font-semibold">Transform</Label>
+
+                  <div>
+                    <Label className="text-xs">Reference Frame</Label>
+                    <Input
+                      value={selectedDisplay.frame}
+                      onChange={(e) =>
+                        setDisplays((prev) =>
+                          prev.map((d) =>
+                            d.id === selectedDisplay.id
+                              ? { ...d, frame: e.target.value }
+                              : d,
+                          ),
+                        )
+                      }
+                      className="h-8 text-sm"
+                      placeholder="map"
+                    />
+                  </div>
+
+                  <div>
+                    <Label className="text-xs">Queue Size</Label>
+                    <Input
+                      type="number"
+                      value={selectedDisplay.queueSize}
+                      onChange={(e) =>
+                        setDisplays((prev) =>
+                          prev.map((d) =>
+                            d.id === selectedDisplay.id
+                              ? {
+                                  ...d,
+                                  queueSize: parseInt(e.target.value) || 1,
+                                }
+                              : d,
+                          ),
+                        )
+                      }
+                      className="h-8 text-sm"
+                      min="1"
+                      max="1000"
+                    />
+                  </div>
+                </div>
+
+                {/* Type-specific settings */}
+                {selectedDisplay.type === "grid" && (
+                  <>
+                    <Separator />
+                    <div className="space-y-3">
+                      <Label className="text-xs font-semibold">
+                        Grid Settings
+                      </Label>
+
+                      <div>
+                        <Label className="text-xs">Cell Count</Label>
+                        <Input
+                          type="number"
+                          value={selectedDisplay.settings.cellCount || 10}
+                          onChange={(e) =>
+                            setDisplays((prev) =>
+                              prev.map((d) =>
+                                d.id === selectedDisplay.id
+                                  ? {
+                                      ...d,
+                                      settings: {
+                                        ...d.settings,
+                                        cellCount:
+                                          parseInt(e.target.value) || 10,
+                                      },
+                                    }
+                                  : d,
+                              ),
+                            )
+                          }
+                          className="h-8 text-sm"
+                          min="1"
+                          max="100"
+                        />
+                      </div>
+
+                      <div>
+                        <Label className="text-xs">Cell Size</Label>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          value={selectedDisplay.settings.cellSize || 1}
+                          onChange={(e) =>
+                            setDisplays((prev) =>
+                              prev.map((d) =>
+                                d.id === selectedDisplay.id
+                                  ? {
+                                      ...d,
+                                      settings: {
+                                        ...d.settings,
+                                        cellSize:
+                                          parseFloat(e.target.value) || 1,
+                                      },
+                                    }
+                                  : d,
+                              ),
+                            )
+                          }
+                          className="h-8 text-sm"
+                          min="0.1"
+                          max="10"
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {selectedDisplay.type === "tf" && (
+                  <>
+                    <Separator />
+                    <div className="space-y-3">
+                      <Label className="text-xs font-semibold">
+                        TF Settings
+                      </Label>
+
+                      <div className="flex items-center justify-between">
+                        <Label className="text-xs">Show Frame Names</Label>
                         <Switch
-                          checked={display.enabled}
-                          onCheckedChange={() => toggleDisplay(display.id)}
+                          checked={selectedDisplay.settings.showNames || true}
+                          onCheckedChange={(checked) =>
+                            setDisplays((prev) =>
+                              prev.map((d) =>
+                                d.id === selectedDisplay.id
+                                  ? {
+                                      ...d,
+                                      settings: {
+                                        ...d.settings,
+                                        showNames: checked,
+                                      },
+                                    }
+                                  : d,
+                              ),
+                            )
+                          }
                           size="sm"
                         />
-                        <span className="text-sm font-medium">
-                          {display.name}
-                        </span>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeDisplay(display.id);
-                        }}
-                        className="h-6 w-6 p-0"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                    <div className="text-xs text-muted-foreground space-y-1">
-                      <div>Type: {display.type}</div>
-                      <div>Topic: {display.topic || "N/A"}</div>
-                      <div className="flex items-center gap-2">
-                        <div
-                          className="w-3 h-3 rounded border"
-                          style={{ backgroundColor: display.color }}
+
+                      <div className="flex items-center justify-between">
+                        <Label className="text-xs">Show Axes</Label>
+                        <Switch
+                          checked={selectedDisplay.settings.showAxes || true}
+                          onCheckedChange={(checked) =>
+                            setDisplays((prev) =>
+                              prev.map((d) =>
+                                d.id === selectedDisplay.id
+                                  ? {
+                                      ...d,
+                                      settings: {
+                                        ...d.settings,
+                                        showAxes: checked,
+                                      },
+                                    }
+                                  : d,
+                              ),
+                            )
+                          }
+                          size="sm"
                         />
-                        Alpha: {(display.alpha * 100).toFixed(0)}%
+                      </div>
+
+                      <div>
+                        <Label className="text-xs">Frame Timeout (s)</Label>
+                        <Input
+                          type="number"
+                          value={selectedDisplay.settings.frameTimeout || 15}
+                          onChange={(e) =>
+                            setDisplays((prev) =>
+                              prev.map((d) =>
+                                d.id === selectedDisplay.id
+                                  ? {
+                                      ...d,
+                                      settings: {
+                                        ...d.settings,
+                                        frameTimeout:
+                                          parseFloat(e.target.value) || 15,
+                                      },
+                                    }
+                                  : d,
+                              ),
+                            )
+                          }
+                          className="h-8 text-sm"
+                          min="0.1"
+                          max="60"
+                          step="0.1"
+                        />
                       </div>
                     </div>
-                  </div>
-                ))}
+                  </>
+                )}
               </div>
             </ScrollArea>
-          </CardContent>
-        </Card>
-
-        {/* 3D Viewer */}
-        <Card className="lg:col-span-3 glass-effect">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <Box className="h-5 w-5" />
-                  {t("rviz.viewer3D")}
-                </CardTitle>
-                <CardDescription>
-                  {t("rviz.interactiveVisualization")}
-                </CardDescription>
-              </div>
-
-              <div className="flex items-center gap-2">
-                {/* View Controls */}
-                <div className="flex items-center gap-1 bg-background/50 rounded-lg p-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() =>
-                      setCameraPosition((prev) => ({
-                        ...prev,
-                        z: prev.z * 0.8,
-                      }))
-                    }
-                  >
-                    <ZoomIn className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() =>
-                      setCameraPosition((prev) => ({
-                        ...prev,
-                        z: prev.z * 1.2,
-                      }))
-                    }
-                  >
-                    <ZoomOut className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={resetCamera}>
-                    <RotateCcw className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setIsFullscreen(!isFullscreen)}
-                  >
-                    {isFullscreen ? (
-                      <Minimize className="h-4 w-4" />
-                    ) : (
-                      <Maximize className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-
-                {/* Settings */}
-                <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="ghost" size="sm">
-                      <Settings className="h-4 w-4" />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>{t("rviz.viewSettings")}</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <Label>{t("rviz.showGrid")}</Label>
-                          <Switch
-                            checked={viewSettings.gridEnabled}
-                            onCheckedChange={(checked) =>
-                              setViewSettings((prev) => ({
-                                ...prev,
-                                gridEnabled: checked,
-                              }))
-                            }
-                          />
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <Label>{t("rviz.showAxes")}</Label>
-                          <Switch
-                            checked={viewSettings.axesEnabled}
-                            onCheckedChange={(checked) =>
-                              setViewSettings((prev) => ({
-                                ...prev,
-                                axesEnabled: checked,
-                              }))
-                            }
-                          />
-                        </div>
-                      </div>
-
-                      <Separator />
-
-                      <div className="space-y-3">
-                        <div>
-                          <Label>{t("rviz.backgroundColor")}</Label>
-                          <Input
-                            type="color"
-                            value={viewSettings.backgroundColor}
-                            onChange={(e) =>
-                              setViewSettings((prev) => ({
-                                ...prev,
-                                backgroundColor: e.target.value,
-                              }))
-                            }
-                            className="mt-1"
-                          />
-                        </div>
-                        <div>
-                          <Label>
-                            {t("rviz.gridSize")}: {viewSettings.gridSize}
-                          </Label>
-                          <Slider
-                            value={[viewSettings.gridSize]}
-                            onValueChange={([value]) =>
-                              setViewSettings((prev) => ({
-                                ...prev,
-                                gridSize: value,
-                              }))
-                            }
-                            min={5}
-                            max={50}
-                            step={5}
-                            className="mt-2"
-                          />
-                        </div>
-                        <div>
-                          <Label>
-                            {t("rviz.fps")}: {fps}
-                          </Label>
-                          <Slider
-                            value={[fps]}
-                            onValueChange={([value]) => setFps(value)}
-                            min={1}
-                            max={60}
-                            step={1}
-                            className="mt-2"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div
-              className={`relative bg-black rounded-lg overflow-hidden ${isFullscreen ? "fixed inset-4 z-50" : ""}`}
-            >
-              <canvas
-                ref={canvasRef}
-                width={isFullscreen ? window.innerWidth - 32 : 800}
-                height={isFullscreen ? window.innerHeight - 200 : 600}
-                className="cursor-move border border-border/20"
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
-                onWheel={handleWheel}
-              />
-
-              {/* Status Overlay */}
-              <div className="absolute top-4 right-4 bg-background/90 backdrop-blur-sm rounded-lg p-3 border border-border/20">
-                <div className="text-sm space-y-1">
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={`w-2 h-2 rounded-full ${isPlaying ? "bg-green-400" : "bg-red-400"}`}
-                    />
-                    {isPlaying ? t("rviz.rendering") : t("rviz.paused")}
-                  </div>
-                  <div>
-                    {t("rviz.fps")}: {fps}
-                  </div>
-                  <div>
-                    {t("rviz.displays")}:{" "}
-                    {displays.filter((d) => d.enabled).length}/{displays.length}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        )}
       </div>
-
-      {/* Display Properties Panel */}
-      {selectedDisplay && (
-        <Card className="glass-effect">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Settings className="h-5 w-5" />
-              {t("rviz.displayProperties")}: {selectedDisplay.name}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-4">
-                <div>
-                  <Label>{t("rviz.displayName")}</Label>
-                  <Input
-                    value={selectedDisplay.name}
-                    onChange={(e) =>
-                      setDisplays((prev) =>
-                        prev.map((d) =>
-                          d.id === selectedDisplay.id
-                            ? { ...d, name: e.target.value }
-                            : d,
-                        ),
-                      )
-                    }
-                  />
-                </div>
-                <div>
-                  <Label>{t("rviz.topic")}</Label>
-                  <Select
-                    value={selectedDisplay.topic}
-                    onValueChange={(value) =>
-                      setDisplays((prev) =>
-                        prev.map((d) =>
-                          d.id === selectedDisplay.id
-                            ? { ...d, topic: value }
-                            : d,
-                        ),
-                      )
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableTopics.map((topic) => (
-                        <SelectItem key={topic} value={topic}>
-                          {topic}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <Label>{t("rviz.color")}</Label>
-                  <Input
-                    type="color"
-                    value={selectedDisplay.color}
-                    onChange={(e) =>
-                      setDisplays((prev) =>
-                        prev.map((d) =>
-                          d.id === selectedDisplay.id
-                            ? { ...d, color: e.target.value }
-                            : d,
-                        ),
-                      )
-                    }
-                  />
-                </div>
-                <div>
-                  <Label>
-                    {t("rviz.size")}: {selectedDisplay.size}
-                  </Label>
-                  <Slider
-                    value={[selectedDisplay.size]}
-                    onValueChange={([value]) =>
-                      setDisplays((prev) =>
-                        prev.map((d) =>
-                          d.id === selectedDisplay.id
-                            ? { ...d, size: value }
-                            : d,
-                        ),
-                      )
-                    }
-                    min={0.1}
-                    max={5}
-                    step={0.1}
-                    className="mt-2"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <Label>
-                    {t("rviz.alpha")}:{" "}
-                    {(selectedDisplay.alpha * 100).toFixed(0)}%
-                  </Label>
-                  <Slider
-                    value={[selectedDisplay.alpha]}
-                    onValueChange={([value]) =>
-                      setDisplays((prev) =>
-                        prev.map((d) =>
-                          d.id === selectedDisplay.id
-                            ? { ...d, alpha: value }
-                            : d,
-                        ),
-                      )
-                    }
-                    min={0}
-                    max={1}
-                    step={0.1}
-                    className="mt-2"
-                  />
-                </div>
-                <div>
-                  <Label>{t("rviz.frame")}</Label>
-                  <Input
-                    value={selectedDisplay.frame}
-                    onChange={(e) =>
-                      setDisplays((prev) =>
-                        prev.map((d) =>
-                          d.id === selectedDisplay.id
-                            ? { ...d, frame: e.target.value }
-                            : d,
-                        ),
-                      )
-                    }
-                    placeholder="map"
-                  />
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 };
