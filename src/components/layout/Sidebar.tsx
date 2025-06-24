@@ -163,6 +163,14 @@ const rosItems = [
     bgColor: "bg-blue-50 dark:bg-blue-950/30",
   },
   {
+    titleKey: "nav.virtualRviz",
+    icon: Eye,
+    href: "/virtual-rviz",
+    badge: "3D",
+    color: "text-purple-600",
+    bgColor: "bg-purple-50 dark:bg-purple-950/30",
+  },
+  {
     titleKey: "nav.nodes",
     icon: Network,
     href: "/nodes",
