@@ -2,6 +2,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useROSIntegration } from "@/services/ROSIntegrationService";
+import { useToast } from "@/hooks/use-toast";
 import {
   Activity,
   Bell,
@@ -12,10 +14,17 @@ import {
   Clock,
   Cpu,
   HardDrive,
+  Cable,
+  CableIcon,
+  Link,
+  Unlink,
 } from "lucide-react";
 
 export function Header() {
   const { t } = useLanguage();
+  const { isConnected, connect, disconnect, connectionStatus } =
+    useROSIntegration();
+  const { toast } = useToast();
 
   // Mock ROS system status
   const systemStatus = {
@@ -27,6 +36,36 @@ export function Header() {
     cpu: "34%",
     memory: "67%",
     network: true,
+  };
+
+  // ROS Bridge connection handlers
+  const handleConnectRosBridge = async () => {
+    try {
+      await connect("ws://localhost:9090");
+      toast({
+        title: "ROS Bridge Connected",
+        description: "Successfully connected to ROS Bridge server",
+      });
+    } catch (error) {
+      toast({
+        title: "Connection Failed",
+        description: "Failed to connect to ROS Bridge server",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDisconnectRosBridge = async () => {
+    try {
+      await disconnect();
+      toast({
+        title: "ROS Bridge Disconnected",
+        description: "Disconnected from ROS Bridge server",
+        variant: "destructive",
+      });
+    } catch (error) {
+      console.error("Disconnect error:", error);
+    }
   };
 
   return (
@@ -88,6 +127,38 @@ export function Header() {
             <div className="flex items-center gap-2 text-sm">
               <HardDrive className="h-4 w-4 text-primary" />
               <span>MEM: {systemStatus.memory}</span>
+            </div>
+
+            {/* ROS Bridge Connection */}
+            <div className="flex items-center gap-2">
+              <div
+                className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}
+              />
+              <span className="text-xs text-muted-foreground">
+                ROS Bridge: {isConnected ? "Connected" : "Disconnected"}
+              </span>
+              <Button
+                variant={isConnected ? "destructive" : "default"}
+                size="sm"
+                onClick={
+                  isConnected
+                    ? handleDisconnectRosBridge
+                    : handleConnectRosBridge
+                }
+                className="h-6 px-2 text-xs ml-1"
+              >
+                {isConnected ? (
+                  <>
+                    <Unlink className="h-3 w-3 mr-1" />
+                    Disconnect
+                  </>
+                ) : (
+                  <>
+                    <Link className="h-3 w-3 mr-1" />
+                    Connect
+                  </>
+                )}
+              </Button>
             </div>
 
             <Separator orientation="vertical" className="h-8" />
