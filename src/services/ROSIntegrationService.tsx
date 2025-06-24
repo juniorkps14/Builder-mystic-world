@@ -136,6 +136,15 @@ export const ROSIntegrationProvider: React.FC<ROSIntegrationProviderProps> = ({
   const connect = async (): Promise<boolean> => {
     return new Promise((resolve) => {
       try {
+        // Validate URL format
+        if (!config.rosBridgeUrl || !config.rosBridgeUrl.startsWith("ws")) {
+          console.error("Invalid RosBridge URL:", config.rosBridgeUrl);
+          setConfig((prev) => ({ ...prev, isConnected: false }));
+          resolve(false);
+          return;
+        }
+
+        console.log("Attempting to connect to RosBridge:", config.rosBridgeUrl);
         const ws = new WebSocket(config.rosBridgeUrl);
 
         ws.onopen = () => {
@@ -157,26 +166,46 @@ export const ROSIntegrationProvider: React.FC<ROSIntegrationProviderProps> = ({
           }
         };
 
-        ws.onclose = () => {
-          console.log("ROS Bridge connection closed");
+        ws.onclose = (event) => {
+          console.log("ROS Bridge connection closed", {
+            code: event.code,
+            reason: event.reason,
+            wasClean: event.wasClean,
+          });
           setConfig((prev) => ({ ...prev, isConnected: false }));
           setWebsocket(null);
 
-          // Auto-reconnect
-          setTimeout(() => {
-            if (!config.isConnected) {
-              connect();
-            }
-          }, config.reconnectInterval);
+          // Auto-reconnect only if it wasn't a clean close
+          if (!event.wasClean && event.code !== 1000) {
+            console.log(
+              `Attempting reconnection in ${config.reconnectInterval}ms...`,
+            );
+            setTimeout(() => {
+              if (!config.isConnected) {
+                console.log("Reconnecting to ROS Bridge...");
+                connect();
+              }
+            }, config.reconnectInterval);
+          }
         };
 
-        ws.onerror = (error) => {
-          console.error("ROS Bridge connection error:", error);
+        ws.onerror = (event) => {
+          const errorMessage = `WebSocket connection failed to ${config.rosBridgeUrl}. Please check if RosBridge server is running.`;
+          console.error("ROS Bridge connection error:", errorMessage);
+          console.error("Error event details:", event);
           setConfig((prev) => ({ ...prev, isConnected: false }));
           resolve(false);
         };
       } catch (error) {
-        console.error("Failed to create WebSocket connection:", error);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        console.error("Failed to create WebSocket connection:", {
+          url: config.rosBridgeUrl,
+          error: errorMessage,
+          suggestion:
+            "Check if RosBridge server is running on the specified URL",
+        });
+        setConfig((prev) => ({ ...prev, isConnected: false }));
         resolve(false);
       }
     });
@@ -219,9 +248,22 @@ export const ROSIntegrationProvider: React.FC<ROSIntegrationProviderProps> = ({
       setTimeout(() => {
         if (pendingCalls.has(id)) {
           pendingCalls.delete(id);
-          reject(new Error("Request timeout"));
+          reject(
+            new Error(
+              `Request timeout for message: ${JSON.stringify(message)}`,
+            ),
+          );
         }
       }, 10000);
+
+      // Handle WebSocket errors
+      if (ws.readyState !== WebSocket.OPEN) {
+        pendingCalls.delete(id);
+        reject(
+          new Error(`WebSocket not connected. Current state: ${ws.readyState}`),
+        );
+        return;
+      }
     });
   };
 
