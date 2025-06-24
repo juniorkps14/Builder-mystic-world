@@ -17,6 +17,7 @@ import IOConfiguration from "./pages/IOConfiguration";
 import FeatureManagement from "./pages/FeatureManagement";
 import TFTree from "./pages/TFTree";
 import MapViewer from "./pages/MapViewer";
+import VirtualRviz from "./pages/VirtualRviz";
 import Sensors from "./pages/Sensors";
 import System from "./pages/System";
 import Cameras from "./pages/Cameras";
@@ -72,6 +73,7 @@ const App = () => (
                         />
                         <Route path="/tf-tree" element={<TFTree />} />
                         <Route path="/map-viewer" element={<MapViewer />} />
+                        <Route path="/virtual-rviz" element={<VirtualRviz />} />
                         <Route path="/cameras" element={<Cameras />} />
                         <Route path="/sensors" element={<Sensors />} />
                         <Route path="/navigation" element={<Navigation />} />
