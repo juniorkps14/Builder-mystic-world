@@ -1,14 +1,21 @@
-import { useState, useRef, useEffect, useCallback } from "react";
-import { Card } from "@/components/ui/card";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useROSIntegration } from "@/services/ROSIntegrationService";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Slider } from "@/components/ui/slider";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -17,1061 +24,1113 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { useLanguage } from "@/contexts/LanguageContext";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
 import {
   Map,
-  Navigation,
+  Plus,
+  Download,
+  Upload,
+  Trash2,
+  Play,
+  Pause,
   RotateCcw,
   ZoomIn,
   ZoomOut,
-  Home,
-  Target,
+  Grid3x3,
+  Crosshair,
+  Navigation,
+  Save,
+  RefreshCw,
   MapPin,
-  Activity,
+  Target,
+  Settings,
   Eye,
   EyeOff,
-  Settings,
-  Download,
-  RefreshCw,
-  Layers,
-  Grid3X3,
-  Compass,
-  Camera,
-  Box,
-  Route,
-  Zap,
-  Wifi,
-  ChevronDown,
-  ChevronRight,
-  Plus,
-  Minus,
-  RotateCw,
-  Move3D,
-  Palette,
-  Monitor,
-  Save,
-  FolderOpen,
-  Play,
-  Pause,
-  SkipForward,
-  Volume2,
-  VolumeX,
+  Maximize,
+  Minimize,
 } from "lucide-react";
 
-interface DisplayItem {
+interface MapData {
   id: string;
   name: string;
-  type: string;
-  enabled: boolean;
-  topic?: string;
-  color?: string;
-  size?: number;
-  alpha?: number;
-  icon: any;
-  config?: Record<string, any>;
+  description: string;
+  created: Date;
+  lastModified: Date;
+  resolution: number; // meters per pixel
+  width: number; // pixels
+  height: number; // pixels
+  origin: { x: number; y: number; theta: number };
+  data: Uint8Array; // occupancy grid data (0-100, 255 = unknown)
+  size: number; // file size in bytes
 }
 
-interface ViewConfig {
-  zoom: number;
-  pan: { x: number; y: number };
-  rotation: number;
-  projection: "2D" | "3D" | "Orbit";
-  backgroundColor: string;
-  gridEnabled: boolean;
-  axisEnabled: boolean;
+interface RobotPosition {
+  x: number;
+  y: number;
+  theta: number;
+  timestamp: Date;
 }
 
-const RVizMapViewer = () => {
+interface MapSettings {
+  showGrid: boolean;
+  showRobot: boolean;
+  showGoal: boolean;
+  showTrajectory: boolean;
+  fps: number;
+  occupancyThreshold: number;
+  robotColor: string;
+  goalColor: string;
+  trajectoryColor: string;
+}
+
+const MapViewer: React.FC = () => {
   const { t } = useLanguage();
+  const { toast } = useToast();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [selectedDisplay, setSelectedDisplay] = useState<string | null>(null);
-  const [dragState, setDragState] = useState<{
-    isDragging: boolean;
-    lastX: number;
-    lastY: number;
-  }>({ isDragging: false, lastX: 0, lastY: 0 });
+  const [maps, setMaps] = useState<MapData[]>([]);
+  const [selectedMap, setSelectedMap] = useState<MapData | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [robotPosition, setRobotPosition] = useState<RobotPosition | null>(
+    null,
+  );
+  const [goalPosition, setGoalPosition] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+  const [trajectory, setTrajectory] = useState<Array<{ x: number; y: number }>>(
+    [],
+  );
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [lastMouse, setLastMouse] = useState({ x: 0, y: 0 });
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [newMapName, setNewMapName] = useState("");
+  const [newMapDescription, setNewMapDescription] = useState("");
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [refreshInterval, setRefreshInterval] = useState<NodeJS.Timeout | null>(
+    null,
+  );
 
-  // RViz-style Display Items
-  const [displays, setDisplays] = useState<DisplayItem[]>([
-    {
-      id: "map",
-      name: "Map",
-      type: "Map",
-      enabled: true,
-      topic: "/map",
-      alpha: 0.7,
-      icon: Map,
-      config: { colorScheme: "occupancy" },
-    },
-    {
-      id: "robot_model",
-      name: "Robot Model",
-      type: "RobotModel",
-      enabled: true,
-      alpha: 1.0,
-      icon: Box,
-      config: { urdfTopic: "/robot_description" },
-    },
-    {
-      id: "laser_scan",
-      name: "LaserScan",
-      type: "LaserScan",
-      enabled: true,
-      topic: "/scan",
-      color: "#ff0000",
-      size: 0.05,
-      icon: Target,
-      config: { style: "Points", decay: 0 },
-    },
-    {
-      id: "robot_path",
-      name: "Path",
-      type: "Path",
-      enabled: true,
-      topic: "/move_base/global_plan",
-      color: "#00ff00",
-      size: 0.02,
-      alpha: 0.8,
-      icon: Route,
-      config: { buffer: 1 },
-    },
-    {
-      id: "tf_frames",
-      name: "TF",
-      type: "TF",
-      enabled: false,
-      alpha: 1.0,
-      icon: Compass,
-      config: { showNames: true, showAxes: true, showArrows: true },
-    },
-    {
-      id: "camera",
-      name: "Camera",
-      type: "Camera",
-      enabled: false,
-      topic: "/camera/image_raw",
-      alpha: 1.0,
-      icon: Camera,
-      config: { imageTransport: "raw" },
-    },
-    {
-      id: "pointcloud",
-      name: "PointCloud2",
-      type: "PointCloud2",
-      enabled: false,
-      topic: "/velodyne_points",
-      color: "#ffffff",
-      size: 0.01,
-      alpha: 1.0,
-      icon: Grid3X3,
-      config: { style: "Points", colorTransformer: "Intensity" },
-    },
-    {
-      id: "markers",
-      name: "Interactive Markers",
-      type: "InteractiveMarkers",
-      enabled: false,
-      topic: "/interactive_markers",
-      alpha: 1.0,
-      icon: Zap,
-      config: {},
-    },
-    {
-      id: "costmap",
-      name: "Costmap",
-      type: "Costmap",
-      enabled: false,
-      topic: "/move_base/global_costmap/costmap",
-      alpha: 0.5,
-      icon: Layers,
-      config: { colorScheme: "costmap" },
-    },
-  ]);
-
-  // View Configuration
-  const [viewConfig, setViewConfig] = useState<ViewConfig>({
-    zoom: 100,
-    pan: { x: 0, y: 0 },
-    rotation: 0,
-    projection: "2D",
-    backgroundColor: "#1a1a1a",
-    gridEnabled: true,
-    axisEnabled: true,
+  const [settings, setSettings] = useState<MapSettings>({
+    showGrid: true,
+    showRobot: true,
+    showGoal: true,
+    showTrajectory: true,
+    fps: 10,
+    occupancyThreshold: 50,
+    robotColor: "#00ff00",
+    goalColor: "#ff0000",
+    trajectoryColor: "#0088ff",
   });
 
-  // Robot State for simulation
-  const [robotState, setRobotState] = useState({
-    position: { x: 2.34, y: 1.67, z: 0, roll: 0, pitch: 0, yaw: 0.45 },
-    velocity: {
-      linear: { x: 0.25, y: 0, z: 0 },
-      angular: { x: 0, y: 0, z: 0.1 },
-    },
-    joints: {
-      base_link: { x: 0, y: 0, z: 0, roll: 0, pitch: 0, yaw: 0 },
-      laser_link: { x: 0.2, y: 0, z: 0.15, roll: 0, pitch: 0, yaw: 0 },
-    },
-    laserScan: [] as Array<{ angle: number; range: number; intensity: number }>,
-  });
+  const { isConnected, subscribe, publish, callService, connectionStatus } =
+    useROSIntegration();
 
-  // Generate laser scan data
-  const generateLaserScan = useCallback(() => {
-    const scan = [];
-    for (let i = 0; i < 360; i += 2) {
-      const angle = (i * Math.PI) / 180;
-      const baseRange = 3 + Math.random() * 4;
-      const noise = (Math.random() - 0.5) * 0.2;
-      const range = Math.max(0.1, baseRange + noise);
-      const intensity = Math.random() * 100;
+  // Initialize sample maps
+  useEffect(() => {
+    const sampleMaps: MapData[] = [
+      {
+        id: "map_1",
+        name: "Ground Floor Layout",
+        description: "Main building ground floor map",
+        created: new Date("2024-01-15"),
+        lastModified: new Date("2024-01-20"),
+        resolution: 0.05,
+        width: 800,
+        height: 600,
+        origin: { x: -20, y: -15, theta: 0 },
+        data: new Uint8Array(800 * 600).fill(255),
+        size: 480000,
+      },
+      {
+        id: "map_2",
+        name: "Laboratory Map",
+        description: "Research laboratory detailed map",
+        created: new Date("2024-01-10"),
+        lastModified: new Date("2024-01-22"),
+        resolution: 0.02,
+        width: 1000,
+        height: 800,
+        origin: { x: -10, y: -8, theta: 0 },
+        data: new Uint8Array(1000 * 800).fill(255),
+        size: 800000,
+      },
+      {
+        id: "map_3",
+        name: "Warehouse Navigation",
+        description: "Warehouse floor navigation map",
+        created: new Date("2024-01-05"),
+        lastModified: new Date("2024-01-25"),
+        resolution: 0.1,
+        width: 1200,
+        height: 900,
+        origin: { x: -60, y: -45, theta: 0 },
+        data: new Uint8Array(1200 * 900).fill(255),
+        size: 1080000,
+      },
+    ];
 
-      scan.push({ angle, range, intensity });
+    // Generate sample occupancy data
+    sampleMaps.forEach((map) => {
+      for (let i = 0; i < map.data.length; i++) {
+        const x = i % map.width;
+        const y = Math.floor(i / map.width);
+
+        // Create walls around perimeter
+        if (x < 5 || x > map.width - 5 || y < 5 || y > map.height - 5) {
+          map.data[i] = 100; // occupied
+        }
+        // Create some internal obstacles
+        else if (
+          (x > 100 && x < 120 && y > 100 && y < 200) ||
+          (x > 200 && x < 220 && y > 50 && y < 150) ||
+          (x > 300 && x < 400 && y > 200 && y < 220)
+        ) {
+          map.data[i] = 100; // occupied
+        }
+        // Free space
+        else if (Math.random() > 0.95) {
+          map.data[i] = 100; // random obstacles
+        } else {
+          map.data[i] = 0; // free
+        }
+      }
+    });
+
+    setMaps(sampleMaps);
+    if (sampleMaps.length > 0) {
+      setSelectedMap(sampleMaps[0]);
     }
-    return scan;
   }, []);
 
-  // Initialize laser scan
+  // Subscribe to ROS topics for real-time data
   useEffect(() => {
-    setRobotState((prev) => ({
-      ...prev,
-      laserScan: generateLaserScan(),
-    }));
-  }, [generateLaserScan]);
+    if (!isConnected) return;
 
-  // World to Canvas coordinate transformation
-  const worldToCanvas = useCallback(
-    (x: number, y: number) => {
-      const canvas = canvasRef.current;
-      if (!canvas) return { x: 0, y: 0 };
-
-      const scale = viewConfig.zoom / 100;
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
-
-      return {
-        x: centerX + x * 20 * scale + viewConfig.pan.x,
-        y: centerY - y * 20 * scale + viewConfig.pan.y,
-      };
-    },
-    [viewConfig.zoom, viewConfig.pan],
-  );
-
-  // Draw functions
-  const drawGrid = useCallback(
-    (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
-      if (!viewConfig.gridEnabled) return;
-
-      ctx.save();
-      ctx.strokeStyle = "#333333";
-      ctx.lineWidth = 1;
-      ctx.setLineDash([2, 2]);
-
-      const scale = viewConfig.zoom / 100;
-      const gridSize = 20 * scale;
-      const offsetX = viewConfig.pan.x % gridSize;
-      const offsetY = viewConfig.pan.y % gridSize;
-
-      // Vertical lines
-      for (let x = offsetX; x < canvas.width; x += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
-        ctx.stroke();
-      }
-
-      // Horizontal lines
-      for (let y = offsetY; y < canvas.height; y += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
-      }
-
-      ctx.restore();
-    },
-    [viewConfig],
-  );
-
-  const drawAxis = useCallback(
-    (ctx: CanvasRenderingContext2D) => {
-      if (!viewConfig.axisEnabled) return;
-
-      ctx.save();
-      const origin = worldToCanvas(0, 0);
-      const scale = viewConfig.zoom / 100;
-      const axisLength = 50 * scale;
-
-      // X-axis (Red)
-      ctx.strokeStyle = "#ff0000";
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(origin.x, origin.y);
-      ctx.lineTo(origin.x + axisLength, origin.y);
-      ctx.stroke();
-
-      // Arrow head for X
-      ctx.fillStyle = "#ff0000";
-      ctx.beginPath();
-      ctx.moveTo(origin.x + axisLength, origin.y);
-      ctx.lineTo(origin.x + axisLength - 10, origin.y - 5);
-      ctx.lineTo(origin.x + axisLength - 10, origin.y + 5);
-      ctx.closePath();
-      ctx.fill();
-
-      // Y-axis (Green)
-      ctx.strokeStyle = "#00ff00";
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(origin.x, origin.y);
-      ctx.lineTo(origin.x, origin.y - axisLength);
-      ctx.stroke();
-
-      // Arrow head for Y
-      ctx.fillStyle = "#00ff00";
-      ctx.beginPath();
-      ctx.moveTo(origin.x, origin.y - axisLength);
-      ctx.lineTo(origin.x - 5, origin.y - axisLength + 10);
-      ctx.lineTo(origin.x + 5, origin.y - axisLength + 10);
-      ctx.closePath();
-      ctx.fill();
-
-      ctx.restore();
-    },
-    [viewConfig, worldToCanvas],
-  );
-
-  const drawRobotModel = useCallback(
-    (ctx: CanvasRenderingContext2D) => {
-      if (!displays.find((d) => d.id === "robot_model")?.enabled) return;
-
-      ctx.save();
-      const robotPos = worldToCanvas(
-        robotState.position.x,
-        robotState.position.y,
-      );
-      const scale = viewConfig.zoom / 100;
-
-      // Robot body (rectangle)
-      ctx.translate(robotPos.x, robotPos.y);
-      ctx.rotate(-robotState.position.yaw);
-
-      ctx.fillStyle = "#4a9eff";
-      ctx.strokeStyle = "#2563eb";
-      ctx.lineWidth = 2;
-      const robotWidth = 30 * scale;
-      const robotHeight = 20 * scale;
-
-      ctx.fillRect(-robotWidth / 2, -robotHeight / 2, robotWidth, robotHeight);
-      ctx.strokeRect(
-        -robotWidth / 2,
-        -robotHeight / 2,
-        robotWidth,
-        robotHeight,
-      );
-
-      // Direction arrow
-      ctx.fillStyle = "#ffffff";
-      ctx.beginPath();
-      ctx.moveTo(robotWidth / 2 - 5, 0);
-      ctx.lineTo(robotWidth / 2 - 15, -8);
-      ctx.lineTo(robotWidth / 2 - 15, 8);
-      ctx.closePath();
-      ctx.fill();
-
-      // Laser scanner
-      ctx.fillStyle = "#ff6b6b";
-      ctx.beginPath();
-      ctx.arc(robotWidth / 4, 0, 4 * scale, 0, 2 * Math.PI);
-      ctx.fill();
-
-      ctx.restore();
-    },
-    [displays, robotState, viewConfig, worldToCanvas],
-  );
-
-  const drawLaserScan = useCallback(
-    (ctx: CanvasRenderingContext2D) => {
-      const laserDisplay = displays.find((d) => d.id === "laser_scan");
-      if (!laserDisplay?.enabled) return;
-
-      ctx.save();
-      const robotPos = worldToCanvas(
-        robotState.position.x,
-        robotState.position.y,
-      );
-      const scale = viewConfig.zoom / 100;
-
-      ctx.globalAlpha = laserDisplay.alpha || 1;
-      ctx.fillStyle = laserDisplay.color || "#ff0000";
-
-      robotState.laserScan.forEach((point) => {
-        const x =
-          robotState.position.x +
-          point.range * Math.cos(point.angle + robotState.position.yaw);
-        const y =
-          robotState.position.y +
-          point.range * Math.sin(point.angle + robotState.position.yaw);
-        const screenPos = worldToCanvas(x, y);
-
-        const pointSize = (laserDisplay.size || 0.05) * 100 * scale;
-        ctx.beginPath();
-        ctx.arc(screenPos.x, screenPos.y, pointSize, 0, 2 * Math.PI);
-        ctx.fill();
+    const unsubscribePosition = subscribe("/amcl_pose", (message: any) => {
+      const pose = message.pose.pose;
+      setRobotPosition({
+        x: pose.position.x,
+        y: pose.position.y,
+        theta: Math.atan2(
+          2 *
+            (pose.orientation.w * pose.orientation.z +
+              pose.orientation.x * pose.orientation.y),
+          1 -
+            2 *
+              (pose.orientation.y * pose.orientation.y +
+                pose.orientation.z * pose.orientation.z),
+        ),
+        timestamp: new Date(),
       });
+    });
 
-      ctx.restore();
-    },
-    [displays, robotState, viewConfig, worldToCanvas],
-  );
+    const unsubscribeGoal = subscribe(
+      "/move_base_simple/goal",
+      (message: any) => {
+        const goal = message.pose;
+        setGoalPosition({
+          x: goal.position.x,
+          y: goal.position.y,
+        });
+      },
+    );
 
-  const drawPath = useCallback(
-    (ctx: CanvasRenderingContext2D) => {
-      const pathDisplay = displays.find((d) => d.id === "robot_path");
-      if (!pathDisplay?.enabled) return;
+    const unsubscribePath = subscribe(
+      "/move_base/DWAPlannerROS/global_plan",
+      (message: any) => {
+        const path = message.poses || [];
+        setTrajectory(
+          path.map((pose: any) => ({
+            x: pose.pose.position.x,
+            y: pose.pose.position.y,
+          })),
+        );
+      },
+    );
 
-      ctx.save();
-      ctx.strokeStyle = pathDisplay.color || "#00ff00";
-      ctx.lineWidth =
-        (pathDisplay.size || 0.02) * 100 * (viewConfig.zoom / 100);
-      ctx.globalAlpha = pathDisplay.alpha || 0.8;
+    return () => {
+      unsubscribePosition();
+      unsubscribeGoal();
+      unsubscribePath();
+    };
+  }, [isConnected, subscribe]);
 
-      // Example path
-      const path = [
-        { x: 0, y: 0 },
-        { x: 1, y: 1 },
-        { x: robotState.position.x, y: robotState.position.y },
-        { x: 5, y: 3 },
-        { x: 8, y: 2 },
-      ];
+  // FPS control
+  useEffect(() => {
+    if (refreshInterval) {
+      clearInterval(refreshInterval);
+    }
 
-      ctx.beginPath();
-      path.forEach((point, index) => {
-        const screenPos = worldToCanvas(point.x, point.y);
-        if (index === 0) {
-          ctx.moveTo(screenPos.x, screenPos.y);
-        } else {
-          ctx.lineTo(screenPos.x, screenPos.y);
-        }
-      });
-      ctx.stroke();
+    if (isPlaying && selectedMap) {
+      const interval = setInterval(() => {
+        drawMap();
+      }, 1000 / settings.fps);
+      setRefreshInterval(interval);
+    }
 
-      ctx.restore();
-    },
-    [displays, robotState, viewConfig, worldToCanvas],
-  );
+    return () => {
+      if (refreshInterval) {
+        clearInterval(refreshInterval);
+      }
+    };
+  }, [isPlaying, settings.fps, selectedMap, zoom, pan, settings]);
 
+  // Draw map on canvas
   const drawMap = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!selectedMap || !canvasRef.current) return;
 
+    const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     // Clear canvas
-    ctx.fillStyle = viewConfig.backgroundColor;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw grid
-    drawGrid(ctx, canvas);
+    // Apply transformations
+    ctx.save();
+    ctx.translate(pan.x, pan.y);
+    ctx.scale(zoom, zoom);
 
-    // Draw map (if enabled)
-    if (displays.find((d) => d.id === "map")?.enabled) {
-      ctx.save();
-      ctx.fillStyle = "rgba(100, 100, 100, 0.3)";
-      // Simulate occupancy grid
-      for (let i = 0; i < 20; i++) {
-        const x = Math.random() * 10 - 5;
-        const y = Math.random() * 10 - 5;
-        const pos = worldToCanvas(x, y);
-        ctx.fillRect(pos.x - 5, pos.y - 5, 10, 10);
+    // Draw occupancy grid
+    const imageData = ctx.createImageData(
+      selectedMap.width,
+      selectedMap.height,
+    );
+    for (let i = 0; i < selectedMap.data.length; i++) {
+      const value = selectedMap.data[i];
+      const pixelIndex = i * 4;
+
+      if (value === 255) {
+        // Unknown space - gray
+        imageData.data[pixelIndex] = 128;
+        imageData.data[pixelIndex + 1] = 128;
+        imageData.data[pixelIndex + 2] = 128;
+      } else if (value >= settings.occupancyThreshold) {
+        // Occupied space - black
+        imageData.data[pixelIndex] = 0;
+        imageData.data[pixelIndex + 1] = 0;
+        imageData.data[pixelIndex + 2] = 0;
+      } else {
+        // Free space - white
+        imageData.data[pixelIndex] = 255;
+        imageData.data[pixelIndex + 1] = 255;
+        imageData.data[pixelIndex + 2] = 255;
       }
-      ctx.restore();
+      imageData.data[pixelIndex + 3] = 255; // alpha
     }
 
-    // Draw displays in order
-    drawAxis(ctx);
-    drawPath(ctx);
-    drawLaserScan(ctx);
-    drawRobotModel(ctx);
+    ctx.putImageData(imageData, 0, 0);
+
+    // Draw grid
+    if (settings.showGrid) {
+      ctx.strokeStyle = "rgba(0, 0, 0, 0.1)";
+      ctx.lineWidth = 1 / zoom;
+      const gridSize = 20; // pixels
+
+      for (let x = 0; x < selectedMap.width; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, selectedMap.height);
+        ctx.stroke();
+      }
+
+      for (let y = 0; y < selectedMap.height; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(selectedMap.width, y);
+        ctx.stroke();
+      }
+    }
+
+    // Draw trajectory
+    if (settings.showTrajectory && trajectory.length > 1) {
+      ctx.strokeStyle = settings.trajectoryColor;
+      ctx.lineWidth = 2 / zoom;
+      ctx.beginPath();
+
+      trajectory.forEach((point, index) => {
+        const pixelX =
+          (point.x - selectedMap.origin.x) / selectedMap.resolution;
+        const pixelY =
+          selectedMap.height -
+          (point.y - selectedMap.origin.y) / selectedMap.resolution;
+
+        if (index === 0) {
+          ctx.moveTo(pixelX, pixelY);
+        } else {
+          ctx.lineTo(pixelX, pixelY);
+        }
+      });
+      ctx.stroke();
+    }
+
+    // Draw goal position
+    if (settings.showGoal && goalPosition) {
+      const goalPixelX =
+        (goalPosition.x - selectedMap.origin.x) / selectedMap.resolution;
+      const goalPixelY =
+        selectedMap.height -
+        (goalPosition.y - selectedMap.origin.y) / selectedMap.resolution;
+
+      ctx.fillStyle = settings.goalColor;
+      ctx.beginPath();
+      ctx.arc(goalPixelX, goalPixelY, 10 / zoom, 0, 2 * Math.PI);
+      ctx.fill();
+
+      // Goal marker
+      ctx.strokeStyle = settings.goalColor;
+      ctx.lineWidth = 2 / zoom;
+      ctx.beginPath();
+      ctx.moveTo(goalPixelX - 15 / zoom, goalPixelY);
+      ctx.lineTo(goalPixelX + 15 / zoom, goalPixelY);
+      ctx.moveTo(goalPixelX, goalPixelY - 15 / zoom);
+      ctx.lineTo(goalPixelX, goalPixelY + 15 / zoom);
+      ctx.stroke();
+    }
+
+    // Draw robot position
+    if (settings.showRobot && robotPosition) {
+      const robotPixelX =
+        (robotPosition.x - selectedMap.origin.x) / selectedMap.resolution;
+      const robotPixelY =
+        selectedMap.height -
+        (robotPosition.y - selectedMap.origin.y) / selectedMap.resolution;
+
+      ctx.fillStyle = settings.robotColor;
+      ctx.beginPath();
+      ctx.arc(robotPixelX, robotPixelY, 8 / zoom, 0, 2 * Math.PI);
+      ctx.fill();
+
+      // Robot orientation arrow
+      ctx.strokeStyle = settings.robotColor;
+      ctx.lineWidth = 3 / zoom;
+      ctx.beginPath();
+      const arrowLength = 20 / zoom;
+      const arrowEndX =
+        robotPixelX + Math.cos(robotPosition.theta) * arrowLength;
+      const arrowEndY =
+        robotPixelY - Math.sin(robotPosition.theta) * arrowLength;
+      ctx.moveTo(robotPixelX, robotPixelY);
+      ctx.lineTo(arrowEndX, arrowEndY);
+      ctx.stroke();
+
+      // Arrow head
+      const headLength = 8 / zoom;
+      const headAngle = Math.PI / 6;
+      ctx.beginPath();
+      ctx.moveTo(arrowEndX, arrowEndY);
+      ctx.lineTo(
+        arrowEndX - headLength * Math.cos(robotPosition.theta - headAngle),
+        arrowEndY + headLength * Math.sin(robotPosition.theta - headAngle),
+      );
+      ctx.moveTo(arrowEndX, arrowEndY);
+      ctx.lineTo(
+        arrowEndX - headLength * Math.cos(robotPosition.theta + headAngle),
+        arrowEndY + headLength * Math.sin(robotPosition.theta + headAngle),
+      );
+      ctx.stroke();
+    }
+
+    ctx.restore();
   }, [
-    viewConfig,
-    displays,
-    drawGrid,
-    drawAxis,
-    drawPath,
-    drawLaserScan,
-    drawRobotModel,
+    selectedMap,
+    zoom,
+    pan,
+    settings,
+    robotPosition,
+    goalPosition,
+    trajectory,
   ]);
 
-  // Mouse interaction handlers
-  const handleMouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
-    setDragState({
-      isDragging: true,
-      lastX: event.clientX,
-      lastY: event.clientY,
-    });
+  // Canvas mouse event handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setLastMouse({ x: e.clientX, y: e.clientY });
   };
 
-  const handleMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!dragState.isDragging) return;
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
 
-    const deltaX = event.clientX - dragState.lastX;
-    const deltaY = event.clientY - dragState.lastY;
+    const deltaX = e.clientX - lastMouse.x;
+    const deltaY = e.clientY - lastMouse.y;
 
-    setViewConfig((prev) => ({
-      ...prev,
-      pan: {
-        x: prev.pan.x + deltaX,
-        y: prev.pan.y + deltaY,
-      },
+    setPan((prev) => ({
+      x: prev.x + deltaX,
+      y: prev.y + deltaY,
     }));
 
-    setDragState({
-      isDragging: true,
-      lastX: event.clientX,
-      lastY: event.clientY,
-    });
+    setLastMouse({ x: e.clientX, y: e.clientY });
   };
 
   const handleMouseUp = () => {
-    setDragState((prev) => ({ ...prev, isDragging: false }));
+    setIsDragging(false);
   };
 
-  const handleWheel = (event: React.WheelEvent<HTMLCanvasElement>) => {
-    event.preventDefault();
-    const delta = event.deltaY > 0 ? 0.9 : 1.1;
-    setViewConfig((prev) => ({
-      ...prev,
-      zoom: Math.max(10, Math.min(500, prev.zoom * delta)),
-    }));
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+    setZoom((prev) => Math.max(0.1, Math.min(5, prev * zoomFactor)));
   };
 
-  // Toggle display visibility
-  const toggleDisplay = (displayId: string) => {
-    setDisplays((prev) =>
-      prev.map((display) =>
-        display.id === displayId
-          ? { ...display, enabled: !display.enabled }
-          : display,
-      ),
-    );
-  };
+  const handleCanvasClick = (e: React.MouseEvent) => {
+    if (!selectedMap || isDragging) return;
 
-  // Update display config
-  const updateDisplayConfig = (displayId: string, key: string, value: any) => {
-    setDisplays((prev) =>
-      prev.map((display) =>
-        display.id === displayId ? { ...display, [key]: value } : display,
-      ),
-    );
-  };
-
-  // Canvas resize effect
-  useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    let timeoutId: NodeJS.Timeout;
-    let isResizing = false;
+    const rect = canvas.getBoundingClientRect();
+    const canvasX = e.clientX - rect.left;
+    const canvasY = e.clientY - rect.top;
 
-    const updateCanvasSize = () => {
-      if (isResizing) return;
+    // Convert canvas coordinates to map coordinates
+    const mapX = (canvasX - pan.x) / zoom;
+    const mapY = (canvasY - pan.y) / zoom;
 
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        if (!canvas.parentElement) return;
+    const worldX = selectedMap.origin.x + mapX * selectedMap.resolution;
+    const worldY =
+      selectedMap.origin.y +
+      (selectedMap.height - mapY) * selectedMap.resolution;
 
-        const rect = canvas.parentElement.getBoundingClientRect();
-        if (rect && rect.width > 0 && rect.height > 0) {
-          const newWidth = Math.floor(rect.width);
-          const newHeight = Math.floor(rect.height);
+    // Set navigation goal
+    if (isConnected) {
+      const goal = {
+        header: {
+          stamp: { sec: Math.floor(Date.now() / 1000), nanosec: 0 },
+          frame_id: "map",
+        },
+        pose: {
+          position: { x: worldX, y: worldY, z: 0 },
+          orientation: { x: 0, y: 0, z: 0, w: 1 },
+        },
+      };
 
-          if (canvas.width !== newWidth || canvas.height !== newHeight) {
-            canvas.width = newWidth;
-            canvas.height = newHeight;
-            requestAnimationFrame(() => drawMap());
-          }
-        }
-        isResizing = false;
-      }, 150);
-    };
+      publish("/move_base_simple/goal", goal);
 
-    updateCanvasSize();
+      toast({
+        title: t("map.goalSet"),
+        description: `${t("map.coordinates")}: (${worldX.toFixed(2)}, ${worldY.toFixed(2)})`,
+      });
+    }
+  };
 
-    let resizeObserver: ResizeObserver | null = null;
+  const handleCreateMap = async () => {
+    if (!newMapName.trim()) return;
 
     try {
-      resizeObserver = new ResizeObserver(() => {
-        if (isResizing) return;
-        isResizing = true;
-        requestAnimationFrame(updateCanvasSize);
-      });
+      if (isConnected) {
+        // Call ROS service to create new map
+        const result = await callService("/make_map", {
+          name: newMapName,
+          description: newMapDescription,
+        });
 
-      if (canvas.parentElement) {
-        resizeObserver.observe(canvas.parentElement, { box: "border-box" });
+        if (result) {
+          toast({
+            title: t("map.mapCreated"),
+            description: t("map.mapCreatedSuccessfully"),
+          });
+
+          // Refresh map list
+          loadMapsFromROS();
+        }
+      } else {
+        // Create mock map for demonstration
+        const newMap: MapData = {
+          id: `map_${Date.now()}`,
+          name: newMapName,
+          description: newMapDescription,
+          created: new Date(),
+          lastModified: new Date(),
+          resolution: 0.05,
+          width: 800,
+          height: 600,
+          origin: { x: -20, y: -15, theta: 0 },
+          data: new Uint8Array(800 * 600).fill(255),
+          size: 480000,
+        };
+
+        setMaps((prev) => [...prev, newMap]);
+        toast({
+          title: t("map.mapCreated"),
+          description: t("map.mapCreatedSuccessfully"),
+        });
+      }
+
+      setIsCreateDialogOpen(false);
+      setNewMapName("");
+      setNewMapDescription("");
+    } catch (error) {
+      toast({
+        title: t("common.error"),
+        description: t("map.createMapError"),
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteMap = async (mapId: string) => {
+    try {
+      if (isConnected) {
+        await callService("/delete_map", { map_id: mapId });
+      }
+
+      setMaps((prev) => prev.filter((map) => map.id !== mapId));
+
+      if (selectedMap?.id === mapId) {
+        setSelectedMap(null);
+      }
+
+      toast({
+        title: t("map.mapDeleted"),
+        description: t("map.mapDeletedSuccessfully"),
+      });
+    } catch (error) {
+      toast({
+        title: t("common.error"),
+        description: t("map.deleteMapError"),
+        variant: "destructive",
+      });
+    }
+  };
+
+  const loadMapsFromROS = async () => {
+    if (!isConnected) return;
+
+    try {
+      const result = await callService("/list_maps", {});
+      if (result && result.maps) {
+        setMaps(result.maps);
       }
     } catch (error) {
-      console.warn("ResizeObserver not supported");
+      console.error("Failed to load maps from ROS:", error);
     }
+  };
 
-    return () => {
-      clearTimeout(timeoutId);
-      if (resizeObserver) {
-        resizeObserver.disconnect();
-      }
-    };
-  }, []);
+  const resetView = () => {
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+  };
 
-  // Animation loop
-  useEffect(() => {
-    const interval = setInterval(() => {
-      drawMap();
-
-      // Simulate robot movement
-      setRobotState((prev) => ({
-        ...prev,
-        position: {
-          ...prev.position,
-          x: prev.position.x + Math.sin(Date.now() / 3000) * 0.01,
-          y: prev.position.y + Math.cos(Date.now() / 3000) * 0.01,
-          yaw: prev.position.yaw + 0.005,
-        },
-        laserScan: generateLaserScan(),
-      }));
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, [drawMap, generateLaserScan]);
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return "0 B";
+    const k = 1024;
+    const sizes = ["B", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  };
 
   return (
-    <div className="h-full flex bg-background">
-      {/* Left Panel - RViz Style */}
-      <div className="w-80 border-r border-border flex flex-col bg-card">
-        {/* Header */}
-        <div className="p-4 border-b border-border">
-          <div className="flex items-center gap-2 mb-3">
-            <Monitor className="h-5 w-5 text-primary" />
-            <h2 className="font-extralight text-lg">
-              RViz - ROS Visualization
-            </h2>
-          </div>
-
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              className="flex-1 font-extralight"
-            >
-              <Save className="h-4 w-4 mr-1" />
-              Save Config
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="flex-1 font-extralight"
-            >
-              <FolderOpen className="h-4 w-4 mr-1" />
-              Load Config
-            </Button>
-          </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-4xl font-extralight bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text text-transparent">
+            {t("map.title")}
+          </h1>
+          <p className="text-muted-foreground font-light mt-2">
+            {t("map.subtitle")}
+          </p>
         </div>
 
-        <Tabs defaultValue="displays" className="flex-1 flex flex-col">
-          <TabsList className="grid w-full grid-cols-2 mx-4 my-2">
-            <TabsTrigger value="displays" className="font-extralight">
-              Displays
-            </TabsTrigger>
-            <TabsTrigger value="views" className="font-extralight">
-              Views
-            </TabsTrigger>
-          </TabsList>
+        <div className="flex items-center gap-3">
+          <Badge
+            variant={isConnected ? "default" : "secondary"}
+            className="gap-2"
+          >
+            <div
+              className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-400" : "bg-gray-400"}`}
+            />
+            {isConnected ? t("common.connected") : t("common.disconnected")}
+          </Badge>
 
-          {/* Displays Panel */}
-          <TabsContent value="displays" className="flex-1 p-0">
-            <div className="p-4">
-              <Button
-                size="sm"
-                className="w-full mb-3 font-extralight"
-                onClick={() => {
-                  // Add new display logic
-                }}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Display
+          <Dialog
+            open={isCreateDialogOpen}
+            onOpenChange={setIsCreateDialogOpen}
+          >
+            <DialogTrigger asChild>
+              <Button className="gap-2">
+                <Plus className="h-4 w-4" />
+                {t("map.createMap")}
               </Button>
-            </div>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{t("map.createNewMap")}</DialogTitle>
+                <DialogDescription>
+                  {t("map.createNewMapDescription")}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="mapName">{t("map.mapName")}</Label>
+                  <Input
+                    id="mapName"
+                    value={newMapName}
+                    onChange={(e) => setNewMapName(e.target.value)}
+                    placeholder={t("map.enterMapName")}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="mapDescription">{t("map.description")}</Label>
+                  <Input
+                    id="mapDescription"
+                    value={newMapDescription}
+                    onChange={(e) => setNewMapDescription(e.target.value)}
+                    placeholder={t("map.enterDescription")}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsCreateDialogOpen(false)}
+                >
+                  {t("common.cancel")}
+                </Button>
+                <Button onClick={handleCreateMap} disabled={!newMapName.trim()}>
+                  {t("common.create")}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </div>
 
-            <ScrollArea className="flex-1">
-              <div className="p-4 pt-0 space-y-2">
-                {displays.map((display) => (
-                  <Collapsible key={display.id}>
-                    <CollapsibleTrigger asChild>
-                      <div
-                        className={`flex items-center p-3 rounded-lg hover:bg-accent cursor-pointer transition-colors ${
-                          selectedDisplay === display.id ? "bg-accent" : ""
-                        }`}
-                        onClick={() => setSelectedDisplay(display.id)}
-                      >
-                        <div className="flex items-center gap-2 flex-1">
-                          <Switch
-                            checked={display.enabled}
-                            onCheckedChange={() => toggleDisplay(display.id)}
-                            onClick={(e) => e.stopPropagation()}
-                          />
-                          <display.icon className="h-4 w-4" />
-                          <span className="font-extralight text-sm">
-                            {display.name}
-                          </span>
-                        </div>
-                        <ChevronRight className="h-4 w-4 transition-transform ui-state-open:rotate-90" />
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Map List Panel */}
+        <Card className="lg:col-span-1 glass-effect">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Map className="h-5 w-5" />
+              {t("map.availableMaps")}
+            </CardTitle>
+            <CardDescription>{t("map.manageMaps")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ScrollArea className="h-[400px]">
+              <div className="space-y-3">
+                {maps.map((map) => (
+                  <div
+                    key={map.id}
+                    className={`p-3 rounded-lg border cursor-pointer transition-all duration-200 hover:bg-accent/50 ${
+                      selectedMap?.id === map.id
+                        ? "border-primary bg-primary/10"
+                        : "border-border"
+                    }`}
+                    onClick={() => setSelectedMap(map)}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-medium text-sm">{map.name}</h4>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              {t("map.deleteMap")}
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              {t("map.deleteMapConfirmation")}
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>
+                              {t("common.cancel")}
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDeleteMap(map.id)}
+                            >
+                              {t("common.delete")}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-2">
+                      {map.description}
+                    </p>
+                    <div className="text-xs text-muted-foreground space-y-1">
+                      <div>
+                        {t("map.resolution")}: {map.resolution}m/px
                       </div>
-                    </CollapsibleTrigger>
-
-                    <CollapsibleContent className="p-3 pt-0">
-                      <div className="ml-6 space-y-3 border-l border-border pl-3">
-                        {display.topic && (
-                          <div>
-                            <Label className="text-xs font-extralight">
-                              Topic
-                            </Label>
-                            <Input
-                              value={display.topic}
-                              className="h-7 text-xs font-extralight"
-                              onChange={(e) =>
-                                updateDisplayConfig(
-                                  display.id,
-                                  "topic",
-                                  e.target.value,
-                                )
-                              }
-                            />
-                          </div>
-                        )}
-
-                        {display.color && (
-                          <div>
-                            <Label className="text-xs font-extralight">
-                              Color
-                            </Label>
-                            <div className="flex items-center gap-2">
-                              <div
-                                className="w-6 h-6 rounded border border-border cursor-pointer"
-                                style={{ backgroundColor: display.color }}
-                                onClick={() => {
-                                  // Color picker logic
-                                }}
-                              />
-                              <Input
-                                value={display.color}
-                                className="h-7 text-xs font-extralight"
-                                onChange={(e) =>
-                                  updateDisplayConfig(
-                                    display.id,
-                                    "color",
-                                    e.target.value,
-                                  )
-                                }
-                              />
-                            </div>
-                          </div>
-                        )}
-
-                        {display.size !== undefined && (
-                          <div>
-                            <Label className="text-xs font-extralight">
-                              Size: {display.size?.toFixed(3)}
-                            </Label>
-                            <Slider
-                              value={[display.size]}
-                              onValueChange={(value) =>
-                                updateDisplayConfig(
-                                  display.id,
-                                  "size",
-                                  value[0],
-                                )
-                              }
-                              min={0.001}
-                              max={0.1}
-                              step={0.001}
-                              className="mt-1"
-                            />
-                          </div>
-                        )}
-
-                        {display.alpha !== undefined && (
-                          <div>
-                            <Label className="text-xs font-extralight">
-                              Alpha: {display.alpha?.toFixed(2)}
-                            </Label>
-                            <Slider
-                              value={[display.alpha]}
-                              onValueChange={(value) =>
-                                updateDisplayConfig(
-                                  display.id,
-                                  "alpha",
-                                  value[0],
-                                )
-                              }
-                              min={0}
-                              max={1}
-                              step={0.01}
-                              className="mt-1"
-                            />
-                          </div>
-                        )}
+                      <div>
+                        {t("map.size")}: {map.width}×{map.height}
                       </div>
-                    </CollapsibleContent>
-                  </Collapsible>
+                      <div>
+                        {t("map.fileSize")}: {formatFileSize(map.size)}
+                      </div>
+                      <div>
+                        {t("map.lastModified")}:{" "}
+                        {map.lastModified.toLocaleDateString()}
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
             </ScrollArea>
-          </TabsContent>
+          </CardContent>
+        </Card>
 
-          {/* Views Panel */}
-          <TabsContent value="views" className="flex-1 p-4">
-            <div className="space-y-4">
-              {/* View Controls */}
-              <Card className="p-4">
-                <Label className="text-sm font-extralight mb-2 block">
-                  View Type
-                </Label>
-                <Select
-                  value={viewConfig.projection}
-                  onValueChange={(value: "2D" | "3D" | "Orbit") =>
-                    setViewConfig((prev) => ({ ...prev, projection: value }))
-                  }
-                >
-                  <SelectTrigger className="font-extralight">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="2D">Top Down (2D)</SelectItem>
-                    <SelectItem value="3D">Third Person (3D)</SelectItem>
-                    <SelectItem value="Orbit">Orbit</SelectItem>
-                  </SelectContent>
-                </Select>
-              </Card>
+        {/* Map Viewer */}
+        <Card className="lg:col-span-3 glass-effect">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Navigation className="h-5 w-5" />
+                  {selectedMap ? selectedMap.name : t("map.noMapSelected")}
+                </CardTitle>
+                <CardDescription>
+                  {selectedMap
+                    ? selectedMap.description
+                    : t("map.selectMapToView")}
+                </CardDescription>
+              </div>
 
-              {/* Camera Controls */}
-              <Card className="p-4">
-                <h3 className="text-sm font-extralight mb-3">
-                  Camera Controls
-                </h3>
-
-                <div className="space-y-3">
-                  <div>
-                    <Label className="text-xs font-extralight">
-                      Zoom: {viewConfig.zoom}%
-                    </Label>
-                    <Slider
-                      value={[viewConfig.zoom]}
-                      onValueChange={(value) =>
-                        setViewConfig((prev) => ({ ...prev, zoom: value[0] }))
-                      }
-                      min={10}
-                      max={500}
-                      step={5}
-                      className="mt-1"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="font-extralight"
-                      onClick={() =>
-                        setViewConfig((prev) => ({
-                          ...prev,
-                          pan: { x: 0, y: 0 },
-                          zoom: 100,
-                        }))
-                      }
-                    >
-                      <Home className="h-4 w-4 mr-1" />
-                      Reset
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="font-extralight"
-                      onClick={() => {
-                        const robotPos = worldToCanvas(
-                          robotState.position.x,
-                          robotState.position.y,
-                        );
-                        const canvas = canvasRef.current;
-                        if (canvas) {
-                          setViewConfig((prev) => ({
-                            ...prev,
-                            pan: {
-                              x: canvas.width / 2 - robotPos.x,
-                              y: canvas.height / 2 - robotPos.y,
-                            },
-                          }));
-                        }
-                      }}
-                    >
-                      <Target className="h-4 w-4 mr-1" />
-                      Focus Robot
-                    </Button>
-                  </div>
+              <div className="flex items-center gap-2">
+                {/* View Controls */}
+                <div className="flex items-center gap-1 bg-background/50 rounded-lg p-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setZoom((prev) => Math.min(5, prev * 1.2))}
+                  >
+                    <ZoomIn className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setZoom((prev) => Math.max(0.1, prev * 0.8))}
+                  >
+                    <ZoomOut className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={resetView}>
+                    <RotateCcw className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsFullscreen(!isFullscreen)}
+                  >
+                    {isFullscreen ? (
+                      <Minimize className="h-4 w-4" />
+                    ) : (
+                      <Maximize className="h-4 w-4" />
+                    )}
+                  </Button>
                 </div>
-              </Card>
 
-              {/* Display Options */}
-              <Card className="p-4">
-                <h3 className="text-sm font-extralight mb-3">
-                  Display Options
-                </h3>
+                {/* Playback Controls */}
+                <div className="flex items-center gap-1 bg-background/50 rounded-lg p-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsPlaying(!isPlaying)}
+                  >
+                    {isPlaying ? (
+                      <Pause className="h-4 w-4" />
+                    ) : (
+                      <Play className="h-4 w-4" />
+                    )}
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={drawMap}>
+                    <RefreshCw className="h-4 w-4" />
+                  </Button>
+                </div>
 
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-xs font-extralight">Grid</Label>
-                    <Switch
-                      checked={viewConfig.gridEnabled}
-                      onCheckedChange={(checked) =>
-                        setViewConfig((prev) => ({
-                          ...prev,
-                          gridEnabled: checked,
-                        }))
-                      }
-                    />
-                  </div>
+                {/* Settings */}
+                <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>{t("map.displaySettings")}</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <Label>{t("map.showGrid")}</Label>
+                          <Switch
+                            checked={settings.showGrid}
+                            onCheckedChange={(checked) =>
+                              setSettings((prev) => ({
+                                ...prev,
+                                showGrid: checked,
+                              }))
+                            }
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label>{t("map.showRobot")}</Label>
+                          <Switch
+                            checked={settings.showRobot}
+                            onCheckedChange={(checked) =>
+                              setSettings((prev) => ({
+                                ...prev,
+                                showRobot: checked,
+                              }))
+                            }
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label>{t("map.showGoal")}</Label>
+                          <Switch
+                            checked={settings.showGoal}
+                            onCheckedChange={(checked) =>
+                              setSettings((prev) => ({
+                                ...prev,
+                                showGoal: checked,
+                              }))
+                            }
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label>{t("map.showTrajectory")}</Label>
+                          <Switch
+                            checked={settings.showTrajectory}
+                            onCheckedChange={(checked) =>
+                              setSettings((prev) => ({
+                                ...prev,
+                                showTrajectory: checked,
+                              }))
+                            }
+                          />
+                        </div>
+                      </div>
 
-                  <div className="flex items-center justify-between">
-                    <Label className="text-xs font-extralight">Axis</Label>
-                    <Switch
-                      checked={viewConfig.axisEnabled}
-                      onCheckedChange={(checked) =>
-                        setViewConfig((prev) => ({
-                          ...prev,
-                          axisEnabled: checked,
-                        }))
-                      }
-                    />
-                  </div>
+                      <Separator />
 
-                  <div>
-                    <Label className="text-xs font-extralight">
-                      Background Color
-                    </Label>
-                    <div className="flex items-center gap-2 mt-1">
-                      <div
-                        className="w-6 h-6 rounded border border-border cursor-pointer"
-                        style={{ backgroundColor: viewConfig.backgroundColor }}
-                        onClick={() => {
-                          // Color picker for background
-                        }}
-                      />
-                      <Input
-                        value={viewConfig.backgroundColor}
-                        className="h-7 text-xs font-extralight"
-                        onChange={(e) =>
-                          setViewConfig((prev) => ({
-                            ...prev,
-                            backgroundColor: e.target.value,
-                          }))
-                        }
-                      />
+                      <div className="space-y-3">
+                        <div>
+                          <Label>
+                            {t("map.refreshRate")}: {settings.fps} FPS
+                          </Label>
+                          <Slider
+                            value={[settings.fps]}
+                            onValueChange={([value]) =>
+                              setSettings((prev) => ({ ...prev, fps: value }))
+                            }
+                            min={1}
+                            max={60}
+                            step={1}
+                            className="mt-2"
+                          />
+                        </div>
+
+                        <div>
+                          <Label>
+                            {t("map.occupancyThreshold")}:{" "}
+                            {settings.occupancyThreshold}%
+                          </Label>
+                          <Slider
+                            value={[settings.occupancyThreshold]}
+                            onValueChange={([value]) =>
+                              setSettings((prev) => ({
+                                ...prev,
+                                occupancyThreshold: value,
+                              }))
+                            }
+                            min={0}
+                            max={100}
+                            step={5}
+                            className="mt-2"
+                          />
+                        </div>
+                      </div>
                     </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div
+              className={`relative bg-white rounded-lg overflow-hidden ${isFullscreen ? "fixed inset-4 z-50" : ""}`}
+            >
+              {selectedMap ? (
+                <canvas
+                  ref={canvasRef}
+                  width={isFullscreen ? window.innerWidth - 32 : 800}
+                  height={isFullscreen ? window.innerHeight - 200 : 600}
+                  className="cursor-move border border-border/20"
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  onMouseLeave={handleMouseUp}
+                  onWheel={handleWheel}
+                  onClick={handleCanvasClick}
+                />
+              ) : (
+                <div className="h-[600px] flex items-center justify-center text-muted-foreground">
+                  <div className="text-center">
+                    <Map className="h-16 w-16 mx-auto mb-4 opacity-50" />
+                    <p className="text-lg font-light">
+                      {t("map.noMapSelected")}
+                    </p>
+                    <p className="text-sm">{t("map.selectMapFromList")}</p>
                   </div>
                 </div>
-              </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
-      </div>
+              )}
 
-      {/* Main Visualization Area */}
-      <div className="flex-1 flex flex-col">
-        {/* Top Toolbar */}
-        <div className="h-12 border-b border-border flex items-center px-4 gap-2 bg-card/50">
-          <Badge variant="outline" className="font-extralight">
-            FPS: 10
-          </Badge>
-          <Separator orientation="vertical" className="h-6" />
-
-          <Button size="sm" variant="ghost" className="font-extralight">
-            <Play className="h-4 w-4" />
-          </Button>
-          <Button size="sm" variant="ghost" className="font-extralight">
-            <Pause className="h-4 w-4" />
-          </Button>
-          <Button size="sm" variant="ghost" className="font-extralight">
-            <SkipForward className="h-4 w-4" />
-          </Button>
-
-          <Separator orientation="vertical" className="h-6" />
-
-          <div className="flex items-center gap-2">
-            <Label className="text-xs font-extralight">Time:</Label>
-            <Badge variant="secondary" className="font-extralight">
-              {new Date().toLocaleTimeString()}
-            </Badge>
-          </div>
-
-          <div className="ml-auto flex items-center gap-2">
-            <Badge
-              variant={robotState ? "default" : "destructive"}
-              className="font-extralight"
-            >
-              {robotState ? "Connected" : "Disconnected"}
-            </Badge>
-            <Button size="sm" variant="ghost" className="font-extralight">
-              <RefreshCw className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-
-        {/* Canvas Container */}
-        <div className="flex-1 relative bg-background">
-          <canvas
-            ref={canvasRef}
-            className="w-full h-full cursor-move"
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onWheel={handleWheel}
-          />
-
-          {/* Overlay Info */}
-          <div className="absolute top-4 right-4 space-y-2">
-            <Card className="p-3 bg-card/90 backdrop-blur-sm">
-              <div className="text-xs font-extralight space-y-1">
-                <div>
-                  Position: ({robotState.position.x.toFixed(2)},{" "}
-                  {robotState.position.y.toFixed(2)})
+              {/* Map Info Overlay */}
+              {selectedMap && (
+                <div className="absolute top-4 left-4 bg-background/90 backdrop-blur-sm rounded-lg p-3 border border-border/20">
+                  <div className="text-sm space-y-1">
+                    <div className="font-medium">{selectedMap.name}</div>
+                    <div className="text-muted-foreground">
+                      {t("map.zoom")}: {(zoom * 100).toFixed(0)}%
+                    </div>
+                    {robotPosition && (
+                      <div className="text-muted-foreground">
+                        {t("map.robotPos")}: ({robotPosition.x.toFixed(2)},{" "}
+                        {robotPosition.y.toFixed(2)})
+                      </div>
+                    )}
+                    {goalPosition && (
+                      <div className="text-muted-foreground">
+                        {t("map.goalPos")}: ({goalPosition.x.toFixed(2)},{" "}
+                        {goalPosition.y.toFixed(2)})
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  Orientation:{" "}
-                  {((robotState.position.yaw * 180) / Math.PI).toFixed(1)}°
-                </div>
-                <div>Zoom: {viewConfig.zoom}%</div>
-                <div>
-                  Displays: {displays.filter((d) => d.enabled).length}/
-                  {displays.length}
+              )}
+
+              {/* Status Overlay */}
+              <div className="absolute top-4 right-4 bg-background/90 backdrop-blur-sm rounded-lg p-3 border border-border/20">
+                <div className="text-sm space-y-1">
+                  <div className="flex items-center gap-2">
+                    <div
+                      className={`w-2 h-2 rounded-full ${isPlaying ? "bg-green-400" : "bg-red-400"}`}
+                    />
+                    {isPlaying ? t("map.playing") : t("map.paused")}
+                  </div>
+                  <div>
+                    {t("map.fps")}: {settings.fps}
+                  </div>
+                  {selectedMap && (
+                    <div>
+                      {t("map.mapSize")}: {selectedMap.width}×
+                      {selectedMap.height}
+                    </div>
+                  )}
                 </div>
               </div>
-            </Card>
-          </div>
-
-          {/* Bottom Status Bar */}
-          <div className="absolute bottom-0 left-0 right-0 h-8 bg-card/90 backdrop-blur-sm border-t border-border flex items-center px-4 text-xs font-extralight">
-            <div className="flex items-center gap-4">
-              <span>Mode: {viewConfig.projection}</span>
-              <span>Robot: turtle1</span>
-              <span>Map: /map</span>
-              <span>Frame: map</span>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* Map Statistics */}
+      {selectedMap && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="glass-effect">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-500/10 rounded-lg">
+                  <MapPin className="h-5 w-5 text-blue-500" />
+                </div>
+                <div>
+                  <div className="text-sm text-muted-foreground">
+                    {t("map.resolution")}
+                  </div>
+                  <div className="text-lg font-semibold">
+                    {selectedMap.resolution}m/px
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-effect">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-500/10 rounded-lg">
+                  <Grid3x3 className="h-5 w-5 text-green-500" />
+                </div>
+                <div>
+                  <div className="text-sm text-muted-foreground">
+                    {t("map.dimensions")}
+                  </div>
+                  <div className="text-lg font-semibold">
+                    {selectedMap.width}×{selectedMap.height}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-effect">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-500/10 rounded-lg">
+                  <Target className="h-5 w-5 text-purple-500" />
+                </div>
+                <div>
+                  <div className="text-sm text-muted-foreground">
+                    {t("map.origin")}
+                  </div>
+                  <div className="text-lg font-semibold">
+                    ({selectedMap.origin.x}, {selectedMap.origin.y})
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-effect">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-orange-500/10 rounded-lg">
+                  <Save className="h-5 w-5 text-orange-500" />
+                </div>
+                <div>
+                  <div className="text-sm text-muted-foreground">
+                    {t("map.fileSize")}
+                  </div>
+                  <div className="text-lg font-semibold">
+                    {formatFileSize(selectedMap.size)}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 };
 
-export default RVizMapViewer;
+export default MapViewer;
