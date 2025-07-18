@@ -13,6 +13,11 @@ interface ROSConfig {
   isConnected: boolean;
   reconnectInterval: number;
   heartbeatInterval: number;
+  connectionStatus: "connecting" | "connected" | "disconnected" | "error";
+  lastError?: string;
+  autoReconnect: boolean;
+  maxReconnectAttempts: number;
+  currentReconnectAttempt: number;
 }
 
 // ROS Message Types
