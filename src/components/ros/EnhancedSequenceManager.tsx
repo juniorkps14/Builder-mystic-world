@@ -1004,11 +1004,17 @@ export function EnhancedSequenceManager() {
             {/* Task List - Table or Cards View */}
             <Card
               className={`${getCardClass("task-list")} ${
-                viewMode === "execution"
-                  ? "lg:col-span-2"
-                  : viewMode === "editing"
+                taskViewMode === "table"
+                  ? sidebarCollapsed
+                    ? "lg:col-span-full"
+                    : viewMode === "execution"
+                      ? "lg:col-span-3"
+                      : "lg:col-span-3"
+                  : viewMode === "execution"
                     ? "lg:col-span-2"
-                    : "lg:col-span-2"
+                    : viewMode === "editing"
+                      ? "lg:col-span-2"
+                      : "lg:col-span-2"
               }`}
             >
               <div className="p-4 border-b">
