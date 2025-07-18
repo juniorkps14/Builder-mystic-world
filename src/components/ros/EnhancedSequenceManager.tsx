@@ -513,6 +513,81 @@ export function EnhancedSequenceManager() {
     );
   };
 
+  const handleUpdateSubtask = (parentTaskId: string, updatedSubtask: Task) => {
+    setTasks((prev) =>
+      prev.map((task) => {
+        if (task.id === parentTaskId && task.subtasks) {
+          return {
+            ...task,
+            subtasks: task.subtasks.map((subtask) =>
+              subtask.id === updatedSubtask.id ? updatedSubtask : subtask,
+            ),
+          };
+        }
+        return task;
+      }),
+    );
+  };
+
+  const handleDeleteSubtask = (parentTaskId: string, subtaskId: string) => {
+    setTasks((prev) =>
+      prev.map((task) => {
+        if (task.id === parentTaskId && task.subtasks) {
+          return {
+            ...task,
+            subtasks: task.subtasks.filter(
+              (subtask) => subtask.id !== subtaskId,
+            ),
+            hasSubtasks:
+              task.subtasks.filter((subtask) => subtask.id !== subtaskId)
+                .length > 0,
+          };
+        }
+        return task;
+      }),
+    );
+    addLog(`Deleted subtask: ${subtaskId} from task: ${parentTaskId}`);
+  };
+
+  const handleAddSubtask = (parentTaskId: string) => {
+    const newSubtask: Task = {
+      id: `subtask_${Date.now()}`,
+      name: "New Subtask",
+      type: "custom_script",
+      description: "Description for new subtask",
+      parameters: {},
+      timeout: 30,
+      retries: 1,
+      waitForFeedback: false,
+      feedbackTimeout: 30,
+      status: "pending",
+      progress: 0,
+      duration: 0,
+      dependencies: [],
+      hasSubtasks: false,
+      subtasks: [],
+      subtaskExecutionMode: "sequential",
+      maxSubtaskConcurrency: 2,
+      subtaskWaitForFeedback: false,
+    };
+
+    setTasks((prev) =>
+      prev.map((task) => {
+        if (task.id === parentTaskId) {
+          const updatedSubtasks = [...(task.subtasks || []), newSubtask];
+          return {
+            ...task,
+            subtasks: updatedSubtasks,
+            hasSubtasks: true,
+          };
+        }
+        return task;
+      }),
+    );
+
+    addLog(`Added new subtask to task: ${parentTaskId}`);
+  };
+
   const handleDeleteTask = (taskId: string) => {
     setTasks((prev) => prev.filter((task) => task.id !== taskId));
     if (activeSequence) {
