@@ -36,6 +36,7 @@ import LogViewer from "./pages/LogViewer";
 import ROSTerminal from "./pages/ROSTerminal";
 import SystemTerminal from "./pages/SystemTerminal";
 import SystemConfiguration from "./pages/SystemConfiguration";
+import ROSSetup from "./pages/ROSSetup";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
