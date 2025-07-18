@@ -341,6 +341,11 @@ const translations = {
     "rviz.size": "Size",
     "rviz.alpha": "Alpha",
     "rviz.frame": "Frame",
+
+    // System Terminal
+    "terminal.title": "System Terminal",
+    "terminal.subtitle":
+      "Execute system commands directly on the robot with real-time feedback",
   },
   th: {
     // Navigation
@@ -407,7 +412,7 @@ const translations = {
 
     // Robotic Arm
     "arm.title": "ควบคุมแขนกล",
-    "arm.joints": "ควบคุมข���อต่อ",
+    "arm.joints": "ควบคุมข้อต่อ",
     "arm.endEffector": "ปลายแขน",
     "arm.position": "ตำแหน่ง",
     "arm.orientation": "การหมุน",
@@ -418,7 +423,7 @@ const translations = {
 
     // Holonomic
     "holonomic.title": "ควบคุมระบบล้อโฮโลโนมิก",
-    "holonomic.velocity": "ควบคุมความเร็ว",
+    "holonomic.velocity": "ควบคุมค��ามเร็ว",
     "holonomic.linear": "ความเร็วเชิงเส้น",
     "holonomic.angular": "ความเร็วเชิงมุม",
     "holonomic.strafe": "ความเร็วเคลื่อนข้าง",
@@ -483,10 +488,10 @@ const translations = {
     // Microcontroller Connections
     "mcu.title": "การเชื่อมต่อไมโครคอนโทรลเลอร์",
     "mcu.totalControllers": "คอนโทรลเลอร์ทั้งหมด",
-    "mcu.connected": "เชื่อมต��อแล้ว",
+    "mcu.connected": "เชื่อมต่อแล้ว",
     "mcu.powerUsage": "การใช้พลังงาน",
     "mcu.addConnection": "เพิ่มการเชื่อมต่อ",
-    "mcu.connectionDetails": "รายละเอียดการเชื่อมต่อ",
+    "mcu.connectionDetails": "รายละเอีย���การเชื่อมต่อ",
     "mcu.quickActions": "การดำเนินการด่วน",
 
     // Task Management
@@ -509,7 +514,7 @@ const translations = {
     "task.configureTask": "ตั้งค่างาน",
 
     // Movement Types
-    "movement.robotMovement": "การเคลื่อนที่ของหุ่นยนต์",
+    "movement.robotMovement": "การเคลื่อนท���่ของหุ่นยนต์",
     "movement.moveWithObstacleCheck": "เคลื่อนที่พร้อมตรวจสิ่งกีดขวาง",
     "movement.armManipulation": "การควบคุมแขนกล",
     "movement.visionProcessing": "การประมวลผลภาพ",
@@ -564,7 +569,7 @@ const translations = {
     "obstacle.wait": "รอ",
     "obstacle.alternativeRoute": "เส้นทางทางเลือก",
     "obstacle.emergencyStop": "หยุดฉุกเฉิน",
-    "obstacle.slowDown": "ลดความเร็ว",
+    "obstacle.slowDown": "ลดควา���เร็ว",
 
     // Pattern Movement
     "pattern.configuration": "การตั้งค่ารูปแบบการเคลื่อนที่",
@@ -578,7 +583,7 @@ const translations = {
     "pattern.currentPattern": "รูปแบบปัจจุบัน",
     "pattern.waypoints": "จุดหมาย",
     "pattern.patternRepeat": "ทำซ้ำรูปแบบ",
-    "pattern.waitAtWaypoint": "รอที��จุดหมาย",
+    "pattern.waitAtWaypoint": "รอที่จุดหมาย",
     "pattern.waypointTolerance": "ค่าคลาดเคลื่อนจุดหมาย",
     "pattern.targetPosition": "ตำแหน่งเป้าหมายและการหมุน",
     "pattern.relativeMovement": "การเคลื่อนที่แบบสัมพัทธ์ (จากตำแหน่งปัจจุบัน)",
@@ -621,7 +626,7 @@ const translations = {
     "map.lastModified": "แก้ไขล่าสุด",
     "map.coordinates": "พิกัด",
     "map.goalSet": "ตั้งเป้าหมายการนำทาง",
-    "map.displaySettings": "การตั้งค่าการแสดงผล",
+    "map.displaySettings": "การตั้ง��่าการแสดงผล",
     "map.showGrid": "แสดงตาราง",
     "map.showRobot": "แสดงหุ่นยนต์",
     "map.showGoal": "แสดงเป้าหมาย",
@@ -643,7 +648,7 @@ const translations = {
     "rviz.subtitle":
       "อินเทอร์เฟซการแสดงผลแบบ 3D สำหรับข้อมูล ROS พร้อมการเรนเดอร์แบบเรียลไทม์",
     "rviz.displays": "การแสดงผล",
-    "rviz.manageDisplays": "จัดการการแสดงผลภาพ",
+    "rviz.manageDisplays": "จัดการการแ��ดงผลภาพ",
     "rviz.addDisplay": "เพิ่มการแสดงผล",
     "rviz.addNewDisplay": "เพิ่มการแสดงผลใหม่",
     "rviz.addDisplayDescription": "เพิ่มการแสดงผลใหม่ไปยังฉาก 3D",
@@ -670,6 +675,10 @@ const translations = {
     "rviz.size": "ขนาด",
     "rviz.alpha": "ความโปร่งใส",
     "rviz.frame": "เฟรม",
+
+    // System Terminal
+    "terminal.title": "เทอร์มินัลระบบ",
+    "terminal.subtitle": "สั่งงานระบบโดยตรงบนหุ่นยนต์พร้อมผลลัพธ์แบบเรียลไทม์",
   },
 };
 
