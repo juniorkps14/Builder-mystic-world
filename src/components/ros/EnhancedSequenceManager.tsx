@@ -669,17 +669,11 @@ export function EnhancedSequenceManager() {
       // Table view gets maximum space
       switch (viewMode) {
         case "execution":
-          return sidebarCollapsed
-            ? "grid-cols-1"
-            : "grid-cols-1 lg:grid-cols-4";
+          return sidebarCollapsed ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-4";
         case "editing":
-          return sidebarCollapsed
-            ? "grid-cols-1"
-            : "grid-cols-1 lg:grid-cols-3";
+          return sidebarCollapsed ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-3";
         default:
-          return sidebarCollapsed
-            ? "grid-cols-1"
-            : "grid-cols-1 lg:grid-cols-4";
+          return sidebarCollapsed ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-4";
       }
     } else {
       // Cards view uses original layout
@@ -1049,52 +1043,31 @@ export function EnhancedSequenceManager() {
                 </div>
               ) : taskViewMode === "table" ? (
                 /* Table View - POS Style */
-                <div className="overflow-hidden">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="bg-muted/50 border-b">
-                        <TableHead className="w-[60px] text-center font-semibold">
-                          #
-                        </TableHead>
-                        <TableHead className="min-w-[250px] font-semibold">
-                          Task Name & Description
-                        </TableHead>
-                        <TableHead className="w-[120px] font-semibold">
-                          Type
-                        </TableHead>
-                        <TableHead className="w-[120px] text-center font-semibold">
-                          Status
-                        </TableHead>
-                        <TableHead className="w-[140px] text-center font-semibold">
-                          Progress
-                        </TableHead>
-                        <TableHead className="w-[100px] text-center font-semibold">
-                          Duration
-                        </TableHead>
-                        <TableHead className="w-[120px] font-semibold">
-                          Dependencies
-                        </TableHead>
-                        <TableHead className="w-[100px] text-center font-semibold">
-                          Retries
-                        </TableHead>
-                        <TableHead className="w-[160px] text-center font-semibold">
-                          Actions
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                  </Table>
-                  <ScrollArea
-                    className={`${taskViewMode === "table" ? "h-[600px]" : "h-[500px]"}`}
-                  >
-                    <Table>
+                <div className="w-full overflow-x-auto">
+                  <div className="min-w-[1200px]">
+                    <Table className="w-full">
+                      <TableHeader>
+                        <TableRow className="bg-muted/50 border-b">
+                          <TableHead className="w-16 text-center font-semibold">#</TableHead>
+                          <TableHead className="flex-1 min-w-[300px] font-semibold">Task Name & Description</TableHead>
+                          <TableHead className="w-24 font-semibold">Type</TableHead>
+                          <TableHead className="w-28 text-center font-semibold">Status</TableHead>
+                          <TableHead className="w-32 text-center font-semibold">Progress</TableHead>
+                          <TableHead className="w-24 text-center font-semibold">Duration</TableHead>
+                          <TableHead className="w-28 font-semibold">Dependencies</TableHead>
+                          <TableHead className="w-20 text-center font-semibold">Retries</TableHead>
+                          <TableHead className="w-40 text-center font-semibold">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                    </Table>
+                    <ScrollArea className={`${taskViewMode === "table" ? "h-[650px]" : "h-[500px]"} w-full`}>
+                      <Table className="w-full">
                       <TableBody>
                         {currentTasks.map((task, index) => (
                           <TableRow
                             key={task.id}
                             className={`cursor-pointer transition-colors hover:bg-accent/50 ${
-                              focusedCard === task.id
-                                ? "bg-primary/5 border-l-4 border-l-primary"
-                                : ""
+                              focusedCard === task.id ? "bg-primary/5 border-l-4 border-l-primary" : ""
                             }`}
                             onClick={() => setFocusedCard(task.id)}
                           >
@@ -1108,26 +1081,18 @@ export function EnhancedSequenceManager() {
                             {/* Task Name & Description */}
                             <TableCell>
                               <div className="space-y-1">
-                                <div className="font-semibold text-sm">
-                                  {task.name}
-                                </div>
+                                <div className="font-semibold text-sm">{task.name}</div>
                                 <div className="text-xs text-muted-foreground line-clamp-3 max-w-xs">
                                   {task.description}
                                 </div>
                                 <div className="flex gap-1 mt-1">
                                   {task.hasSubtasks && (
-                                    <Badge
-                                      variant="secondary"
-                                      className="text-xs"
-                                    >
+                                    <Badge variant="secondary" className="text-xs">
                                       {task.subtasks?.length || 0} subtasks
                                     </Badge>
                                   )}
                                   {task.waitForFeedback && (
-                                    <Badge
-                                      variant="outline"
-                                      className="text-xs"
-                                    >
+                                    <Badge variant="outline" className="text-xs">
                                       Feedback Required
                                     </Badge>
                                   )}
@@ -1137,19 +1102,14 @@ export function EnhancedSequenceManager() {
 
                             {/* Type */}
                             <TableCell>
-                              <Badge
-                                variant="outline"
-                                className={`text-xs font-medium ${getTypeColor(task.type)}`}
-                              >
+                              <Badge variant="outline" className={`text-xs font-medium ${getTypeColor(task.type)}`}>
                                 {task.type.replace("_", " ").toUpperCase()}
                               </Badge>
                             </TableCell>
 
                             {/* Status */}
                             <TableCell className="text-center">
-                              <div
-                                className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(task.status)}`}
-                              >
+                              <div className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(task.status)}`}>
                                 {getStatusIcon(task.status)}
                                 {task.status.toUpperCase()}
                               </div>
@@ -1161,19 +1121,13 @@ export function EnhancedSequenceManager() {
                                 <div className="flex justify-between text-xs font-medium">
                                   <span>{task.progress}%</span>
                                   {task.status === "running" && (
-                                    <span className="text-blue-600 animate-pulse">
-                                      ●
-                                    </span>
+                                    <span className="text-blue-600 animate-pulse">●</span>
                                   )}
                                 </div>
-                                <Progress
-                                  value={task.progress}
-                                  className="h-2"
-                                />
+                                <Progress value={task.progress} className="h-2" />
                                 {task.startTime && (
                                   <div className="text-xs text-muted-foreground">
-                                    Started:{" "}
-                                    {task.startTime.toLocaleTimeString()}
+                                    Started: {task.startTime.toLocaleTimeString()}
                                   </div>
                                 )}
                               </div>
@@ -1182,20 +1136,13 @@ export function EnhancedSequenceManager() {
                             {/* Duration */}
                             <TableCell className="text-center">
                               <div className="text-sm space-y-1">
-                                <div className="font-medium">
-                                  {task.duration}s
-                                </div>
+                                <div className="font-medium">{task.duration}s</div>
                                 <div className="text-xs text-muted-foreground">
                                   Max: {task.timeout}s
                                 </div>
                                 {task.status === "running" && (
                                   <div className="text-xs text-blue-600">
-                                    {Math.round(
-                                      ((task.timeout - task.duration) /
-                                        task.timeout) *
-                                        100,
-                                    )}
-                                    % left
+                                    {Math.round(((task.timeout - task.duration) / task.timeout) * 100)}% left
                                   </div>
                                 )}
                               </div>
@@ -1204,13 +1151,9 @@ export function EnhancedSequenceManager() {
                             {/* Dependencies */}
                             <TableCell>
                               <div className="space-y-1">
-                                {task.dependencies &&
-                                task.dependencies.length > 0 ? (
+                                {task.dependencies && task.dependencies.length > 0 ? (
                                   <div>
-                                    <Badge
-                                      variant="outline"
-                                      className="text-xs mb-1"
-                                    >
+                                    <Badge variant="outline" className="text-xs mb-1">
                                       {task.dependencies.length} dependencies
                                     </Badge>
                                     <div className="text-xs text-muted-foreground">
@@ -1219,9 +1162,7 @@ export function EnhancedSequenceManager() {
                                     </div>
                                   </div>
                                 ) : (
-                                  <span className="text-xs text-muted-foreground">
-                                    Independent
-                                  </span>
+                                  <span className="text-xs text-muted-foreground">Independent</span>
                                 )}
                               </div>
                             </TableCell>
@@ -1230,13 +1171,8 @@ export function EnhancedSequenceManager() {
                             <TableCell className="text-center">
                               <div className="text-sm space-y-1">
                                 <div>
-                                  <span className="font-medium">
-                                    {task.retries}
-                                  </span>
-                                  <span className="text-muted-foreground">
-                                    {" "}
-                                    max
-                                  </span>
+                                  <span className="font-medium">{task.retries}</span>
+                                  <span className="text-muted-foreground"> max</span>
                                 </div>
                                 <div className="text-xs text-muted-foreground">
                                   Feedback: {task.feedbackTimeout}s
