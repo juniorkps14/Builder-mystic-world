@@ -768,7 +768,10 @@ export function EnhancedSequenceManager() {
             <Button
               variant={taskViewMode === "table" ? "default" : "ghost"}
               size="sm"
-              onClick={() => setTaskViewMode("table")}
+              onClick={() => {
+                setTaskViewMode("table");
+                setSidebarCollapsed(true); // Auto-collapse for more space
+              }}
               className="rounded-r-none gap-1"
             >
               <TableIcon className="h-4 w-4" />
