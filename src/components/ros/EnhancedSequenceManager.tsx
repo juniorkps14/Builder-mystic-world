@@ -78,7 +78,9 @@ export function EnhancedSequenceManager() {
   const [isEditing, setIsEditing] = useState(false);
   const [executionLogs, setExecutionLogs] = useState<string[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [selectedSubtask, setSelectedSubtask] = useState<Task | null>(null);
   const [showTaskEditor, setShowTaskEditor] = useState(false);
+  const [showSubtaskEditor, setShowSubtaskEditor] = useState(false);
   const [showFeatureManager, setShowFeatureManager] = useState(false);
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [showExportDialog, setShowExportDialog] = useState(false);
