@@ -1322,6 +1322,26 @@ export function EnhancedSequenceManager() {
                                         </div>
                                       )}
 
+                                    {/* Add Subtask for tasks without subtasks */}
+                                    {(!task.hasSubtasks ||
+                                      !task.subtasks ||
+                                      task.subtasks.length === 0) && (
+                                      <div className="mt-2">
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleAddSubtask(task.id);
+                                          }}
+                                          className="h-5 px-2 text-xs"
+                                        >
+                                          <Plus className="h-3 w-3 mr-1" />
+                                          Add Subtask
+                                        </Button>
+                                      </div>
+                                    )}
+
                                     <div className="flex gap-1 mt-1">
                                       {task.waitForFeedback && (
                                         <Badge
