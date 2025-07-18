@@ -1072,7 +1072,9 @@ export function EnhancedSequenceManager() {
                       </TableRow>
                     </TableHeader>
                   </Table>
-                  <ScrollArea className="h-[500px]">
+                  <ScrollArea
+                    className={`${taskViewMode === "table" ? "h-[600px]" : "h-[500px]"}`}
+                  >
                     <Table>
                       <TableBody>
                         {currentTasks.map((task, index) => (
