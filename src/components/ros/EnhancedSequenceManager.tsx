@@ -1306,6 +1306,18 @@ export function EnhancedSequenceManager() {
                                                 subtasks
                                               </div>
                                             )}
+                                            <Button
+                                              size="sm"
+                                              variant="outline"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleAddSubtask(task.id);
+                                              }}
+                                              className="h-5 px-2 text-xs mt-1"
+                                            >
+                                              <Plus className="h-3 w-3 mr-1" />
+                                              Add Subtask
+                                            </Button>
                                           </div>
                                         </div>
                                       )}
