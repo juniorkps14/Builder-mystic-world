@@ -665,13 +665,32 @@ export function EnhancedSequenceManager() {
 
   // Smart layout based on view mode and context
   const getLayoutClass = () => {
-    switch (viewMode) {
-      case "execution":
-        return "grid-cols-1 lg:grid-cols-4"; // Focus on execution status
-      case "editing":
-        return "grid-cols-1 lg:grid-cols-3"; // Balance for editing
-      default:
-        return "grid-cols-1 lg:grid-cols-5"; // Overview mode
+    if (taskViewMode === "table") {
+      // Table view gets maximum space
+      switch (viewMode) {
+        case "execution":
+          return sidebarCollapsed
+            ? "grid-cols-1"
+            : "grid-cols-1 lg:grid-cols-4";
+        case "editing":
+          return sidebarCollapsed
+            ? "grid-cols-1"
+            : "grid-cols-1 lg:grid-cols-3";
+        default:
+          return sidebarCollapsed
+            ? "grid-cols-1"
+            : "grid-cols-1 lg:grid-cols-4";
+      }
+    } else {
+      // Cards view uses original layout
+      switch (viewMode) {
+        case "execution":
+          return "grid-cols-1 lg:grid-cols-4";
+        case "editing":
+          return "grid-cols-1 lg:grid-cols-3";
+        default:
+          return "grid-cols-1 lg:grid-cols-5";
+      }
     }
   };
 
