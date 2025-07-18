@@ -38,7 +38,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Tree, TreeViewElement } from "@/components/ui/tree-view";
+
 import { useToast } from "@/hooks/use-toast";
 import {
   Eye,
