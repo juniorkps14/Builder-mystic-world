@@ -360,9 +360,10 @@ const translations = {
     "nav.system": "ตรวจสอบระบบ",
     "nav.roboticArm": "แขนกล",
     "nav.holonomic": "ระบบล้อโฮโลโนมิก",
+    "nav.rosSetup": "ตั้งค่า ROS",
     "nav.ioConfig": "ตั้งค่า I/O",
     "nav.features": "จัดการฟีเจอร์",
-    "nav.tfTree": "แผนผัง TF",
+    "nav.tfTree": "แผน��ัง TF",
     "nav.mapView": "แสดงแผนที่",
     "nav.virtualRviz": "Virtual RViz",
     "nav.nodes": "โหนด",
@@ -389,7 +390,7 @@ const translations = {
     "common.stop": "หยุด",
     "common.pause": "พัก",
     "common.resume": "ดำเนินต่อ",
-    "common.status": "สถานะ",
+    "common.status": "ส��านะ",
     "common.active": "ใช้งาน",
     "common.inactive": "ไม่ใช้งาน",
     "common.connected": "เชื่อมต่อ",
@@ -419,7 +420,7 @@ const translations = {
     "arm.endEffector": "ปลายแขน",
     "arm.position": "ตำแหน่ง",
     "arm.orientation": "การหมุน",
-    "arm.gripper": "คีมจับ",
+    "arm.gripper": "คีมจั���",
     "arm.preset": "ตำแหน่งที่บันทึก",
     "arm.home": "ตำแหน่งบ้าน",
     "arm.emergency": "หยุดฉุกเฉิน",
@@ -682,7 +683,7 @@ const translations = {
 
     // System Terminal
     "terminal.title": "เทอร์มินัลระบบ",
-    "terminal.subtitle": "สั่งงานระบบโดยตรงบนหุ่นยนต์พร้อมผลลัพธ์แบบเรียลไทม์",
+    "terminal.subtitle": "สั่งงานระบบโดยตรงบนหุ่นยนต์พร้อมผลลัพธ์แบบเรียล��ทม์",
   },
 };
 
