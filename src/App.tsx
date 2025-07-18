@@ -65,6 +65,7 @@ const App = () => (
                           path="/holonomic-drive"
                           element={<HolonomicDrive />}
                         />
+                        <Route path="/ros-setup" element={<ROSSetup />} />
                         <Route
                           path="/io-config"
                           element={<IOConfiguration />}
