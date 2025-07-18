@@ -1762,6 +1762,30 @@ export function EnhancedSequenceManager() {
         />
       )}
 
+      {/* Subtask Parameter Editor */}
+      {selectedSubtask && (
+        <TaskParameterEditor
+          task={selectedSubtask}
+          isOpen={showSubtaskEditor}
+          onClose={() => {
+            setShowSubtaskEditor(false);
+            setSelectedSubtask(null);
+            setFocusedCard(null);
+          }}
+          onSave={(updatedSubtask) => {
+            // Find parent task and update subtask
+            const parentTask = currentTasks.find((task) =>
+              task.subtasks?.some(
+                (subtask) => subtask.id === selectedSubtask.id,
+              ),
+            );
+            if (parentTask) {
+              handleUpdateSubtask(parentTask.id, updatedSubtask);
+            }
+          }}
+        />
+      )}
+
       {/* Feature Manager */}
       <Dialog open={showFeatureManager} onOpenChange={setShowFeatureManager}>
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
