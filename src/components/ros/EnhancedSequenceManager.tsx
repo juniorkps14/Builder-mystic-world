@@ -744,6 +744,30 @@ export function EnhancedSequenceManager() {
 
         {/* Header Actions */}
         <div className="flex items-center gap-2">
+          {/* Task View Mode Switcher */}
+          <div className="flex rounded-lg border">
+            <Button
+              variant={taskViewMode === "table" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setTaskViewMode("table")}
+              className="rounded-r-none gap-1"
+            >
+              <TableIcon className="h-4 w-4" />
+              Table
+            </Button>
+            <Button
+              variant={taskViewMode === "cards" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setTaskViewMode("cards")}
+              className="rounded-l-none border-l gap-1"
+            >
+              <Grid3X3 className="h-4 w-4" />
+              Cards
+            </Button>
+          </div>
+
+          <Separator orientation="vertical" className="h-6" />
+
           <Button
             variant="outline"
             size="sm"
