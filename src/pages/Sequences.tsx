@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useROSIntegration } from "@/services/ROSIntegrationService";
+import { EnhancedSequenceManager } from "@/components/ros/EnhancedSequenceManager";
 import {
   Card,
   CardContent,
@@ -8,61 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { useToast } from "@/hooks/use-toast";
-import {
-  Plus,
-  Play,
-  Pause,
-  Square,
-  Trash2,
-  Settings,
-  Copy,
-  Save,
-  Download,
-  Upload,
-  List,
-  CheckCircle,
-  XCircle,
-  Clock,
-  AlertCircle,
-  RotateCcw,
-  Zap,
-  Navigation,
-} from "lucide-react";
 
 interface Task {
   id: string;
