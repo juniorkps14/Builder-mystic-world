@@ -1100,28 +1100,38 @@ export function EnhancedSequenceManager() {
                           >
                             {/* Index */}
                             <TableCell className="text-center font-medium">
-                              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary text-sm font-bold">
+                              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary text-sm font-bold">
                                 {index + 1}
                               </div>
                             </TableCell>
 
                             {/* Task Name & Description */}
                             <TableCell>
-                              <div>
-                                <div className="font-medium text-sm">
+                              <div className="space-y-1">
+                                <div className="font-semibold text-sm">
                                   {task.name}
                                 </div>
-                                <div className="text-xs text-muted-foreground line-clamp-2">
+                                <div className="text-xs text-muted-foreground line-clamp-3 max-w-xs">
                                   {task.description}
                                 </div>
-                                {task.hasSubtasks && (
-                                  <Badge
-                                    variant="secondary"
-                                    className="text-xs mt-1"
-                                  >
-                                    {task.subtasks?.length || 0} subtasks
-                                  </Badge>
-                                )}
+                                <div className="flex gap-1 mt-1">
+                                  {task.hasSubtasks && (
+                                    <Badge
+                                      variant="secondary"
+                                      className="text-xs"
+                                    >
+                                      {task.subtasks?.length || 0} subtasks
+                                    </Badge>
+                                  )}
+                                  {task.waitForFeedback && (
+                                    <Badge
+                                      variant="outline"
+                                      className="text-xs"
+                                    >
+                                      Feedback Required
+                                    </Badge>
+                                  )}
+                                </div>
                               </div>
                             </TableCell>
 
@@ -1129,76 +1139,142 @@ export function EnhancedSequenceManager() {
                             <TableCell>
                               <Badge
                                 variant="outline"
-                                className={`text-xs ${getTypeColor(task.type)}`}
+                                className={`text-xs font-medium ${getTypeColor(task.type)}`}
                               >
-                                {task.type.replace("_", " ")}
+                                {task.type.replace("_", " ").toUpperCase()}
                               </Badge>
                             </TableCell>
 
                             {/* Status */}
                             <TableCell className="text-center">
                               <div
-                                className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(task.status)}`}
+                                className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(task.status)}`}
                               >
                                 {getStatusIcon(task.status)}
-                                {task.status}
+                                {task.status.toUpperCase()}
                               </div>
                             </TableCell>
 
                             {/* Progress */}
                             <TableCell className="text-center">
-                              <div className="w-full">
-                                <div className="flex justify-between text-xs mb-1">
+                              <div className="w-full space-y-1">
+                                <div className="flex justify-between text-xs font-medium">
                                   <span>{task.progress}%</span>
+                                  {task.status === "running" && (
+                                    <span className="text-blue-600 animate-pulse">
+                                      ●
+                                    </span>
+                                  )}
                                 </div>
                                 <Progress
                                   value={task.progress}
                                   className="h-2"
                                 />
+                                {task.startTime && (
+                                  <div className="text-xs text-muted-foreground">
+                                    Started:{" "}
+                                    {task.startTime.toLocaleTimeString()}
+                                  </div>
+                                )}
                               </div>
                             </TableCell>
 
                             {/* Duration */}
                             <TableCell className="text-center">
-                              <div className="text-sm">
-                                <div>{task.duration}s</div>
-                                <div className="text-xs text-muted-foreground">
-                                  / {task.timeout}s
+                              <div className="text-sm space-y-1">
+                                <div className="font-medium">
+                                  {task.duration}s
                                 </div>
+                                <div className="text-xs text-muted-foreground">
+                                  Max: {task.timeout}s
+                                </div>
+                                {task.status === "running" && (
+                                  <div className="text-xs text-blue-600">
+                                    {Math.round(
+                                      ((task.timeout - task.duration) /
+                                        task.timeout) *
+                                        100,
+                                    )}
+                                    % left
+                                  </div>
+                                )}
                               </div>
                             </TableCell>
 
                             {/* Dependencies */}
                             <TableCell>
-                              {task.dependencies &&
-                              task.dependencies.length > 0 ? (
-                                <div className="text-xs">
-                                  <Badge variant="outline" className="text-xs">
-                                    {task.dependencies.length} deps
-                                  </Badge>
+                              <div className="space-y-1">
+                                {task.dependencies &&
+                                task.dependencies.length > 0 ? (
+                                  <div>
+                                    <Badge
+                                      variant="outline"
+                                      className="text-xs mb-1"
+                                    >
+                                      {task.dependencies.length} dependencies
+                                    </Badge>
+                                    <div className="text-xs text-muted-foreground">
+                                      {task.dependencies.slice(0, 2).join(", ")}
+                                      {task.dependencies.length > 2 && "..."}
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <span className="text-xs text-muted-foreground">
+                                    Independent
+                                  </span>
+                                )}
+                              </div>
+                            </TableCell>
+
+                            {/* Retries */}
+                            <TableCell className="text-center">
+                              <div className="text-sm space-y-1">
+                                <div>
+                                  <span className="font-medium">
+                                    {task.retries}
+                                  </span>
+                                  <span className="text-muted-foreground">
+                                    {" "}
+                                    max
+                                  </span>
                                 </div>
-                              ) : (
-                                <span className="text-xs text-muted-foreground">
-                                  None
-                                </span>
-                              )}
+                                <div className="text-xs text-muted-foreground">
+                                  Feedback: {task.feedbackTimeout}s
+                                </div>
+                              </div>
                             </TableCell>
 
                             {/* Actions */}
                             <TableCell className="text-center">
                               <div className="flex items-center justify-center gap-1">
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleTaskAction("start", task.id);
-                                  }}
-                                  className="h-7 w-7 p-0"
-                                  disabled={task.status === "running"}
-                                >
-                                  <PlayCircle className="h-3 w-3" />
-                                </Button>
+                                {task.status !== "running" ? (
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleTaskAction("start", task.id);
+                                    }}
+                                    className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
+                                    title="Start Task"
+                                  >
+                                    <PlayCircle className="h-4 w-4" />
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleTaskAction("pause", task.id);
+                                    }}
+                                    className="h-8 w-8 p-0 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                                    title="Pause Task"
+                                  >
+                                    <PauseCircle className="h-4 w-4" />
+                                  </Button>
+                                )}
+
                                 <Button
                                   size="sm"
                                   variant="ghost"
@@ -1209,10 +1285,12 @@ export function EnhancedSequenceManager() {
                                     setViewMode("editing");
                                     setFocusedCard(task.id);
                                   }}
-                                  className="h-7 w-7 p-0"
+                                  className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                  title="Edit Task"
                                 >
-                                  <Edit className="h-3 w-3" />
+                                  <Edit className="h-4 w-4" />
                                 </Button>
+
                                 <Button
                                   size="sm"
                                   variant="ghost"
@@ -1220,10 +1298,12 @@ export function EnhancedSequenceManager() {
                                     e.stopPropagation();
                                     handleDuplicateTask(task);
                                   }}
-                                  className="h-7 w-7 p-0"
+                                  className="h-8 w-8 p-0 text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                                  title="Duplicate Task"
                                 >
-                                  <Copy className="h-3 w-3" />
+                                  <Copy className="h-4 w-4" />
                                 </Button>
+
                                 <Button
                                   size="sm"
                                   variant="ghost"
@@ -1231,9 +1311,10 @@ export function EnhancedSequenceManager() {
                                     e.stopPropagation();
                                     handleDeleteTask(task.id);
                                   }}
-                                  className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                                  className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                  title="Delete Task"
                                 >
-                                  <Trash2 className="h-3 w-3" />
+                                  <Trash2 className="h-4 w-4" />
                                 </Button>
                               </div>
                             </TableCell>
