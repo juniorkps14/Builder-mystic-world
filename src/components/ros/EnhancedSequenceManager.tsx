@@ -1267,9 +1267,13 @@ export function EnhancedSequenceManager() {
                                                       variant="ghost"
                                                       onClick={(e) => {
                                                         e.stopPropagation();
-                                                        // Open subtask editor (will implement)
-                                                        console.log(
-                                                          "Edit subtask:",
+                                                        setSelectedSubtask(
+                                                          subtask,
+                                                        );
+                                                        setShowSubtaskEditor(
+                                                          true,
+                                                        );
+                                                        setFocusedCard(
                                                           subtask.id,
                                                         );
                                                       }}
@@ -1277,6 +1281,21 @@ export function EnhancedSequenceManager() {
                                                       title="Edit Subtask"
                                                     >
                                                       <Edit className="h-2 w-2" />
+                                                    </Button>
+                                                    <Button
+                                                      size="sm"
+                                                      variant="ghost"
+                                                      onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDeleteSubtask(
+                                                          task.id,
+                                                          subtask.id,
+                                                        );
+                                                      }}
+                                                      className="h-4 w-4 p-0 text-red-500 hover:text-red-700"
+                                                      title="Delete Subtask"
+                                                    >
+                                                      <Trash2 className="h-2 w-2" />
                                                     </Button>
                                                   </div>
                                                 </div>
