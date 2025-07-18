@@ -669,11 +669,17 @@ export function EnhancedSequenceManager() {
       // Table view gets maximum space
       switch (viewMode) {
         case "execution":
-          return sidebarCollapsed ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-4";
+          return sidebarCollapsed
+            ? "grid-cols-1"
+            : "grid-cols-1 lg:grid-cols-4";
         case "editing":
-          return sidebarCollapsed ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-3";
+          return sidebarCollapsed
+            ? "grid-cols-1"
+            : "grid-cols-1 lg:grid-cols-3";
         default:
-          return sidebarCollapsed ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-4";
+          return sidebarCollapsed
+            ? "grid-cols-1"
+            : "grid-cols-1 lg:grid-cols-4";
       }
     } else {
       // Cards view uses original layout
@@ -1048,217 +1054,279 @@ export function EnhancedSequenceManager() {
                     <Table className="w-full">
                       <TableHeader>
                         <TableRow className="bg-muted/50 border-b">
-                          <TableHead className="w-16 text-center font-semibold">#</TableHead>
-                          <TableHead className="flex-1 min-w-[300px] font-semibold">Task Name & Description</TableHead>
-                          <TableHead className="w-24 font-semibold">Type</TableHead>
-                          <TableHead className="w-28 text-center font-semibold">Status</TableHead>
-                          <TableHead className="w-32 text-center font-semibold">Progress</TableHead>
-                          <TableHead className="w-24 text-center font-semibold">Duration</TableHead>
-                          <TableHead className="w-28 font-semibold">Dependencies</TableHead>
-                          <TableHead className="w-20 text-center font-semibold">Retries</TableHead>
-                          <TableHead className="w-40 text-center font-semibold">Actions</TableHead>
+                          <TableHead className="w-16 text-center font-semibold">
+                            #
+                          </TableHead>
+                          <TableHead className="flex-1 min-w-[300px] font-semibold">
+                            Task Name & Description
+                          </TableHead>
+                          <TableHead className="w-24 font-semibold">
+                            Type
+                          </TableHead>
+                          <TableHead className="w-28 text-center font-semibold">
+                            Status
+                          </TableHead>
+                          <TableHead className="w-32 text-center font-semibold">
+                            Progress
+                          </TableHead>
+                          <TableHead className="w-24 text-center font-semibold">
+                            Duration
+                          </TableHead>
+                          <TableHead className="w-28 font-semibold">
+                            Dependencies
+                          </TableHead>
+                          <TableHead className="w-20 text-center font-semibold">
+                            Retries
+                          </TableHead>
+                          <TableHead className="w-40 text-center font-semibold">
+                            Actions
+                          </TableHead>
                         </TableRow>
                       </TableHeader>
                     </Table>
-                    <ScrollArea className={`${taskViewMode === "table" ? "h-[650px]" : "h-[500px]"} w-full`}>
+                    <ScrollArea
+                      className={`${taskViewMode === "table" ? "h-[650px]" : "h-[500px]"} w-full`}
+                    >
                       <Table className="w-full">
-                      <TableBody>
-                        {currentTasks.map((task, index) => (
-                          <TableRow
-                            key={task.id}
-                            className={`cursor-pointer transition-colors hover:bg-accent/50 ${
-                              focusedCard === task.id ? "bg-primary/5 border-l-4 border-l-primary" : ""
-                            }`}
-                            onClick={() => setFocusedCard(task.id)}
-                          >
-                            {/* Index */}
-                            <TableCell className="text-center font-medium">
-                              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary text-sm font-bold">
-                                {index + 1}
-                              </div>
-                            </TableCell>
-
-                            {/* Task Name & Description */}
-                            <TableCell>
-                              <div className="space-y-1">
-                                <div className="font-semibold text-sm">{task.name}</div>
-                                <div className="text-xs text-muted-foreground line-clamp-3 max-w-xs">
-                                  {task.description}
+                        <TableBody>
+                          {currentTasks.map((task, index) => (
+                            <TableRow
+                              key={task.id}
+                              className={`cursor-pointer transition-colors hover:bg-accent/50 ${
+                                focusedCard === task.id
+                                  ? "bg-primary/5 border-l-4 border-l-primary"
+                                  : ""
+                              }`}
+                              onClick={() => setFocusedCard(task.id)}
+                            >
+                              {/* Index */}
+                              <TableCell className="text-center font-medium">
+                                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary text-sm font-bold">
+                                  {index + 1}
                                 </div>
-                                <div className="flex gap-1 mt-1">
-                                  {task.hasSubtasks && (
-                                    <Badge variant="secondary" className="text-xs">
-                                      {task.subtasks?.length || 0} subtasks
-                                    </Badge>
-                                  )}
-                                  {task.waitForFeedback && (
-                                    <Badge variant="outline" className="text-xs">
-                                      Feedback Required
-                                    </Badge>
-                                  )}
-                                </div>
-                              </div>
-                            </TableCell>
+                              </TableCell>
 
-                            {/* Type */}
-                            <TableCell>
-                              <Badge variant="outline" className={`text-xs font-medium ${getTypeColor(task.type)}`}>
-                                {task.type.replace("_", " ").toUpperCase()}
-                              </Badge>
-                            </TableCell>
-
-                            {/* Status */}
-                            <TableCell className="text-center">
-                              <div className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(task.status)}`}>
-                                {getStatusIcon(task.status)}
-                                {task.status.toUpperCase()}
-                              </div>
-                            </TableCell>
-
-                            {/* Progress */}
-                            <TableCell className="text-center">
-                              <div className="w-full space-y-1">
-                                <div className="flex justify-between text-xs font-medium">
-                                  <span>{task.progress}%</span>
-                                  {task.status === "running" && (
-                                    <span className="text-blue-600 animate-pulse">●</span>
-                                  )}
-                                </div>
-                                <Progress value={task.progress} className="h-2" />
-                                {task.startTime && (
-                                  <div className="text-xs text-muted-foreground">
-                                    Started: {task.startTime.toLocaleTimeString()}
+                              {/* Task Name & Description */}
+                              <TableCell>
+                                <div className="space-y-1">
+                                  <div className="font-semibold text-sm">
+                                    {task.name}
                                   </div>
-                                )}
-                              </div>
-                            </TableCell>
-
-                            {/* Duration */}
-                            <TableCell className="text-center">
-                              <div className="text-sm space-y-1">
-                                <div className="font-medium">{task.duration}s</div>
-                                <div className="text-xs text-muted-foreground">
-                                  Max: {task.timeout}s
-                                </div>
-                                {task.status === "running" && (
-                                  <div className="text-xs text-blue-600">
-                                    {Math.round(((task.timeout - task.duration) / task.timeout) * 100)}% left
+                                  <div className="text-xs text-muted-foreground line-clamp-3 max-w-xs">
+                                    {task.description}
                                   </div>
-                                )}
-                              </div>
-                            </TableCell>
+                                  <div className="flex gap-1 mt-1">
+                                    {task.hasSubtasks && (
+                                      <Badge
+                                        variant="secondary"
+                                        className="text-xs"
+                                      >
+                                        {task.subtasks?.length || 0} subtasks
+                                      </Badge>
+                                    )}
+                                    {task.waitForFeedback && (
+                                      <Badge
+                                        variant="outline"
+                                        className="text-xs"
+                                      >
+                                        Feedback Required
+                                      </Badge>
+                                    )}
+                                  </div>
+                                </div>
+                              </TableCell>
 
-                            {/* Dependencies */}
-                            <TableCell>
-                              <div className="space-y-1">
-                                {task.dependencies && task.dependencies.length > 0 ? (
-                                  <div>
-                                    <Badge variant="outline" className="text-xs mb-1">
-                                      {task.dependencies.length} dependencies
-                                    </Badge>
+                              {/* Type */}
+                              <TableCell>
+                                <Badge
+                                  variant="outline"
+                                  className={`text-xs font-medium ${getTypeColor(task.type)}`}
+                                >
+                                  {task.type.replace("_", " ").toUpperCase()}
+                                </Badge>
+                              </TableCell>
+
+                              {/* Status */}
+                              <TableCell className="text-center">
+                                <div
+                                  className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(task.status)}`}
+                                >
+                                  {getStatusIcon(task.status)}
+                                  {task.status.toUpperCase()}
+                                </div>
+                              </TableCell>
+
+                              {/* Progress */}
+                              <TableCell className="text-center">
+                                <div className="w-full space-y-1">
+                                  <div className="flex justify-between text-xs font-medium">
+                                    <span>{task.progress}%</span>
+                                    {task.status === "running" && (
+                                      <span className="text-blue-600 animate-pulse">
+                                        ●
+                                      </span>
+                                    )}
+                                  </div>
+                                  <Progress
+                                    value={task.progress}
+                                    className="h-2"
+                                  />
+                                  {task.startTime && (
                                     <div className="text-xs text-muted-foreground">
-                                      {task.dependencies.slice(0, 2).join(", ")}
-                                      {task.dependencies.length > 2 && "..."}
+                                      Started:{" "}
+                                      {task.startTime.toLocaleTimeString()}
                                     </div>
+                                  )}
+                                </div>
+                              </TableCell>
+
+                              {/* Duration */}
+                              <TableCell className="text-center">
+                                <div className="text-sm space-y-1">
+                                  <div className="font-medium">
+                                    {task.duration}s
                                   </div>
-                                ) : (
-                                  <span className="text-xs text-muted-foreground">Independent</span>
-                                )}
-                              </div>
-                            </TableCell>
-
-                            {/* Retries */}
-                            <TableCell className="text-center">
-                              <div className="text-sm space-y-1">
-                                <div>
-                                  <span className="font-medium">{task.retries}</span>
-                                  <span className="text-muted-foreground"> max</span>
+                                  <div className="text-xs text-muted-foreground">
+                                    Max: {task.timeout}s
+                                  </div>
+                                  {task.status === "running" && (
+                                    <div className="text-xs text-blue-600">
+                                      {Math.round(
+                                        ((task.timeout - task.duration) /
+                                          task.timeout) *
+                                          100,
+                                      )}
+                                      % left
+                                    </div>
+                                  )}
                                 </div>
-                                <div className="text-xs text-muted-foreground">
-                                  Feedback: {task.feedbackTimeout}s
-                                </div>
-                              </div>
-                            </TableCell>
+                              </TableCell>
 
-                            {/* Actions */}
-                            <TableCell className="text-center">
-                              <div className="flex items-center justify-center gap-1">
-                                {task.status !== "running" ? (
+                              {/* Dependencies */}
+                              <TableCell>
+                                <div className="space-y-1">
+                                  {task.dependencies &&
+                                  task.dependencies.length > 0 ? (
+                                    <div>
+                                      <Badge
+                                        variant="outline"
+                                        className="text-xs mb-1"
+                                      >
+                                        {task.dependencies.length} dependencies
+                                      </Badge>
+                                      <div className="text-xs text-muted-foreground">
+                                        {task.dependencies
+                                          .slice(0, 2)
+                                          .join(", ")}
+                                        {task.dependencies.length > 2 && "..."}
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <span className="text-xs text-muted-foreground">
+                                      Independent
+                                    </span>
+                                  )}
+                                </div>
+                              </TableCell>
+
+                              {/* Retries */}
+                              <TableCell className="text-center">
+                                <div className="text-sm space-y-1">
+                                  <div>
+                                    <span className="font-medium">
+                                      {task.retries}
+                                    </span>
+                                    <span className="text-muted-foreground">
+                                      {" "}
+                                      max
+                                    </span>
+                                  </div>
+                                  <div className="text-xs text-muted-foreground">
+                                    Feedback: {task.feedbackTimeout}s
+                                  </div>
+                                </div>
+                              </TableCell>
+
+                              {/* Actions */}
+                              <TableCell className="text-center">
+                                <div className="flex items-center justify-center gap-1">
+                                  {task.status !== "running" ? (
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleTaskAction("start", task.id);
+                                      }}
+                                      className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
+                                      title="Start Task"
+                                    >
+                                      <PlayCircle className="h-4 w-4" />
+                                    </Button>
+                                  ) : (
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleTaskAction("pause", task.id);
+                                      }}
+                                      className="h-8 w-8 p-0 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                                      title="Pause Task"
+                                    >
+                                      <PauseCircle className="h-4 w-4" />
+                                    </Button>
+                                  )}
+
                                   <Button
                                     size="sm"
                                     variant="ghost"
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      handleTaskAction("start", task.id);
+                                      setSelectedTask(task);
+                                      setShowTaskEditor(true);
+                                      setViewMode("editing");
+                                      setFocusedCard(task.id);
                                     }}
-                                    className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
-                                    title="Start Task"
+                                    className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                    title="Edit Task"
                                   >
-                                    <PlayCircle className="h-4 w-4" />
+                                    <Edit className="h-4 w-4" />
                                   </Button>
-                                ) : (
+
                                   <Button
                                     size="sm"
                                     variant="ghost"
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      handleTaskAction("pause", task.id);
+                                      handleDuplicateTask(task);
                                     }}
-                                    className="h-8 w-8 p-0 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
-                                    title="Pause Task"
+                                    className="h-8 w-8 p-0 text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                                    title="Duplicate Task"
                                   >
-                                    <PauseCircle className="h-4 w-4" />
+                                    <Copy className="h-4 w-4" />
                                   </Button>
-                                )}
 
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setSelectedTask(task);
-                                    setShowTaskEditor(true);
-                                    setViewMode("editing");
-                                    setFocusedCard(task.id);
-                                  }}
-                                  className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                                  title="Edit Task"
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDuplicateTask(task);
-                                  }}
-                                  className="h-8 w-8 p-0 text-purple-600 hover:text-purple-700 hover:bg-purple-50"
-                                  title="Duplicate Task"
-                                >
-                                  <Copy className="h-4 w-4" />
-                                </Button>
-
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteTask(task.id);
-                                  }}
-                                  className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                                  title="Delete Task"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </ScrollArea>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDeleteTask(task.id);
+                                    }}
+                                    className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                    title="Delete Task"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </ScrollArea>
+                  </div>
                 </div>
               ) : (
                 /* Cards View - Original */
