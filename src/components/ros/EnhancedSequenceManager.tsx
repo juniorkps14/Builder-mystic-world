@@ -1119,28 +1119,88 @@ export function EnhancedSequenceManager() {
 
                                 {/* Task Name & Description */}
                                 <TableCell>
-                                  <div className="space-y-1">
+                                  <div className="space-y-2">
                                     <div className="font-semibold text-sm">
                                       {task.name}
                                     </div>
-                                    <div className="text-xs text-muted-foreground line-clamp-3 max-w-xs">
+                                    <div className="text-xs text-muted-foreground line-clamp-2">
                                       {task.description}
                                     </div>
-                                    <div className="flex gap-1 mt-1">
-                                      {task.hasSubtasks && (
-                                        <Badge
-                                          variant="secondary"
-                                          className="text-xs"
-                                        >
-                                          {task.subtasks?.length || 0} subtasks
-                                        </Badge>
+
+                                    {/* Subtasks Display */}
+                                    {task.hasSubtasks &&
+                                      task.subtasks &&
+                                      task.subtasks.length > 0 && (
+                                        <div className="space-y-1">
+                                          <Badge
+                                            variant="secondary"
+                                            className="text-xs"
+                                          >
+                                            {task.subtasks.length} subtasks
+                                          </Badge>
+                                          <div className="space-y-1">
+                                            {task.subtasks
+                                              .slice(0, 3)
+                                              .map((subtask, idx) => (
+                                                <div
+                                                  key={subtask.id}
+                                                  className="flex items-center gap-2 text-xs"
+                                                >
+                                                  <div
+                                                    className={`w-2 h-2 rounded-full ${
+                                                      subtask.status ===
+                                                      "completed"
+                                                        ? "bg-green-500"
+                                                        : subtask.status ===
+                                                            "running"
+                                                          ? "bg-blue-500 animate-pulse"
+                                                          : subtask.status ===
+                                                              "failed"
+                                                            ? "bg-red-500"
+                                                            : "bg-gray-300"
+                                                    }`}
+                                                  />
+                                                  <span className="text-muted-foreground truncate max-w-[200px]">
+                                                    {subtask.name}
+                                                  </span>
+                                                  <span className="text-xs text-muted-foreground">
+                                                    {subtask.progress}%
+                                                  </span>
+                                                </div>
+                                              ))}
+                                            {task.subtasks.length > 3 && (
+                                              <div className="text-xs text-muted-foreground">
+                                                +{task.subtasks.length - 3} more
+                                                subtasks
+                                              </div>
+                                            )}
+                                          </div>
+                                        </div>
                                       )}
+
+                                    <div className="flex gap-1 mt-1">
                                       {task.waitForFeedback && (
                                         <Badge
                                           variant="outline"
                                           className="text-xs"
                                         >
                                           Feedback Required
+                                        </Badge>
+                                      )}
+                                      {isCurrentTask && (
+                                        <Badge
+                                          variant="default"
+                                          className="text-xs bg-blue-600"
+                                        >
+                                          RUNNING NOW
+                                        </Badge>
+                                      )}
+                                      {isNextTask && (
+                                        <Badge
+                                          variant="outline"
+                                          className="text-xs border-orange-400 text-orange-600"
+                                        >
+                                          NEXT
                                         </Badge>
                                       )}
                                     </div>
