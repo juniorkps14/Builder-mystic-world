@@ -62,6 +62,13 @@ import {
   EyeOff,
   Maximize2,
   Minimize2,
+  Table as TableIcon,
+  Grid3X3,
+  MoreHorizontal,
+  Edit,
+  PlayCircle,
+  PauseCircle,
+  StopCircle,
 } from "lucide-react";
 
 export function EnhancedSequenceManager() {
