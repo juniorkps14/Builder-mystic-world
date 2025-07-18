@@ -50,6 +50,10 @@ import {
   Shield,
   Globe,
   Smartphone,
+  Eye,
+  EyeOff,
+  Maximize2,
+  Minimize2,
 } from "lucide-react";
 
 export function EnhancedSequenceManager() {
@@ -63,6 +67,11 @@ export function EnhancedSequenceManager() {
   const [showFeatureManager, setShowFeatureManager] = useState(false);
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [showExportDialog, setShowExportDialog] = useState(false);
+  const [viewMode, setViewMode] = useState<
+    "overview" | "execution" | "editing"
+  >("overview");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [focusedCard, setFocusedCard] = useState<string | null>(null);
 
   // Performance metrics
   const [metrics, setMetrics] = useState({
@@ -457,11 +466,19 @@ export function EnhancedSequenceManager() {
 
   const handleSequenceAction = (action: string, sequenceId: string) => {
     console.log(`${action} sequence: ${sequenceId}`);
+    if (action === "start") {
+      setViewMode("execution");
+      setFocusedCard("execution-status");
+    }
     addLog(`${action.toUpperCase()} sequence: ${sequenceId}`);
   };
 
   const handleTaskAction = (action: string, taskId: string) => {
     console.log(`${action} task: ${taskId}`);
+    if (action === "edit") {
+      setViewMode("editing");
+      setFocusedCard(taskId);
+    }
     addLog(`${action.toUpperCase()} task: ${taskId}`);
   };
 
@@ -564,523 +581,545 @@ export function EnhancedSequenceManager() {
     // Auto-open parameter editor for new tasks
     setSelectedTask(newTask);
     setShowTaskEditor(true);
+    setViewMode("editing");
+    setFocusedCard(newTask.id);
     addLog(`Created new task: ${newTask.name} - Opening parameter editor`);
   };
 
   const currentTasks = getSequenceTasks(activeSequence);
-  const canStartNextTask = (task: Task, isSequential: boolean) => {
-    if (!isSequential) return true;
-    const taskIndex = currentTasks.findIndex((t) => t.id === task.id);
-    if (taskIndex === 0) return true;
-    return currentTasks[taskIndex - 1]?.status === "completed";
+  const runningTasks = currentTasks.filter((task) => task.status === "running");
+  const pendingTasks = currentTasks.filter((task) => task.status === "pending");
+  const completedTasks = currentTasks.filter(
+    (task) => task.status === "completed",
+  );
+
+  // Smart layout based on view mode and context
+  const getLayoutClass = () => {
+    switch (viewMode) {
+      case "execution":
+        return "grid-cols-1 lg:grid-cols-4"; // Focus on execution status
+      case "editing":
+        return "grid-cols-1 lg:grid-cols-3"; // Balance for editing
+      default:
+        return "grid-cols-1 lg:grid-cols-5"; // Overview mode
+    }
+  };
+
+  // Get card emphasis based on current focus
+  const getCardClass = (cardId: string) => {
+    const baseClass = "transition-all duration-300 ";
+    if (focusedCard === cardId) {
+      return baseClass + "ring-2 ring-primary shadow-lg scale-[1.02]";
+    }
+    return baseClass + "hover:shadow-md";
   };
 
   return (
     <div className="space-y-6">
-      {/* Enhanced Header with Metrics */}
-      {activeSequence && !isEditing && (
-        <Card className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-2xl font-bold">{activeSequence.name}</h2>
-              <p className="text-muted-foreground">
-                {activeSequence.description}
-              </p>
-              <div className="flex items-center gap-2 mt-2">
-                {activeSequence.tags.map((tag) => (
-                  <Badge key={tag} variant="outline" className="text-xs">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Badge
-                variant={activeSequence.isParallel ? "default" : "secondary"}
+      {/* Enhanced Header with Mode Switcher */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div>
+            <h2 className="text-2xl font-bold">
+              {activeSequence?.name || "Sequence Manager"}
+            </h2>
+            <p className="text-muted-foreground">
+              {activeSequence?.description || "Select a sequence to begin"}
+            </p>
+          </div>
+
+          {/* View Mode Switcher */}
+          <div className="flex items-center gap-2">
+            <Badge variant="outline">Mode:</Badge>
+            <div className="flex rounded-lg border">
+              <Button
+                variant={viewMode === "overview" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => {
+                  setViewMode("overview");
+                  setFocusedCard(null);
+                }}
+                className="rounded-r-none"
               >
-                {activeSequence.isParallel ? "Parallel" : "Sequential"}
-              </Badge>
-              <Badge
-                variant={
-                  getSequenceStatus(activeSequence) === "running"
-                    ? "default"
-                    : "outline"
-                }
-                className="gap-1"
-              >
-                <Activity className="h-3 w-3" />
-                {getSequenceStatus(activeSequence).toUpperCase()}
-              </Badge>
-            </div>
-          </div>
-
-          {/* Performance Metrics */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-            <div className="text-center">
-              <div className="text-2xl font-bold">{currentTasks.length}</div>
-              <div className="text-sm text-muted-foreground">Total Tasks</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-ros-success">
-                {currentTasks.filter((t) => t.status === "completed").length}
-              </div>
-              <div className="text-sm text-muted-foreground">Completed</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-primary">
-                {currentTasks.filter((t) => t.status === "running").length}
-              </div>
-              <div className="text-sm text-muted-foreground">Running</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-destructive">
-                {currentTasks.filter((t) => t.status === "failed").length}
-              </div>
-              <div className="text-sm text-muted-foreground">Failed</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-500">
-                {
-                  currentTasks.filter((t) => t.status === "waiting_feedback")
-                    .length
-                }
-              </div>
-              <div className="text-sm text-muted-foreground">
-                Waiting Feedback
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-2 mb-6">
-            <div className="flex justify-between text-sm">
-              <span>Overall Progress</span>
-              <span>{getSequenceProgress(activeSequence)}%</span>
-            </div>
-            <Progress
-              value={getSequenceProgress(activeSequence)}
-              className="h-3"
-            />
-          </div>
-
-          {/* Enhanced Controls */}
-          <div className="flex flex-wrap gap-2">
-            <Button
-              onClick={() => handleSequenceAction("start", activeSequence.id)}
-              className="gap-2"
-            >
-              <Play className="h-4 w-4" />
-              Start Sequence
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => handleSequenceAction("pause", activeSequence.id)}
-              className="gap-2"
-            >
-              <Pause className="h-4 w-4" />
-              Pause
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => handleSequenceAction("stop", activeSequence.id)}
-              className="gap-2"
-            >
-              <Square className="h-4 w-4" />
-              Stop
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => handleSequenceAction("restart", activeSequence.id)}
-              className="gap-2"
-            >
-              <RotateCcw className="h-4 w-4" />
-              Restart
-            </Button>
-
-            <Separator orientation="vertical" className="h-8" />
-
-            <Button
-              variant="outline"
-              onClick={() => setIsEditing(true)}
-              className="gap-2"
-            >
-              <Settings className="h-4 w-4" />
-              Edit
-            </Button>
-            <div className="flex items-center gap-2">
-              <Button onClick={createNewTask} className="gap-2">
-                <Plus className="h-4 w-4" />
-                Add Task
+                <Eye className="h-4 w-4 mr-1" />
+                Overview
               </Button>
-              <div className="text-xs text-muted-foreground">
-                💡 New tasks will auto-open the parameter editor
-              </div>
+              <Button
+                variant={viewMode === "execution" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => {
+                  setViewMode("execution");
+                  setFocusedCard("execution-status");
+                }}
+                className="rounded-none border-x"
+              >
+                <Play className="h-4 w-4 mr-1" />
+                Execution
+              </Button>
+              <Button
+                variant={viewMode === "editing" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => {
+                  setViewMode("editing");
+                  setFocusedCard(selectedTask?.id || "task-editor");
+                }}
+                className="rounded-l-none"
+              >
+                <Settings className="h-4 w-4 mr-1" />
+                Editing
+              </Button>
             </div>
-
-            <Separator orientation="vertical" className="h-8" />
-
-            <Button
-              variant="outline"
-              onClick={() => exportSequence(activeSequence)}
-              className="gap-2"
-            >
-              <Download className="h-4 w-4" />
-              Export
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => duplicateSequence(activeSequence)}
-              className="gap-2"
-            >
-              <Copy className="h-4 w-4" />
-              Duplicate
-            </Button>
-
-            <Separator orientation="vertical" className="h-8" />
-
-            <Button
-              variant="outline"
-              onClick={() => setShowFeatureManager(true)}
-              className="gap-2"
-            >
-              <Zap className="h-4 w-4" />
-              Features
-            </Button>
           </div>
-        </Card>
-      )}
+        </div>
 
-      {/* Enhanced Sequence Editor */}
-      {isEditing ? (
-        <SequenceEditor
-          sequence={activeSequence || undefined}
-          onSave={(sequence) => {
-            if (activeSequence) {
-              setSequences((prev) =>
-                prev.map((s) => (s.id === sequence.id ? sequence : s)),
-              );
-              setActiveSequence(sequence);
-            } else {
-              setSequences((prev) => [...prev, sequence]);
-              setActiveSequence(sequence);
-            }
-            setIsEditing(false);
-            addLog(`Saved sequence: ${sequence.name}`);
-          }}
-          onCancel={() => setIsEditing(false)}
-        />
-      ) : (
-        <Tabs defaultValue="tasks" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="tasks" className="gap-2">
-              <List className="h-4 w-4" />
-              Tasks
-            </TabsTrigger>
-            <TabsTrigger value="sequences" className="gap-2">
-              <Layers className="h-4 w-4" />
-              Library
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="gap-2">
-              <BarChart3 className="h-4 w-4" />
-              Analytics
-            </TabsTrigger>
-            <TabsTrigger value="logs" className="gap-2">
-              <Activity className="h-4 w-4" />
-              Logs
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Enhanced Task Management */}
-          <TabsContent value="tasks" className="space-y-4">
-            {currentTasks.length === 0 ? (
-              <Card className="p-12 text-center">
-                <List className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">No Tasks</h3>
-                <p className="text-muted-foreground mb-4">
-                  {activeSequence
-                    ? "This sequence has no tasks yet. Create a task and use the 'Advanced Edit' button to configure parameters."
-                    : "Select a sequence to view tasks."}
-                </p>
-                <Button onClick={createNewTask} className="gap-2">
-                  <Plus className="h-4 w-4" />
-                  Add First Task
-                </Button>
-                {activeSequence && (
-                  <p className="text-xs text-muted-foreground mt-2">
-                    💡 After adding a task, click the blue "Advanced Edit"
-                    button to configure movement modes, parameters, and
-                    conditional logic
-                  </p>
-                )}
-              </Card>
+        {/* Header Actions */}
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          >
+            {sidebarCollapsed ? (
+              <Maximize2 className="h-4 w-4" />
             ) : (
-              <div className="space-y-4">
-                {currentTasks.map((task, index) => (
-                  <div key={task.id} className="relative group">
-                    <TaskCardWithSubtasks
-                      task={task}
-                      index={index}
-                      isSequential={!activeSequence?.isParallel}
-                      canStart={canStartNextTask(
-                        task,
-                        !activeSequence?.isParallel,
-                      )}
-                      onUpdate={handleUpdateTask}
-                      onDelete={handleDeleteTask}
-                      onDuplicate={handleDuplicateTask}
-                      onStart={(taskId) => handleTaskAction("start", taskId)}
-                      onPause={(taskId) => handleTaskAction("pause", taskId)}
-                      onStop={(taskId) => handleTaskAction("stop", taskId)}
-                    />
-                    {/* Enhanced task parameter editor button */}
-                    <div className="absolute top-4 right-4 z-10">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          setSelectedTask(task);
-                          setShowTaskEditor(true);
-                        }}
-                        className="bg-background border shadow-sm hover:bg-accent hover:bg-primary hover:text-primary-foreground"
-                        title="Advanced Parameter Editor - Edit task type, movement modes, conditional logic, and more"
-                      >
-                        <Settings className="h-4 w-4 mr-1" />
-                        Advanced Edit
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <Minimize2 className="h-4 w-4" />
             )}
-          </TabsContent>
+          </Button>
+          <Button onClick={createNewTask} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Add Task
+          </Button>
+        </div>
+      </div>
 
-          {/* Enhanced Sequence Library */}
-          <TabsContent value="sequences" className="space-y-4">
-            <div className="flex justify-between items-center">
-              <div className="flex gap-2">
-                <h3 className="text-lg font-semibold">Sequence Library</h3>
-                <Badge variant="secondary">{sequences.length} sequences</Badge>
-              </div>
-              <div className="flex gap-2">
-                <input
-                  type="file"
-                  accept=".json"
-                  onChange={importSequence}
-                  className="hidden"
-                  id="import-sequence"
-                />
-                <Button
-                  variant="outline"
-                  onClick={() =>
-                    document.getElementById("import-sequence")?.click()
-                  }
-                  className="gap-2"
-                >
-                  <Upload className="h-4 w-4" />
-                  Import
-                </Button>
-                <Button onClick={() => setIsEditing(true)} className="gap-2">
-                  <Plus className="h-4 w-4" />
-                  Create Sequence
-                </Button>
+      {/* Smart Layout Grid */}
+      <div className={`grid gap-6 ${getLayoutClass()}`}>
+        {/* Sidebar - Sequences List */}
+        {!sidebarCollapsed && (
+          <Card
+            className={`${getCardClass("sequences-list")} ${viewMode === "overview" ? "lg:col-span-1" : "lg:col-span-1"}`}
+          >
+            <div className="p-4 border-b">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold">Sequences</h3>
+                <Badge variant="secondary">{sequences.length}</Badge>
               </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {sequences.map((sequence) => (
-                <Card
-                  key={sequence.id}
-                  className={`p-4 cursor-pointer transition-all hover:shadow-lg ${
-                    activeSequence?.id === sequence.id
-                      ? "ring-2 ring-primary"
-                      : ""
-                  }`}
-                  onClick={() => setActiveSequence(sequence)}
-                >
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="flex-1">
-                      <h4 className="font-semibold">{sequence.name}</h4>
-                      <p className="text-sm text-muted-foreground line-clamp-2">
-                        {sequence.description}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          exportSequence(sequence);
-                        }}
-                      >
-                        <Download className="h-3 w-3" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          duplicateSequence(sequence);
-                        }}
-                      >
-                        <Copy className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Progress</span>
-                      <span>{getSequenceProgress(sequence)}%</span>
-                    </div>
-                    <Progress
-                      value={getSequenceProgress(sequence)}
-                      className="h-2"
-                    />
-                  </div>
-
-                  <div className="flex justify-between items-center mt-3">
-                    <div className="flex gap-1">
-                      {sequence.tags.slice(0, 2).map((tag, idx) => (
-                        <Badge key={idx} variant="outline" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                      {sequence.tags.length > 2 && (
-                        <Badge variant="outline" className="text-xs">
-                          +{sequence.tags.length - 2}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
+            <ScrollArea className="h-[500px]">
+              <div className="p-4 space-y-3">
+                {sequences.map((sequence) => (
+                  <div
+                    key={sequence.id}
+                    className={`p-3 rounded-lg border cursor-pointer transition-all duration-200 hover:bg-accent/50 ${
+                      activeSequence?.id === sequence.id
+                        ? "border-primary bg-primary/10"
+                        : "border-border"
+                    }`}
+                    onClick={() => {
+                      setActiveSequence(sequence);
+                      setFocusedCard("sequence-details");
+                    }}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-medium text-sm">
+                        {sequence.name}
+                      </span>
                       <Badge
-                        variant={sequence.isParallel ? "default" : "secondary"}
+                        variant={
+                          getSequenceStatus(sequence) === "running"
+                            ? "default"
+                            : "outline"
+                        }
                         className="text-xs"
                       >
-                        {sequence.isParallel ? "Parallel" : "Sequential"}
+                        {getSequenceStatus(sequence)}
                       </Badge>
-                      <span className="text-sm text-muted-foreground">
-                        {getSequenceTasks(sequence).length} tasks
-                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-2">
+                      {sequence.description}
+                    </p>
+                    <div className="space-y-1">
+                      <Progress
+                        value={getSequenceProgress(sequence)}
+                        className="h-1"
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>{getSequenceTasks(sequence).length} tasks</span>
+                        <span>{getSequenceProgress(sequence)}%</span>
+                      </div>
                     </div>
                   </div>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-
-          {/* Analytics Dashboard */}
-          <TabsContent value="analytics" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <BarChart3 className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      Total Executions
-                    </p>
-                    <p className="text-2xl font-bold">
-                      {metrics.totalExecutions}
-                    </p>
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-ros-success/10">
-                    <CheckCircle2 className="h-5 w-5 text-ros-success" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      Success Rate
-                    </p>
-                    <p className="text-2xl font-bold">{metrics.successRate}%</p>
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-blue-500/10">
-                    <Timer className="h-5 w-5 text-blue-500" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Avg Time</p>
-                    <p className="text-2xl font-bold">{metrics.averageTime}s</p>
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-accent/10">
-                    <Clock className="h-5 w-5 text-accent" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      Total Runtime
-                    </p>
-                    <p className="text-2xl font-bold">
-                      {metrics.totalRuntime}h
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            </div>
-
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Performance Trends</h3>
-              <div className="h-64 flex items-center justify-center bg-muted rounded">
-                <p className="text-muted-foreground">
-                  Performance charts would be displayed here
-                </p>
+                ))}
               </div>
-            </Card>
-          </TabsContent>
+            </ScrollArea>
+          </Card>
+        )}
 
-          {/* Enhanced Execution Logs */}
-          <TabsContent value="logs" className="space-y-4">
-            <Card className="p-4">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">Execution Logs</h3>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm">
-                    <Download className="h-4 w-4 mr-2" />
-                    Export Logs
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setExecutionLogs([])}
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Clear
-                  </Button>
-                </div>
-              </div>
-              <ScrollArea className="h-96">
-                <div className="space-y-2">
-                  {executionLogs.length === 0 ? (
-                    <p className="text-muted-foreground text-center py-8">
-                      No execution logs yet. Start a sequence to see logs here.
-                    </p>
-                  ) : (
-                    executionLogs.map((log, index) => (
+        {/* Main Content Area */}
+        {activeSequence && (
+          <>
+            {/* Execution Status Card - Prominent in execution mode */}
+            {(viewMode === "execution" || viewMode === "overview") && (
+              <Card
+                className={`${getCardClass("execution-status")} ${
+                  viewMode === "execution" ? "lg:col-span-2" : "lg:col-span-2"
+                }`}
+              >
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h3 className="text-lg font-semibold flex items-center gap-2">
+                        <Activity className="h-5 w-5" />
+                        Execution Status
+                      </h3>
+                      <p className="text-muted-foreground">
+                        {activeSequence.name}
+                      </p>
+                    </div>
+                    <Badge
+                      variant={
+                        getSequenceStatus(activeSequence) === "running"
+                          ? "default"
+                          : "outline"
+                      }
+                      className="gap-2"
+                    >
                       <div
-                        key={index}
-                        className="text-sm font-mono p-2 rounded bg-muted"
-                      >
-                        {log}
+                        className={`w-2 h-2 rounded-full ${
+                          getSequenceStatus(activeSequence) === "running"
+                            ? "bg-green-400 animate-pulse"
+                            : "bg-gray-400"
+                        }`}
+                      />
+                      {getSequenceStatus(activeSequence).toUpperCase()}
+                    </Badge>
+                  </div>
+
+                  {/* Performance Metrics */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div className="text-center p-3 rounded-lg bg-muted/50">
+                      <div className="text-xl font-bold text-green-600">
+                        {completedTasks.length}
                       </div>
-                    ))
-                  )}
+                      <div className="text-xs text-muted-foreground">
+                        Completed
+                      </div>
+                    </div>
+                    <div className="text-center p-3 rounded-lg bg-muted/50">
+                      <div className="text-xl font-bold text-blue-600">
+                        {runningTasks.length}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Running
+                      </div>
+                    </div>
+                    <div className="text-center p-3 rounded-lg bg-muted/50">
+                      <div className="text-xl font-bold text-orange-600">
+                        {pendingTasks.length}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Pending
+                      </div>
+                    </div>
+                    <div className="text-center p-3 rounded-lg bg-muted/50">
+                      <div className="text-xl font-bold">
+                        {currentTasks.length}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Total</div>
+                    </div>
+                  </div>
+
+                  {/* Overall Progress */}
+                  <div className="space-y-2 mb-6">
+                    <div className="flex justify-between text-sm">
+                      <span>Overall Progress</span>
+                      <span>{getSequenceProgress(activeSequence)}%</span>
+                    </div>
+                    <Progress
+                      value={getSequenceProgress(activeSequence)}
+                      className="h-3"
+                    />
+                  </div>
+
+                  {/* Control Buttons */}
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      onClick={() =>
+                        handleSequenceAction("start", activeSequence.id)
+                      }
+                      className="gap-2"
+                      disabled={getSequenceStatus(activeSequence) === "running"}
+                    >
+                      <Play className="h-4 w-4" />
+                      Start
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() =>
+                        handleSequenceAction("pause", activeSequence.id)
+                      }
+                      className="gap-2"
+                    >
+                      <Pause className="h-4 w-4" />
+                      Pause
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() =>
+                        handleSequenceAction("stop", activeSequence.id)
+                      }
+                      className="gap-2"
+                    >
+                      <Square className="h-4 w-4" />
+                      Stop
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() =>
+                        handleSequenceAction("restart", activeSequence.id)
+                      }
+                      className="gap-2"
+                    >
+                      <RotateCcw className="h-4 w-4" />
+                      Restart
+                    </Button>
+                  </div>
                 </div>
+              </Card>
+            )}
+
+            {/* Task List - Adaptive based on mode */}
+            <Card
+              className={`${getCardClass("task-list")} ${
+                viewMode === "execution"
+                  ? "lg:col-span-2"
+                  : viewMode === "editing"
+                    ? "lg:col-span-2"
+                    : "lg:col-span-2"
+              }`}
+            >
+              <div className="p-4 border-b">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold">Tasks</h3>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline">{currentTasks.length} tasks</Badge>
+                    <Button size="sm" onClick={createNewTask} className="gap-1">
+                      <Plus className="h-3 w-3" />
+                      Add
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              <ScrollArea className="h-[500px]">
+                {currentTasks.length === 0 ? (
+                  <div className="p-8 text-center">
+                    <List className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+                    <p className="text-muted-foreground mb-4">
+                      No tasks in this sequence
+                    </p>
+                    <Button onClick={createNewTask} className="gap-2">
+                      <Plus className="h-4 w-4" />
+                      Add First Task
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="p-4 space-y-3">
+                    {currentTasks.map((task, index) => (
+                      <div
+                        key={task.id}
+                        className={`relative group ${getCardClass(task.id)}`}
+                        onClick={() => setFocusedCard(task.id)}
+                      >
+                        <TaskCardWithSubtasks
+                          task={task}
+                          index={index}
+                          isSequential={!activeSequence?.isParallel}
+                          canStart={true}
+                          onUpdate={handleUpdateTask}
+                          onDelete={handleDeleteTask}
+                          onDuplicate={handleDuplicateTask}
+                          onStart={(taskId) =>
+                            handleTaskAction("start", taskId)
+                          }
+                          onPause={(taskId) =>
+                            handleTaskAction("pause", taskId)
+                          }
+                          onStop={(taskId) => handleTaskAction("stop", taskId)}
+                        />
+                        {/* Quick Edit Button */}
+                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedTask(task);
+                              setShowTaskEditor(true);
+                              setViewMode("editing");
+                              setFocusedCard(task.id);
+                            }}
+                            className="h-7 w-7 p-0"
+                          >
+                            <Settings className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </ScrollArea>
             </Card>
-          </TabsContent>
-        </Tabs>
+
+            {/* Right Sidebar - Context Aware */}
+            {(viewMode === "overview" || viewMode === "execution") && (
+              <Card className={`${getCardClass("sidebar-info")} lg:col-span-1`}>
+                <Tabs defaultValue="info" className="h-full">
+                  <div className="p-4 border-b">
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="info">Info</TabsTrigger>
+                      <TabsTrigger value="logs">Logs</TabsTrigger>
+                    </TabsList>
+                  </div>
+
+                  <TabsContent value="info" className="p-4 mt-0">
+                    <div className="space-y-4">
+                      <div>
+                        <h4 className="font-semibold mb-2">Sequence Details</h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span>Type:</span>
+                            <Badge variant="outline">
+                              {activeSequence.isParallel
+                                ? "Parallel"
+                                : "Sequential"}
+                            </Badge>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Created:</span>
+                            <span>
+                              {activeSequence.createdAt.toLocaleDateString()}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Updated:</span>
+                            <span>
+                              {activeSequence.updatedAt.toLocaleDateString()}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      <div>
+                        <h4 className="font-semibold mb-2">Tags</h4>
+                        <div className="flex flex-wrap gap-1">
+                          {activeSequence.tags.map((tag, idx) => (
+                            <Badge
+                              key={idx}
+                              variant="secondary"
+                              className="text-xs"
+                            >
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      <div>
+                        <h4 className="font-semibold mb-2">Actions</h4>
+                        <div className="space-y-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => exportSequence(activeSequence)}
+                            className="w-full gap-2"
+                          >
+                            <Download className="h-3 w-3" />
+                            Export
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => duplicateSequence(activeSequence)}
+                            className="w-full gap-2"
+                          >
+                            <Copy className="h-3 w-3" />
+                            Duplicate
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="logs" className="p-4 mt-0">
+                    <ScrollArea className="h-[400px]">
+                      <div className="space-y-2">
+                        {executionLogs.length === 0 ? (
+                          <p className="text-muted-foreground text-center py-8 text-sm">
+                            No logs yet
+                          </p>
+                        ) : (
+                          executionLogs.slice(0, 20).map((log, index) => (
+                            <div
+                              key={index}
+                              className="text-xs font-mono p-2 rounded bg-muted/50"
+                            >
+                              {log}
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </ScrollArea>
+                  </TabsContent>
+                </Tabs>
+              </Card>
+            )}
+          </>
+        )}
+
+        {/* Empty State */}
+        {!activeSequence && (
+          <Card className="lg:col-span-full p-12 text-center">
+            <Activity className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-xl font-semibold mb-2">Select a Sequence</h3>
+            <p className="text-muted-foreground mb-6">
+              Choose a sequence from the sidebar to view details and manage
+              tasks
+            </p>
+            <Button onClick={() => setIsEditing(true)} className="gap-2">
+              <Plus className="h-4 w-4" />
+              Create New Sequence
+            </Button>
+          </Card>
+        )}
+      </div>
+
+      {/* Sequence Editor Modal */}
+      {isEditing && (
+        <Dialog open={isEditing} onOpenChange={setIsEditing}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <SequenceEditor
+              sequence={activeSequence || undefined}
+              onSave={(sequence) => {
+                if (activeSequence) {
+                  setSequences((prev) =>
+                    prev.map((s) => (s.id === sequence.id ? sequence : s)),
+                  );
+                  setActiveSequence(sequence);
+                } else {
+                  setSequences((prev) => [...prev, sequence]);
+                  setActiveSequence(sequence);
+                }
+                setIsEditing(false);
+                addLog(`Saved sequence: ${sequence.name}`);
+              }}
+              onCancel={() => setIsEditing(false)}
+            />
+          </DialogContent>
+        </Dialog>
       )}
 
       {/* Task Parameter Editor */}
@@ -1091,6 +1130,7 @@ export function EnhancedSequenceManager() {
           onClose={() => {
             setShowTaskEditor(false);
             setSelectedTask(null);
+            setFocusedCard(null);
           }}
           onSave={handleUpdateTask}
         />
