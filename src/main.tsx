@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
+import FlatApp from "./FlatApp.tsx";
 import "./index.css";
 
 // Suppress ResizeObserver loop warnings (this is a known browser issue)
