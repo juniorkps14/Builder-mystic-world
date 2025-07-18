@@ -242,6 +242,14 @@ const rosItems = [
     color: "text-slate-600",
     bgColor: "bg-slate-50 dark:bg-slate-950/30",
   },
+  {
+    titleKey: "nav.systemTerminal",
+    icon: Terminal,
+    href: "/system-terminal",
+    badge: "SYS",
+    color: "text-red-600",
+    bgColor: "bg-red-50 dark:bg-red-950/30",
+  },
 ];
 
 export function Sidebar() {
@@ -505,7 +513,7 @@ export function Sidebar() {
                   <Monitor className="h-4 w-4 text-sidebar-foreground/70 pulse-soft" />
                 )}
                 <span className="text-sm font-extralight text-sidebar-foreground">
-                  ธีม
+                  ธ��ม
                 </span>
               </div>
               <Select value={theme} onValueChange={setTheme}>

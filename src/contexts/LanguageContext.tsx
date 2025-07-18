@@ -31,6 +31,7 @@ const translations = {
     "nav.parameters": "Parameters",
     "nav.logs": "Log Viewer",
     "nav.terminal": "ROS Terminal",
+    "nav.systemTerminal": "System Terminal",
     "nav.microcontrollers": "Microcontrollers",
     "nav.codeDevelopment": "Code Development",
     "nav.systemConfiguration": "System Configuration",
@@ -369,6 +370,7 @@ const translations = {
     "nav.parameters": "พารามิเตอร์",
     "nav.logs": "ดูบันทึก",
     "nav.terminal": "เทอร์มินัล ROS",
+    "nav.systemTerminal": "เทอร์มินัลระบบ",
     "nav.microcontrollers": "ไมโครคอนโทรลเลอร์",
     "nav.codeDevelopment": "การพัฒนาโค้ด",
     "nav.systemConfiguration": "การตั้งค่าระบบ",
@@ -423,7 +425,7 @@ const translations = {
 
     // Holonomic
     "holonomic.title": "ควบคุมระบบล้อโฮโลโนมิก",
-    "holonomic.velocity": "ควบคุมค��ามเร็ว",
+    "holonomic.velocity": "ควบคุมความเร็ว",
     "holonomic.linear": "ความเร็วเชิงเส้น",
     "holonomic.angular": "ความเร็วเชิงมุม",
     "holonomic.strafe": "ความเร็วเคลื่อนข้าง",
@@ -435,7 +437,7 @@ const translations = {
     "io.pins": "การตั้งค่าพิน",
     "io.pid": "พารามิเตอร์ PID",
     "io.kinematics": "พารามิเตอร์จลนศาสตร์",
-    "io.wheels": "การตั้งค่าล้อ",
+    "io.wheels": "���ารตั้งค่าล้อ",
     "io.arms": "การตั้งค่าแขนกล",
     "io.sensors": "การตั้งค่าเซ็นเซอร์",
     "io.imu": "การตั้งค่า IMU",
@@ -457,7 +459,7 @@ const translations = {
     "system.storage": "พื้นที่จัดเก็บ",
     "system.power": "สถานะพลังงาน",
     "system.rosSystem": "ระบบ ROS",
-    "system.network": "เครือข่าย",
+    "system.network": "เ��รือข่าย",
     "system.processes": "ตรวจสอบกระบวนการ",
 
     // Nodes
@@ -491,7 +493,7 @@ const translations = {
     "mcu.connected": "เชื่อมต่อแล้ว",
     "mcu.powerUsage": "การใช้พลังงาน",
     "mcu.addConnection": "เพิ่มการเชื่อมต่อ",
-    "mcu.connectionDetails": "รายละเอีย���การเชื่อมต่อ",
+    "mcu.connectionDetails": "รายละเอียดการเชื่อมต่อ",
     "mcu.quickActions": "การดำเนินการด่วน",
 
     // Task Management
@@ -504,7 +506,7 @@ const translations = {
     "task.taskName": "ชื่องาน",
     "task.taskType": "ประเภทงาน",
     "task.description": "รายละเอียด",
-    "task.timeout": "เวลาหมดอายุ",
+    "task.timeout": "เวลาหมดอ���ยุ",
     "task.retries": "จำนวนลองใหม่สูงสุด",
     "task.waitForFeedback": "รอการตอบกลับ",
     "task.feedbackTimeout": "เวลาหมดอายุการตอบกลับ",
@@ -514,7 +516,7 @@ const translations = {
     "task.configureTask": "ตั้งค่างาน",
 
     // Movement Types
-    "movement.robotMovement": "การเคลื่อนท���่ของหุ่นยนต์",
+    "movement.robotMovement": "การเคลื่อนที่ของหุ่นยนต์",
     "movement.moveWithObstacleCheck": "เคลื่อนที่พร้อมตรวจสิ่งกีดขวาง",
     "movement.armManipulation": "การควบคุมแขนกล",
     "movement.visionProcessing": "การประมวลผลภาพ",
@@ -522,7 +524,7 @@ const translations = {
     "movement.aiProcessing": "การประมวลผล AI",
     "movement.safetyCheck": "การตรวจสอบความปลอดภัย",
     "movement.communication": "การสื่อสาร",
-    "movement.voiceCommand": "คำสั่งเสียง",
+    "movement.voiceCommand": "คำ���ั่งเสียง",
     "movement.dataLogging": "การบันทึกข้อมูล",
     "movement.maintenance": "การบำรุงรักษา",
     "movement.retryControl": "การควบคุมลองใหม่",
@@ -544,7 +546,7 @@ const translations = {
     "sequence.addFirstTask": "เพิ่มงานแรก",
     "sequence.createSequence": "สร้างลำดับงาน",
     "sequence.importSequence": "นำเข้า",
-    "sequence.exportSequence": "ส่งออก",
+    "sequence.exportSequence": "ส่งอ���ก",
     "sequence.sequenceLibrary": "คลังลำดับงาน",
     "sequence.totalTasks": "งานทั้งหมด",
     "sequence.completed": "เสร็จสิ้น",
@@ -563,13 +565,13 @@ const translations = {
     "obstacle.regionName": "ชื่อพื้นที่",
     "obstacle.currentRegions": "พื้นที่สิ่งกีดขวางปัจ��ุบัน",
     "obstacle.continuous": "ต่อเนื่อง",
-    "obstacle.periodic": "เป็นช่วงๆ",
+    "obstacle.periodic": "���ป็นช่วงๆ",
     "obstacle.triggerBased": "ตามสัญญาณ",
     "obstacle.smartAvoid": "หลีกเลี่ยงอัจฉริยะ",
     "obstacle.wait": "รอ",
     "obstacle.alternativeRoute": "เส้นทางทางเลือก",
     "obstacle.emergencyStop": "หยุดฉุกเฉิน",
-    "obstacle.slowDown": "ลดควา���เร็ว",
+    "obstacle.slowDown": "ลดความเร็ว",
 
     // Pattern Movement
     "pattern.configuration": "การตั้งค่ารูปแบบการเคลื่อนที่",
@@ -583,7 +585,7 @@ const translations = {
     "pattern.currentPattern": "รูปแบบปัจจุบัน",
     "pattern.waypoints": "จุดหมาย",
     "pattern.patternRepeat": "ทำซ้ำรูปแบบ",
-    "pattern.waitAtWaypoint": "รอที่จุดหมาย",
+    "pattern.waitAtWaypoint": "รอที่จุ���หมาย",
     "pattern.waypointTolerance": "ค่าคลาดเคลื่อนจุดหมาย",
     "pattern.targetPosition": "ตำแหน่งเป้าหมายและการหมุน",
     "pattern.relativeMovement": "การเคลื่อนที่แบบสัมพัทธ์ (จากตำแหน่งปัจจุบัน)",
@@ -626,7 +628,7 @@ const translations = {
     "map.lastModified": "แก้ไขล่าสุด",
     "map.coordinates": "พิกัด",
     "map.goalSet": "ตั้งเป้าหมายการนำทาง",
-    "map.displaySettings": "การตั้ง��่าการแสดงผล",
+    "map.displaySettings": "การตั้งค่าการแสดงผล",
     "map.showGrid": "แสดงตาราง",
     "map.showRobot": "แสดงหุ่นยนต์",
     "map.showGoal": "แสดงเป้าหมาย",
@@ -648,7 +650,7 @@ const translations = {
     "rviz.subtitle":
       "อินเทอร์เฟซการแสดงผลแบบ 3D สำหรับข้อมูล ROS พร้อมการเรนเดอร์แบบเรียลไทม์",
     "rviz.displays": "การแสดงผล",
-    "rviz.manageDisplays": "จัดการการแ��ดงผลภาพ",
+    "rviz.manageDisplays": "จัดการการแสดงผลภาพ",
     "rviz.addDisplay": "เพิ่มการแสดงผล",
     "rviz.addNewDisplay": "เพิ่มการแสดงผลใหม่",
     "rviz.addDisplayDescription": "เพิ่มการแสดงผลใหม่ไปยังฉาก 3D",
@@ -678,7 +680,7 @@ const translations = {
 
     // System Terminal
     "terminal.title": "เทอร์มินัลระบบ",
-    "terminal.subtitle": "สั่งงานระบบโดยตรงบนหุ่นยนต์พร้อมผลลัพธ์แบบเรียลไทม์",
+    "terminal.subtitle": "สั่งงานร��บบโดยตรงบนหุ่นยนต์พร้อมผลลัพธ์แบบเรียลไทม์",
   },
 };
 

@@ -34,6 +34,7 @@ import MicrocontrollerConnections from "./pages/MicrocontrollerConnections";
 import CodeDevelopment from "./pages/CodeDevelopment";
 import LogViewer from "./pages/LogViewer";
 import ROSTerminal from "./pages/ROSTerminal";
+import SystemTerminal from "./pages/SystemTerminal";
 import SystemConfiguration from "./pages/SystemConfiguration";
 import NotFound from "./pages/NotFound";
 
@@ -84,6 +85,10 @@ const App = () => (
                         <Route path="/parameters" element={<Parameters />} />
                         <Route path="/logs" element={<LogViewer />} />
                         <Route path="/terminal" element={<ROSTerminal />} />
+                        <Route
+                          path="/system-terminal"
+                          element={<SystemTerminal />}
+                        />
                         <Route
                           path="/microcontroller-connections"
                           element={<MicrocontrollerConnections />}
