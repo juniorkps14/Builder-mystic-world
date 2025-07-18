@@ -609,6 +609,60 @@ export function EnhancedSequenceManager() {
     (task) => task.status === "completed",
   );
 
+  // Task status utilities
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "running":
+        return "text-blue-600 bg-blue-50";
+      case "completed":
+        return "text-green-600 bg-green-50";
+      case "failed":
+        return "text-red-600 bg-red-50";
+      case "pending":
+        return "text-orange-600 bg-orange-50";
+      case "paused":
+        return "text-yellow-600 bg-yellow-50";
+      default:
+        return "text-gray-600 bg-gray-50";
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "running":
+        return <PlayCircle className="h-4 w-4" />;
+      case "completed":
+        return <CheckCircle2 className="h-4 w-4" />;
+      case "failed":
+        return <XCircle className="h-4 w-4" />;
+      case "pending":
+        return <Clock className="h-4 w-4" />;
+      case "paused":
+        return <PauseCircle className="h-4 w-4" />;
+      default:
+        return <AlertTriangle className="h-4 w-4" />;
+    }
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case "movement":
+        return "bg-blue-100 text-blue-800";
+      case "sensor_reading":
+        return "bg-green-100 text-green-800";
+      case "vision":
+        return "bg-purple-100 text-purple-800";
+      case "voice_command":
+        return "bg-pink-100 text-pink-800";
+      case "maintenance":
+        return "bg-orange-100 text-orange-800";
+      case "safety_check":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
   // Smart layout based on view mode and context
   const getLayoutClass = () => {
     switch (viewMode) {
