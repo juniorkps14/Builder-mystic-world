@@ -1132,19 +1132,37 @@ export function EnhancedSequenceManager() {
                                       task.subtasks &&
                                       task.subtasks.length > 0 && (
                                         <div className="space-y-1">
-                                          <Badge
-                                            variant="secondary"
-                                            className="text-xs"
-                                          >
-                                            {task.subtasks.length} subtasks
-                                          </Badge>
+                                          <div className="flex items-center gap-2">
+                                            <Badge
+                                              variant="secondary"
+                                              className="text-xs"
+                                            >
+                                              {task.subtasks.length} subtasks
+                                            </Badge>
+                                            <Button
+                                              size="sm"
+                                              variant="ghost"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSelectedTask(task);
+                                                setShowTaskEditor(true);
+                                                setViewMode("editing");
+                                                setFocusedCard(task.id);
+                                              }}
+                                              className="h-5 px-2 text-xs"
+                                              title="Edit Subtasks"
+                                            >
+                                              <Edit className="h-3 w-3 mr-1" />
+                                              Edit Subtasks
+                                            </Button>
+                                          </div>
                                           <div className="space-y-1">
                                             {task.subtasks
                                               .slice(0, 3)
                                               .map((subtask, idx) => (
                                                 <div
                                                   key={subtask.id}
-                                                  className="flex items-center gap-2 text-xs"
+                                                  className="flex items-center gap-2 text-xs group/subtask hover:bg-accent/30 rounded px-1 py-0.5"
                                                 >
                                                   <div
                                                     className={`w-2 h-2 rounded-full ${
@@ -1160,12 +1178,30 @@ export function EnhancedSequenceManager() {
                                                             : "bg-gray-300"
                                                     }`}
                                                   />
-                                                  <span className="text-muted-foreground truncate max-w-[200px]">
+                                                  <span className="text-muted-foreground truncate max-w-[160px]">
                                                     {subtask.name}
                                                   </span>
                                                   <span className="text-xs text-muted-foreground">
                                                     {subtask.progress}%
                                                   </span>
+                                                  <div className="opacity-0 group-hover/subtask:opacity-100 transition-opacity flex gap-1">
+                                                    <Button
+                                                      size="sm"
+                                                      variant="ghost"
+                                                      onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        // Open subtask editor (will implement)
+                                                        console.log(
+                                                          "Edit subtask:",
+                                                          subtask.id,
+                                                        );
+                                                      }}
+                                                      className="h-4 w-4 p-0"
+                                                      title="Edit Subtask"
+                                                    >
+                                                      <Edit className="h-2 w-2" />
+                                                    </Button>
+                                                  </div>
                                                 </div>
                                               ))}
                                             {task.subtasks.length > 3 && (
