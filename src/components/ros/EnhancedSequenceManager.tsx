@@ -1052,27 +1052,32 @@ export function EnhancedSequenceManager() {
                 <div className="overflow-hidden">
                   <Table>
                     <TableHeader>
-                      <TableRow className="bg-muted/50">
-                        <TableHead className="w-[50px] text-center">
+                      <TableRow className="bg-muted/50 border-b">
+                        <TableHead className="w-[60px] text-center font-semibold">
                           #
                         </TableHead>
-                        <TableHead className="min-w-[200px]">
-                          Task Name
+                        <TableHead className="min-w-[250px] font-semibold">
+                          Task Name & Description
                         </TableHead>
-                        <TableHead className="w-[100px]">Type</TableHead>
-                        <TableHead className="w-[100px] text-center">
+                        <TableHead className="w-[120px] font-semibold">
+                          Type
+                        </TableHead>
+                        <TableHead className="w-[120px] text-center font-semibold">
                           Status
                         </TableHead>
-                        <TableHead className="w-[120px] text-center">
+                        <TableHead className="w-[140px] text-center font-semibold">
                           Progress
                         </TableHead>
-                        <TableHead className="w-[80px] text-center">
+                        <TableHead className="w-[100px] text-center font-semibold">
                           Duration
                         </TableHead>
-                        <TableHead className="w-[100px]">
+                        <TableHead className="w-[120px] font-semibold">
                           Dependencies
                         </TableHead>
-                        <TableHead className="w-[120px] text-center">
+                        <TableHead className="w-[100px] text-center font-semibold">
+                          Retries
+                        </TableHead>
+                        <TableHead className="w-[160px] text-center font-semibold">
                           Actions
                         </TableHead>
                       </TableRow>
