@@ -72,6 +72,7 @@ export function EnhancedSequenceManager() {
   >("overview");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [focusedCard, setFocusedCard] = useState<string | null>(null);
+  const [taskViewMode, setTaskViewMode] = useState<"cards" | "table">("table");
 
   // Performance metrics
   const [metrics, setMetrics] = useState({
