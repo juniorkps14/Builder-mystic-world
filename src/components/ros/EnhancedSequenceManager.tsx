@@ -982,7 +982,7 @@ export function EnhancedSequenceManager() {
               </Card>
             )}
 
-            {/* Task List - Adaptive based on mode */}
+            {/* Task List - Table or Cards View */}
             <Card
               className={`${getCardClass("task-list")} ${
                 viewMode === "execution"
@@ -1004,19 +1004,210 @@ export function EnhancedSequenceManager() {
                   </div>
                 </div>
               </div>
-              <ScrollArea className="h-[500px]">
-                {currentTasks.length === 0 ? (
-                  <div className="p-8 text-center">
-                    <List className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                    <p className="text-muted-foreground mb-4">
-                      No tasks in this sequence
-                    </p>
-                    <Button onClick={createNewTask} className="gap-2">
-                      <Plus className="h-4 w-4" />
-                      Add First Task
-                    </Button>
-                  </div>
-                ) : (
+
+              {currentTasks.length === 0 ? (
+                <div className="p-8 text-center">
+                  <List className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+                  <p className="text-muted-foreground mb-4">
+                    No tasks in this sequence
+                  </p>
+                  <Button onClick={createNewTask} className="gap-2">
+                    <Plus className="h-4 w-4" />
+                    Add First Task
+                  </Button>
+                </div>
+              ) : taskViewMode === "table" ? (
+                /* Table View - POS Style */
+                <div className="overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-muted/50">
+                        <TableHead className="w-[50px] text-center">
+                          #
+                        </TableHead>
+                        <TableHead className="min-w-[200px]">
+                          Task Name
+                        </TableHead>
+                        <TableHead className="w-[100px]">Type</TableHead>
+                        <TableHead className="w-[100px] text-center">
+                          Status
+                        </TableHead>
+                        <TableHead className="w-[120px] text-center">
+                          Progress
+                        </TableHead>
+                        <TableHead className="w-[80px] text-center">
+                          Duration
+                        </TableHead>
+                        <TableHead className="w-[100px]">
+                          Dependencies
+                        </TableHead>
+                        <TableHead className="w-[120px] text-center">
+                          Actions
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                  </Table>
+                  <ScrollArea className="h-[500px]">
+                    <Table>
+                      <TableBody>
+                        {currentTasks.map((task, index) => (
+                          <TableRow
+                            key={task.id}
+                            className={`cursor-pointer transition-colors hover:bg-accent/50 ${
+                              focusedCard === task.id
+                                ? "bg-primary/5 border-l-4 border-l-primary"
+                                : ""
+                            }`}
+                            onClick={() => setFocusedCard(task.id)}
+                          >
+                            {/* Index */}
+                            <TableCell className="text-center font-medium">
+                              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary text-sm font-bold">
+                                {index + 1}
+                              </div>
+                            </TableCell>
+
+                            {/* Task Name & Description */}
+                            <TableCell>
+                              <div>
+                                <div className="font-medium text-sm">
+                                  {task.name}
+                                </div>
+                                <div className="text-xs text-muted-foreground line-clamp-2">
+                                  {task.description}
+                                </div>
+                                {task.hasSubtasks && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="text-xs mt-1"
+                                  >
+                                    {task.subtasks?.length || 0} subtasks
+                                  </Badge>
+                                )}
+                              </div>
+                            </TableCell>
+
+                            {/* Type */}
+                            <TableCell>
+                              <Badge
+                                variant="outline"
+                                className={`text-xs ${getTypeColor(task.type)}`}
+                              >
+                                {task.type.replace("_", " ")}
+                              </Badge>
+                            </TableCell>
+
+                            {/* Status */}
+                            <TableCell className="text-center">
+                              <div
+                                className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(task.status)}`}
+                              >
+                                {getStatusIcon(task.status)}
+                                {task.status}
+                              </div>
+                            </TableCell>
+
+                            {/* Progress */}
+                            <TableCell className="text-center">
+                              <div className="w-full">
+                                <div className="flex justify-between text-xs mb-1">
+                                  <span>{task.progress}%</span>
+                                </div>
+                                <Progress
+                                  value={task.progress}
+                                  className="h-2"
+                                />
+                              </div>
+                            </TableCell>
+
+                            {/* Duration */}
+                            <TableCell className="text-center">
+                              <div className="text-sm">
+                                <div>{task.duration}s</div>
+                                <div className="text-xs text-muted-foreground">
+                                  / {task.timeout}s
+                                </div>
+                              </div>
+                            </TableCell>
+
+                            {/* Dependencies */}
+                            <TableCell>
+                              {task.dependencies &&
+                              task.dependencies.length > 0 ? (
+                                <div className="text-xs">
+                                  <Badge variant="outline" className="text-xs">
+                                    {task.dependencies.length} deps
+                                  </Badge>
+                                </div>
+                              ) : (
+                                <span className="text-xs text-muted-foreground">
+                                  None
+                                </span>
+                              )}
+                            </TableCell>
+
+                            {/* Actions */}
+                            <TableCell className="text-center">
+                              <div className="flex items-center justify-center gap-1">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleTaskAction("start", task.id);
+                                  }}
+                                  className="h-7 w-7 p-0"
+                                  disabled={task.status === "running"}
+                                >
+                                  <PlayCircle className="h-3 w-3" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedTask(task);
+                                    setShowTaskEditor(true);
+                                    setViewMode("editing");
+                                    setFocusedCard(task.id);
+                                  }}
+                                  className="h-7 w-7 p-0"
+                                >
+                                  <Edit className="h-3 w-3" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDuplicateTask(task);
+                                  }}
+                                  className="h-7 w-7 p-0"
+                                >
+                                  <Copy className="h-3 w-3" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteTask(task.id);
+                                  }}
+                                  className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </ScrollArea>
+                </div>
+              ) : (
+                /* Cards View - Original */
+                <ScrollArea className="h-[500px]">
                   <div className="p-4 space-y-3">
                     {currentTasks.map((task, index) => (
                       <div
@@ -1060,8 +1251,8 @@ export function EnhancedSequenceManager() {
                       </div>
                     ))}
                   </div>
-                )}
-              </ScrollArea>
+                </ScrollArea>
+              )}
             </Card>
 
             {/* Right Sidebar - Context Aware */}
