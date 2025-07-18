@@ -131,6 +131,14 @@ const navigationItems = [
 
 const rosItems = [
   {
+    titleKey: "nav.rosSetup",
+    icon: Terminal,
+    href: "/ros-setup",
+    badge: "Guide",
+    color: "text-orange-600",
+    bgColor: "bg-orange-50 dark:bg-orange-950/30",
+  },
+  {
     titleKey: "nav.ioConfig",
     icon: Cpu,
     href: "/io-config",
