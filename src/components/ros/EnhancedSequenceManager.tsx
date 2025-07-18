@@ -1081,7 +1081,6 @@ export function EnhancedSequenceManager() {
                               }`}
                               onClick={() => setFocusedCard(task.id)}
                             >
-                        })}
                             {/* Index */}
                             <TableCell className="text-center font-medium">
                               <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary text-sm font-bold">
