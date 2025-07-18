@@ -128,6 +128,10 @@ export const ROSIntegrationProvider: React.FC<ROSIntegrationProviderProps> = ({
     isConnected: false,
     reconnectInterval: 5000,
     heartbeatInterval: 30000,
+    connectionStatus: "disconnected",
+    autoReconnect: true,
+    maxReconnectAttempts: 10,
+    currentReconnectAttempt: 0,
   });
 
   const [websocket, setWebsocket] = useState<WebSocket | null>(null);
