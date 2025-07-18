@@ -1,3 +1,4 @@
+@import "./styles/flat-vector-theme.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
