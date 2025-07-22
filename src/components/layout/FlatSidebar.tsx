@@ -215,11 +215,13 @@ export const FlatSidebar: React.FC<FlatSidebarProps> = ({
               <Zap className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h2 className="text-lg font-light text-white tracking-tight">Dino Core</h2>
+              <h2 className="text-lg font-light text-white tracking-tight">
+                Dino Core
+              </h2>
               <p className="text-xs text-slate-300 font-light">Robot Control</p>
             </div>
           </div>
-          
+
           {/* Close button for mobile */}
           <button
             onClick={onClose}
@@ -305,7 +307,9 @@ export const FlatSidebar: React.FC<FlatSidebarProps> = ({
               <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
               <div>
                 <p className="text-sm font-medium text-white">System Online</p>
-                <p className="text-xs text-slate-400">All systems operational</p>
+                <p className="text-xs text-slate-400">
+                  All systems operational
+                </p>
               </div>
             </div>
           </div>

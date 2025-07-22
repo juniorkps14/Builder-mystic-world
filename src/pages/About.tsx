@@ -28,33 +28,39 @@ export default function About() {
     {
       icon: Bot,
       title: "Advanced Robotics Control",
-      description: "Comprehensive robot control system with real-time monitoring and autonomous navigation capabilities."
+      description:
+        "Comprehensive robot control system with real-time monitoring and autonomous navigation capabilities.",
     },
     {
       icon: Zap,
       title: "High Performance",
-      description: "Optimized for real-time operations with minimal latency and maximum reliability."
+      description:
+        "Optimized for real-time operations with minimal latency and maximum reliability.",
     },
     {
       icon: Shield,
       title: "Enterprise Security",
-      description: "Built with security-first principles and enterprise-grade authentication systems."
+      description:
+        "Built with security-first principles and enterprise-grade authentication systems.",
     },
     {
       icon: Code,
       title: "Open Architecture",
-      description: "Modular design with extensive API support and plugin architecture for customization."
+      description:
+        "Modular design with extensive API support and plugin architecture for customization.",
     },
     {
       icon: Database,
       title: "Data Intelligence",
-      description: "Advanced analytics and machine learning integration for intelligent decision making."
+      description:
+        "Advanced analytics and machine learning integration for intelligent decision making.",
     },
     {
       icon: Activity,
       title: "Real-time Monitoring",
-      description: "Comprehensive monitoring suite with predictive maintenance and diagnostic capabilities."
-    }
+      description:
+        "Comprehensive monitoring suite with predictive maintenance and diagnostic capabilities.",
+    },
   ];
 
   const teamMembers = [
@@ -105,7 +111,8 @@ export default function About() {
             Dino Core
           </h1>
           <p className="text-xl text-slate-300 font-light mb-6 max-w-2xl mx-auto">
-            Advanced Robot Control System for Next-Generation Autonomous Operations
+            Advanced Robot Control System for Next-Generation Autonomous
+            Operations
           </p>
           <div className="flex items-center justify-center gap-4 mb-6">
             <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-0 px-4 py-2">
@@ -115,7 +122,7 @@ export default function About() {
               Production Ready
             </Badge>
           </div>
-          
+
           <div className="flex justify-center gap-4">
             <Button className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white shadow-lg">
               <Github className="h-4 w-4 mr-2" />
@@ -135,11 +142,16 @@ export default function About() {
         {statistics.map((stat, index) => {
           const IconComponent = stat.icon;
           return (
-            <Card key={index} className="bg-white/10 backdrop-blur-xl border border-white/20 p-6 shadow-xl hover:bg-white/15 transition-all duration-300">
+            <Card
+              key={index}
+              className="bg-white/10 backdrop-blur-xl border border-white/20 p-6 shadow-xl hover:bg-white/15 transition-all duration-300"
+            >
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-slate-400 text-sm">{stat.label}</p>
-                  <p className="text-2xl font-light text-white mt-1">{stat.value}</p>
+                  <p className="text-2xl font-light text-white mt-1">
+                    {stat.value}
+                  </p>
                 </div>
                 <div className="h-12 w-12 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl flex items-center justify-center">
                   <IconComponent className="h-6 w-6 text-blue-400" />
@@ -152,19 +164,28 @@ export default function About() {
 
       {/* Features Grid */}
       <div className="mb-8">
-        <h2 className="text-3xl font-light text-white mb-6 text-center">Key Features</h2>
+        <h2 className="text-3xl font-light text-white mb-6 text-center">
+          Key Features
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, index) => {
             const IconComponent = feature.icon;
             return (
-              <Card key={index} className="bg-white/10 backdrop-blur-xl border border-white/20 p-6 shadow-xl hover:bg-white/15 transition-all duration-300">
+              <Card
+                key={index}
+                className="bg-white/10 backdrop-blur-xl border border-white/20 p-6 shadow-xl hover:bg-white/15 transition-all duration-300"
+              >
                 <div className="flex items-center gap-4 mb-4">
                   <div className="p-3 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl border border-white/20">
                     <IconComponent className="h-6 w-6 text-blue-400" />
                   </div>
-                  <h3 className="text-lg font-medium text-white">{feature.title}</h3>
+                  <h3 className="text-lg font-medium text-white">
+                    {feature.title}
+                  </h3>
                 </div>
-                <p className="text-slate-300 text-sm leading-relaxed">{feature.description}</p>
+                <p className="text-slate-300 text-sm leading-relaxed">
+                  {feature.description}
+                </p>
               </Card>
             );
           })}
@@ -180,7 +201,10 @@ export default function About() {
           </h3>
           <div className="space-y-4">
             {technologies.map((tech, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
+              <div
+                key={index}
+                className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10"
+              >
                 <div>
                   <p className="text-white font-medium">{tech.name}</p>
                   <p className="text-slate-400 text-sm">{tech.type}</p>
@@ -201,7 +225,10 @@ export default function About() {
           </h3>
           <div className="space-y-4">
             {teamMembers.map((member, index) => (
-              <div key={index} className="p-4 bg-white/5 rounded-lg border border-white/10">
+              <div
+                key={index}
+                className="p-4 bg-white/5 rounded-lg border border-white/10"
+              >
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
                     <Users className="h-5 w-5 text-white" />
@@ -220,7 +247,9 @@ export default function About() {
 
       {/* System Information */}
       <Card className="bg-white/10 backdrop-blur-xl border border-white/20 p-8 shadow-xl">
-        <h3 className="text-2xl font-light text-white mb-6 text-center">System Information</h3>
+        <h3 className="text-2xl font-light text-white mb-6 text-center">
+          System Information
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="text-center">
             <div className="w-16 h-16 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-xl flex items-center justify-center mx-auto mb-3 border border-white/20">
@@ -237,7 +266,9 @@ export default function About() {
             </div>
             <h4 className="text-white font-medium mb-2">License</h4>
             <p className="text-slate-300 text-sm">MIT Open Source</p>
-            <p className="text-slate-400 text-xs mt-1">Free for commercial use</p>
+            <p className="text-slate-400 text-xs mt-1">
+              Free for commercial use
+            </p>
           </div>
 
           <div className="text-center">
@@ -262,7 +293,8 @@ export default function About() {
         {/* Contact */}
         <div className="mt-8 pt-6 border-t border-white/10 text-center">
           <p className="text-slate-300 mb-4">
-            Built with <Heart className="inline h-4 w-4 text-red-400 mx-1" /> for the robotics community
+            Built with <Heart className="inline h-4 w-4 text-red-400 mx-1" />{" "}
+            for the robotics community
           </p>
           <div className="flex justify-center gap-4">
             <Button className="bg-white/10 hover:bg-white/20 border border-white/20 text-white">

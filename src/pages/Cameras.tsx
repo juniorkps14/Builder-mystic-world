@@ -125,10 +125,12 @@ export default function Cameras() {
                 Real-time camera monitoring and recording system
               </p>
             </div>
-            
+
             <div className="flex items-center gap-3">
               <Button
-                onClick={() => setViewMode(viewMode === "single" ? "grid" : "single")}
+                onClick={() =>
+                  setViewMode(viewMode === "single" ? "grid" : "single")
+                }
                 className="bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-sm transition-all duration-300"
               >
                 <Grid3X3 className="h-4 w-4 mr-2" />
@@ -156,15 +158,19 @@ export default function Cameras() {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Camera className="h-5 w-5 text-blue-400" />
-                <span className="font-medium text-white text-sm">{camera.name}</span>
+                <span className="font-medium text-white text-sm">
+                  {camera.name}
+                </span>
               </div>
               {getStatusIcon(camera.status)}
             </div>
-            
+
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-slate-400">Resolution</span>
-                <span className="text-white font-mono">{camera.resolution}</span>
+                <span className="text-white font-mono">
+                  {camera.resolution}
+                </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-slate-400">FPS</span>
@@ -199,22 +205,38 @@ export default function Cameras() {
             <div className="p-6 border-b border-white/10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <h2 className="text-xl font-light text-white">{selectedCamera.name}</h2>
-                  <Badge className={`bg-gradient-to-r ${getStatusColor(selectedCamera.status)} text-white border-0`}>
+                  <h2 className="text-xl font-light text-white">
+                    {selectedCamera.name}
+                  </h2>
+                  <Badge
+                    className={`bg-gradient-to-r ${getStatusColor(selectedCamera.status)} text-white border-0`}
+                  >
                     {selectedCamera.status}
                   </Badge>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button size="sm" className="bg-white/10 hover:bg-white/20 border border-white/20">
+                  <Button
+                    size="sm"
+                    className="bg-white/10 hover:bg-white/20 border border-white/20"
+                  >
                     <ZoomIn className="h-4 w-4" />
                   </Button>
-                  <Button size="sm" className="bg-white/10 hover:bg-white/20 border border-white/20">
+                  <Button
+                    size="sm"
+                    className="bg-white/10 hover:bg-white/20 border border-white/20"
+                  >
                     <ZoomOut className="h-4 w-4" />
                   </Button>
-                  <Button size="sm" className="bg-white/10 hover:bg-white/20 border border-white/20">
+                  <Button
+                    size="sm"
+                    className="bg-white/10 hover:bg-white/20 border border-white/20"
+                  >
                     <Maximize2 className="h-4 w-4" />
                   </Button>
-                  <Button size="sm" className="bg-white/10 hover:bg-white/20 border border-white/20">
+                  <Button
+                    size="sm"
+                    className="bg-white/10 hover:bg-white/20 border border-white/20"
+                  >
                     <Settings className="h-4 w-4" />
                   </Button>
                 </div>
@@ -227,14 +249,20 @@ export default function Cameras() {
                 {selectedCamera.status === "active" ? (
                   <div className="text-center">
                     <Video className="h-16 w-16 text-blue-400 mx-auto mb-4" />
-                    <p className="text-slate-300">Camera Feed: {selectedCamera.topic}</p>
-                    <p className="text-slate-400 text-sm mt-2">{selectedCamera.resolution} @ {selectedCamera.fps}fps</p>
+                    <p className="text-slate-300">
+                      Camera Feed: {selectedCamera.topic}
+                    </p>
+                    <p className="text-slate-400 text-sm mt-2">
+                      {selectedCamera.resolution} @ {selectedCamera.fps}fps
+                    </p>
                   </div>
                 ) : (
                   <div className="text-center">
                     <EyeOff className="h-16 w-16 text-slate-500 mx-auto mb-4" />
                     <p className="text-slate-400">Camera Offline</p>
-                    <p className="text-slate-500 text-sm mt-2">Check connection and settings</p>
+                    <p className="text-slate-500 text-sm mt-2">
+                      Check connection and settings
+                    </p>
                   </div>
                 )}
               </div>
@@ -267,11 +295,15 @@ export default function Cameras() {
           {/* Camera Info */}
           <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
             <div className="p-6">
-              <h3 className="text-lg font-light text-white mb-4">Camera Details</h3>
+              <h3 className="text-lg font-light text-white mb-4">
+                Camera Details
+              </h3>
               <div className="space-y-3">
                 <div>
                   <p className="text-sm text-slate-400">Topic</p>
-                  <p className="text-white font-mono text-sm">{selectedCamera.topic}</p>
+                  <p className="text-white font-mono text-sm">
+                    {selectedCamera.topic}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-slate-400">Resolution</p>
@@ -284,8 +316,13 @@ export default function Cameras() {
                 <div>
                   <p className="text-sm text-slate-400">Quality</p>
                   <div className="mt-2">
-                    <Progress value={selectedCamera.quality} className="h-2 bg-slate-700" />
-                    <p className="text-xs text-slate-400 mt-1">{selectedCamera.quality}%</p>
+                    <Progress
+                      value={selectedCamera.quality}
+                      className="h-2 bg-slate-700"
+                    />
+                    <p className="text-xs text-slate-400 mt-1">
+                      {selectedCamera.quality}%
+                    </p>
                   </div>
                 </div>
               </div>
@@ -323,7 +360,9 @@ export default function Cameras() {
           {/* Quick Settings */}
           <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
             <div className="p-6">
-              <h3 className="text-lg font-light text-white mb-4">Quick Settings</h3>
+              <h3 className="text-lg font-light text-white mb-4">
+                Quick Settings
+              </h3>
               <div className="space-y-3">
                 <Button className="w-full bg-white/10 hover:bg-white/20 border border-white/20">
                   <Settings className="h-4 w-4 mr-2" />

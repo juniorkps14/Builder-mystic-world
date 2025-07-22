@@ -30,7 +30,14 @@ import {
 interface SensorData {
   id: string;
   name: string;
-  type: "lidar" | "camera" | "imu" | "gps" | "ultrasonic" | "temperature" | "pressure";
+  type:
+    | "lidar"
+    | "camera"
+    | "imu"
+    | "gps"
+    | "ultrasonic"
+    | "temperature"
+    | "pressure";
   status: "active" | "inactive" | "error" | "calibrating";
   value: string;
   unit: string;
@@ -128,14 +135,19 @@ export default function Sensors() {
   // Simulate real-time sensor data
   useEffect(() => {
     const interval = setInterval(() => {
-      setSensors(prev => prev.map(sensor => ({
-        ...sensor,
-        quality: Math.max(70, Math.min(100, sensor.quality + (Math.random() - 0.5) * 5)),
-        lastUpdate: new Date(),
-      })));
+      setSensors((prev) =>
+        prev.map((sensor) => ({
+          ...sensor,
+          quality: Math.max(
+            70,
+            Math.min(100, sensor.quality + (Math.random() - 0.5) * 5),
+          ),
+          lastUpdate: new Date(),
+        })),
+      );
 
       // Add new reading for chart
-      setSensorReadings(prev => {
+      setSensorReadings((prev) => {
         const newReading: SensorReading = {
           timestamp: new Date(),
           value: Math.random() * 100,
@@ -198,7 +210,8 @@ export default function Sensors() {
   };
 
   const getQualityTrend = (quality: number) => {
-    if (quality > 90) return <TrendingUp className="h-4 w-4 text-emerald-400" />;
+    if (quality > 90)
+      return <TrendingUp className="h-4 w-4 text-emerald-400" />;
     if (quality < 80) return <TrendingDown className="h-4 w-4 text-red-400" />;
     return <Minus className="h-4 w-4 text-gray-400" />;
   };
@@ -217,11 +230,11 @@ export default function Sensors() {
                 Real-time sensor data monitoring and diagnostics
               </p>
             </div>
-            
+
             <div className="flex items-center gap-3">
               <Badge className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-4 py-2">
                 <Activity className="h-4 w-4 mr-2" />
-                {sensors.filter(s => s.status === "active").length} Active
+                {sensors.filter((s) => s.status === "active").length} Active
               </Badge>
               <Button className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white shadow-lg transition-all duration-300">
                 <Settings className="h-4 w-4 mr-2" />
@@ -246,11 +259,15 @@ export default function Sensors() {
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg bg-gradient-to-br ${getStatusColor(sensor.status)}/20 border border-white/20`}>
+                  <div
+                    className={`p-2 rounded-lg bg-gradient-to-br ${getStatusColor(sensor.status)}/20 border border-white/20`}
+                  >
                     <IconComponent className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-white text-sm">{sensor.name}</h3>
+                    <h3 className="font-medium text-white text-sm">
+                      {sensor.name}
+                    </h3>
                     <p className="text-xs text-slate-400">{sensor.topic}</p>
                   </div>
                 </div>
@@ -264,21 +281,30 @@ export default function Sensors() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-400">Frequency</span>
-                  <span className="text-white font-mono">{sensor.frequency}Hz</span>
+                  <span className="text-white font-mono">
+                    {sensor.frequency}Hz
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm items-center">
                   <span className="text-slate-400">Quality</span>
                   <div className="flex items-center gap-2">
-                    <span className="text-white font-mono text-sm">{sensor.quality}%</span>
+                    <span className="text-white font-mono text-sm">
+                      {sensor.quality}%
+                    </span>
                     {getQualityTrend(sensor.quality)}
                   </div>
                 </div>
                 <div className="mt-3">
-                  <Progress value={sensor.quality} className="h-2 bg-slate-700" />
+                  <Progress
+                    value={sensor.quality}
+                    className="h-2 bg-slate-700"
+                  />
                 </div>
               </div>
 
-              <Badge className={`mt-4 bg-gradient-to-r ${getStatusColor(sensor.status)} text-white border-0`}>
+              <Badge
+                className={`mt-4 bg-gradient-to-r ${getStatusColor(sensor.status)} text-white border-0`}
+              >
                 {sensor.status.charAt(0).toUpperCase() + sensor.status.slice(1)}
               </Badge>
             </Card>
@@ -293,30 +319,47 @@ export default function Sensors() {
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <div className={`p-3 rounded-xl bg-gradient-to-br ${getStatusColor(selectedSensor.status)}/20 border border-white/20`}>
+                  <div
+                    className={`p-3 rounded-xl bg-gradient-to-br ${getStatusColor(selectedSensor.status)}/20 border border-white/20`}
+                  >
                     {React.createElement(getSensorIcon(selectedSensor.type), {
-                      className: "h-6 w-6 text-white"
+                      className: "h-6 w-6 text-white",
                     })}
                   </div>
                   <div>
-                    <h2 className="text-xl font-light text-white">{selectedSensor.name}</h2>
-                    <p className="text-slate-400 text-sm">{selectedSensor.topic}</p>
+                    <h2 className="text-xl font-light text-white">
+                      {selectedSensor.name}
+                    </h2>
+                    <p className="text-slate-400 text-sm">
+                      {selectedSensor.topic}
+                    </p>
                   </div>
                 </div>
-                <Badge className={`bg-gradient-to-r ${getStatusColor(selectedSensor.status)} text-white border-0`}>
+                <Badge
+                  className={`bg-gradient-to-r ${getStatusColor(selectedSensor.status)} text-white border-0`}
+                >
                   {selectedSensor.status}
                 </Badge>
               </div>
 
               <Tabs defaultValue="realtime" className="w-full">
                 <TabsList className="grid w-full grid-cols-3 bg-white/10 border border-white/20">
-                  <TabsTrigger value="realtime" className="data-[state=active]:bg-white/20">
+                  <TabsTrigger
+                    value="realtime"
+                    className="data-[state=active]:bg-white/20"
+                  >
                     Real-time Data
                   </TabsTrigger>
-                  <TabsTrigger value="history" className="data-[state=active]:bg-white/20">
+                  <TabsTrigger
+                    value="history"
+                    className="data-[state=active]:bg-white/20"
+                  >
                     Historical Data
                   </TabsTrigger>
-                  <TabsTrigger value="config" className="data-[state=active]:bg-white/20">
+                  <TabsTrigger
+                    value="config"
+                    className="data-[state=active]:bg-white/20"
+                  >
                     Configuration
                   </TabsTrigger>
                 </TabsList>
@@ -327,7 +370,9 @@ export default function Sensors() {
                     <div className="text-center">
                       <BarChart3 className="h-16 w-16 text-blue-400 mx-auto mb-4" />
                       <p className="text-slate-300">Real-time Sensor Data</p>
-                      <p className="text-slate-400 text-sm mt-2">Live data visualization for {selectedSensor.name}</p>
+                      <p className="text-slate-400 text-sm mt-2">
+                        Live data visualization for {selectedSensor.name}
+                      </p>
                     </div>
                   </div>
 
@@ -335,15 +380,21 @@ export default function Sensors() {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                       <p className="text-slate-400 text-sm">Current Value</p>
-                      <p className="text-white text-lg font-mono">{selectedSensor.value}</p>
+                      <p className="text-white text-lg font-mono">
+                        {selectedSensor.value}
+                      </p>
                     </div>
                     <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                       <p className="text-slate-400 text-sm">Quality</p>
-                      <p className="text-white text-lg font-mono">{selectedSensor.quality}%</p>
+                      <p className="text-white text-lg font-mono">
+                        {selectedSensor.quality}%
+                      </p>
                     </div>
                     <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                       <p className="text-slate-400 text-sm">Frequency</p>
-                      <p className="text-white text-lg font-mono">{selectedSensor.frequency}Hz</p>
+                      <p className="text-white text-lg font-mono">
+                        {selectedSensor.frequency}Hz
+                      </p>
                     </div>
                     <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                       <p className="text-slate-400 text-sm">Last Update</p>
@@ -359,7 +410,9 @@ export default function Sensors() {
                     <div className="text-center">
                       <TrendingUp className="h-16 w-16 text-green-400 mx-auto mb-4" />
                       <p className="text-slate-300">Historical Data Analysis</p>
-                      <p className="text-slate-400 text-sm mt-2">Sensor performance over time</p>
+                      <p className="text-slate-400 text-sm mt-2">
+                        Sensor performance over time
+                      </p>
                     </div>
                   </div>
                 </TabsContent>
@@ -367,19 +420,27 @@ export default function Sensors() {
                 <TabsContent value="config" className="mt-6">
                   <div className="space-y-4">
                     <div className="bg-white/5 rounded-lg p-4 border border-white/10">
-                      <h4 className="text-white font-medium mb-3">Sensor Configuration</h4>
+                      <h4 className="text-white font-medium mb-3">
+                        Sensor Configuration
+                      </h4>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <p className="text-slate-400 text-sm">ROS Topic</p>
-                          <p className="text-white font-mono">{selectedSensor.topic}</p>
+                          <p className="text-white font-mono">
+                            {selectedSensor.topic}
+                          </p>
                         </div>
                         <div>
                           <p className="text-slate-400 text-sm">Update Rate</p>
-                          <p className="text-white font-mono">{selectedSensor.frequency}Hz</p>
+                          <p className="text-white font-mono">
+                            {selectedSensor.frequency}Hz
+                          </p>
                         </div>
                         <div>
                           <p className="text-slate-400 text-sm">Sensor Type</p>
-                          <p className="text-white">{selectedSensor.type.toUpperCase()}</p>
+                          <p className="text-white">
+                            {selectedSensor.type.toUpperCase()}
+                          </p>
                         </div>
                         <div>
                           <p className="text-slate-400 text-sm">Unit</p>
@@ -387,7 +448,7 @@ export default function Sensors() {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="flex gap-4">
                       <Button className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600">
                         <RefreshCw className="h-4 w-4 mr-2" />
@@ -410,30 +471,39 @@ export default function Sensors() {
           {/* System Health */}
           <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
             <div className="p-6">
-              <h3 className="text-lg font-light text-white mb-4">System Health</h3>
+              <h3 className="text-lg font-light text-white mb-4">
+                System Health
+              </h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-slate-400 text-sm">Active Sensors</span>
                   <span className="text-emerald-400 font-mono">
-                    {sensors.filter(s => s.status === "active").length}/{sensors.length}
+                    {sensors.filter((s) => s.status === "active").length}/
+                    {sensors.length}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400 text-sm">Average Quality</span>
+                  <span className="text-slate-400 text-sm">
+                    Average Quality
+                  </span>
                   <span className="text-white font-mono">
-                    {Math.round(sensors.reduce((acc, s) => acc + s.quality, 0) / sensors.length)}%
+                    {Math.round(
+                      sensors.reduce((acc, s) => acc + s.quality, 0) /
+                        sensors.length,
+                    )}
+                    %
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-slate-400 text-sm">Errors</span>
                   <span className="text-red-400 font-mono">
-                    {sensors.filter(s => s.status === "error").length}
+                    {sensors.filter((s) => s.status === "error").length}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-slate-400 text-sm">Calibrating</span>
                   <span className="text-yellow-400 font-mono">
-                    {sensors.filter(s => s.status === "calibrating").length}
+                    {sensors.filter((s) => s.status === "calibrating").length}
                   </span>
                 </div>
               </div>
@@ -443,7 +513,9 @@ export default function Sensors() {
           {/* Quick Actions */}
           <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
             <div className="p-6">
-              <h3 className="text-lg font-light text-white mb-4">Quick Actions</h3>
+              <h3 className="text-lg font-light text-white mb-4">
+                Quick Actions
+              </h3>
               <div className="space-y-3">
                 <Button className="w-full bg-white/10 hover:bg-white/20 border border-white/20">
                   <RefreshCw className="h-4 w-4 mr-2" />
@@ -464,22 +536,32 @@ export default function Sensors() {
           {/* Recent Alerts */}
           <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
             <div className="p-6">
-              <h3 className="text-lg font-light text-white mb-4">Recent Alerts</h3>
+              <h3 className="text-lg font-light text-white mb-4">
+                Recent Alerts
+              </h3>
               <div className="space-y-3">
                 <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-3">
                   <div className="flex items-center gap-2 mb-1">
                     <Clock className="h-4 w-4 text-yellow-400" />
-                    <span className="text-yellow-300 text-sm font-medium">Calibration Required</span>
+                    <span className="text-yellow-300 text-sm font-medium">
+                      Calibration Required
+                    </span>
                   </div>
-                  <p className="text-yellow-200 text-xs">Temperature sensor needs calibration</p>
+                  <p className="text-yellow-200 text-xs">
+                    Temperature sensor needs calibration
+                  </p>
                 </div>
-                
+
                 <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-3">
                   <div className="flex items-center gap-2 mb-1">
                     <CheckCircle className="h-4 w-4 text-blue-400" />
-                    <span className="text-blue-300 text-sm font-medium">System Update</span>
+                    <span className="text-blue-300 text-sm font-medium">
+                      System Update
+                    </span>
                   </div>
-                  <p className="text-blue-200 text-xs">All sensors updated successfully</p>
+                  <p className="text-blue-200 text-xs">
+                    All sensors updated successfully
+                  </p>
                 </div>
               </div>
             </div>

@@ -58,15 +58,21 @@ export const FlatHeader: React.FC<FlatHeaderProps> = ({ onMenuClick }) => {
           <div className="hidden md:flex items-center gap-4">
             <div className="flex items-center gap-2 px-3 py-2 bg-white/10 rounded-lg border border-white/10">
               <Cpu className="h-4 w-4 text-blue-400" />
-              <span className="text-sm font-mono text-white">{systemData.cpu}%</span>
+              <span className="text-sm font-mono text-white">
+                {systemData.cpu}%
+              </span>
             </div>
             <div className="flex items-center gap-2 px-3 py-2 bg-white/10 rounded-lg border border-white/10">
               <HardDrive className="h-4 w-4 text-purple-400" />
-              <span className="text-sm font-mono text-white">{systemData.memory}%</span>
+              <span className="text-sm font-mono text-white">
+                {systemData.memory}%
+              </span>
             </div>
             <div className="flex items-center gap-2 px-3 py-2 bg-white/10 rounded-lg border border-white/10">
               <Battery className="h-4 w-4 text-green-400" />
-              <span className="text-sm font-mono text-white">{systemData.battery}%</span>
+              <span className="text-sm font-mono text-white">
+                {systemData.battery}%
+              </span>
             </div>
           </div>
 
@@ -93,17 +99,17 @@ export const FlatHeader: React.FC<FlatHeaderProps> = ({ onMenuClick }) => {
         <div className="hidden lg:block">
           <div className="text-center">
             <p className="text-lg font-light text-white">
-              {new Date().toLocaleTimeString('en-US', { 
+              {new Date().toLocaleTimeString("en-US", {
                 hour12: false,
-                hour: '2-digit',
-                minute: '2-digit'
+                hour: "2-digit",
+                minute: "2-digit",
               })}
             </p>
             <p className="text-xs text-slate-400">
-              {new Date().toLocaleDateString('en-US', {
-                weekday: 'short',
-                month: 'short',
-                day: 'numeric'
+              {new Date().toLocaleDateString("en-US", {
+                weekday: "short",
+                month: "short",
+                day: "numeric",
               })}
             </p>
           </div>
@@ -112,18 +118,18 @@ export const FlatHeader: React.FC<FlatHeaderProps> = ({ onMenuClick }) => {
         {/* Right Section */}
         <div className="flex items-center gap-3">
           {/* Search Button */}
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             className="hidden sm:flex bg-white/10 hover:bg-white/20 border border-white/20 text-white"
           >
             <Search className="h-4 w-4" />
           </Button>
 
           {/* Notifications */}
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             className="relative bg-white/10 hover:bg-white/20 border border-white/20 text-white"
           >
             <Bell className="h-4 w-4" />

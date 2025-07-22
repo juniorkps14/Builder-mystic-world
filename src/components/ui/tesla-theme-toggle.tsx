@@ -40,7 +40,7 @@ export function TeslaThemeToggle() {
       glowEffects: true,
       opacity: 90,
       blurIntensity: 20,
-    }
+    },
   );
 
   const [isOpen, setIsOpen] = useState(false);
@@ -89,7 +89,6 @@ export function TeslaThemeToggle() {
     // Apply visual effects
     root.style.setProperty("--glass-opacity", `${themePrefs.opacity}%`);
     root.style.setProperty("--glass-blur", `${themePrefs.blurIntensity}px`);
-
   }, [themePrefs]);
 
   const themeOptions = [
@@ -145,7 +144,10 @@ export function TeslaThemeToggle() {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0 tesla-glass border-white/20" align="end">
+      <PopoverContent
+        className="w-80 p-0 tesla-glass border-white/20"
+        align="end"
+      >
         <div className="p-4 space-y-4">
           {/* Header */}
           <div className="flex items-center gap-2">
@@ -170,15 +172,23 @@ export function TeslaThemeToggle() {
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-lg ${theme.preview} flex items-center justify-center`}>
+                      <div
+                        className={`w-8 h-8 rounded-lg ${theme.preview} flex items-center justify-center`}
+                      >
                         <IconComponent className="h-4 w-4 text-slate-600" />
                       </div>
                       <div className="flex-1">
-                        <p className="font-medium text-white text-sm">{theme.name}</p>
-                        <p className="text-xs text-slate-400">{theme.description}</p>
+                        <p className="font-medium text-white text-sm">
+                          {theme.name}
+                        </p>
+                        <p className="text-xs text-slate-400">
+                          {theme.description}
+                        </p>
                       </div>
                       {themePrefs.mode === theme.id && (
-                        <Badge className="bg-blue-500 text-white text-xs">Active</Badge>
+                        <Badge className="bg-blue-500 text-white text-xs">
+                          Active
+                        </Badge>
                       )}
                     </div>
                   </div>
@@ -200,7 +210,9 @@ export function TeslaThemeToggle() {
                   </div>
                   <Switch
                     checked={themePrefs.glassEffect}
-                    onCheckedChange={(checked) => updateField("glassEffect", checked)}
+                    onCheckedChange={(checked) =>
+                      updateField("glassEffect", checked)
+                    }
                   />
                 </div>
 
@@ -211,7 +223,9 @@ export function TeslaThemeToggle() {
                   </div>
                   <Switch
                     checked={themePrefs.glowEffects}
-                    onCheckedChange={(checked) => updateField("glowEffects", checked)}
+                    onCheckedChange={(checked) =>
+                      updateField("glowEffects", checked)
+                    }
                   />
                 </div>
 
@@ -222,7 +236,9 @@ export function TeslaThemeToggle() {
                   </div>
                   <Switch
                     checked={themePrefs.animations}
-                    onCheckedChange={(checked) => updateField("animations", checked)}
+                    onCheckedChange={(checked) =>
+                      updateField("animations", checked)
+                    }
                   />
                 </div>
 
@@ -230,7 +246,9 @@ export function TeslaThemeToggle() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-white">Transparency</span>
-                    <span className="text-xs text-slate-400">{themePrefs.opacity}%</span>
+                    <span className="text-xs text-slate-400">
+                      {themePrefs.opacity}%
+                    </span>
                   </div>
                   <Slider
                     value={[themePrefs.opacity]}
@@ -246,11 +264,15 @@ export function TeslaThemeToggle() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-white">Blur Intensity</span>
-                    <span className="text-xs text-slate-400">{themePrefs.blurIntensity}px</span>
+                    <span className="text-xs text-slate-400">
+                      {themePrefs.blurIntensity}px
+                    </span>
                   </div>
                   <Slider
                     value={[themePrefs.blurIntensity]}
-                    onValueChange={([value]) => updateField("blurIntensity", value)}
+                    onValueChange={([value]) =>
+                      updateField("blurIntensity", value)
+                    }
                     min={5}
                     max={40}
                     step={5}
@@ -276,7 +298,9 @@ export function TeslaThemeToggle() {
                 </div>
                 <Switch
                   checked={themePrefs.highContrast}
-                  onCheckedChange={(checked) => updateField("highContrast", checked)}
+                  onCheckedChange={(checked) =>
+                    updateField("highContrast", checked)
+                  }
                 />
               </div>
 
@@ -287,7 +311,9 @@ export function TeslaThemeToggle() {
                 </div>
                 <Switch
                   checked={themePrefs.largeText}
-                  onCheckedChange={(checked) => updateField("largeText", checked)}
+                  onCheckedChange={(checked) =>
+                    updateField("largeText", checked)
+                  }
                 />
               </div>
 
@@ -298,7 +324,9 @@ export function TeslaThemeToggle() {
                 </div>
                 <Switch
                   checked={themePrefs.reducedMotion}
-                  onCheckedChange={(checked) => updateField("reducedMotion", checked)}
+                  onCheckedChange={(checked) =>
+                    updateField("reducedMotion", checked)
+                  }
                 />
               </div>
             </div>
@@ -307,8 +335,9 @@ export function TeslaThemeToggle() {
           {/* Theme Info */}
           <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
             <p className="text-xs text-blue-300">
-              🚀 Tesla UI provides a modern, accessible interface inspired by automotive displays.
-              All settings are automatically saved and synchronized.
+              🚀 Tesla UI provides a modern, accessible interface inspired by
+              automotive displays. All settings are automatically saved and
+              synchronized.
             </p>
           </div>
         </div>

@@ -107,16 +107,14 @@ export default function SystemMonitoring() {
   }, []);
 
   // Persistent monitoring preferences
-  const { store: monitoringPrefs, updateField: updateMonitoringPref } = usePersistentStore(
-    "monitoring-preferences",
-    {
+  const { store: monitoringPrefs, updateField: updateMonitoringPref } =
+    usePersistentStore("monitoring-preferences", {
       autoRefresh: true,
       refreshInterval: 5000,
       showCharts: true,
       compactView: false,
       theme: "dark",
-    }
-  );
+    });
 
   const { autoRefresh, refreshInterval } = monitoringPrefs;
   const [lastUpdate, setLastUpdate] = useState(new Date());
@@ -295,7 +293,7 @@ export default function SystemMonitoring() {
                 Real-time system performance and health monitoring
               </p>
             </div>
-            
+
             <div className="flex items-center gap-4">
               <Badge
                 className={`px-4 py-2 ${
@@ -318,7 +316,9 @@ export default function SystemMonitoring() {
               </Badge>
 
               <Button
-                onClick={() => updateMonitoringPref("autoRefresh", !autoRefresh)}
+                onClick={() =>
+                  updateMonitoringPref("autoRefresh", !autoRefresh)
+                }
                 className="bg-white/10 hover:bg-white/20 border border-white/20 text-white gap-2"
               >
                 {autoRefresh ? (
@@ -376,7 +376,10 @@ export default function SystemMonitoring() {
             <div>
               <p className="text-slate-400 text-sm">Memory</p>
               <p className="text-2xl font-light text-white">
-                {((metrics.memory.used / metrics.memory.total) * 100).toFixed(1)}%
+                {((metrics.memory.used / metrics.memory.total) * 100).toFixed(
+                  1,
+                )}
+                %
               </p>
               <p className="text-xs text-slate-400">
                 {formatBytes(metrics.memory.used * 1024 * 1024)} /{" "}
@@ -469,14 +472,18 @@ export default function SystemMonitoring() {
         <div className="lg:col-span-2">
           <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl">
             <div className="p-6">
-              <h3 className="text-xl font-light text-white mb-6">Performance Trends</h3>
-              
+              <h3 className="text-xl font-light text-white mb-6">
+                Performance Trends
+              </h3>
+
               {/* Chart Placeholder */}
               <div className="aspect-video bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-white/10 flex items-center justify-center">
                 <div className="text-center">
                   <BarChart3 className="h-16 w-16 text-blue-400 mx-auto mb-4" />
                   <p className="text-slate-300">Real-time Performance Charts</p>
-                  <p className="text-slate-400 text-sm mt-2">CPU, Memory, and Network usage over time</p>
+                  <p className="text-slate-400 text-sm mt-2">
+                    CPU, Memory, and Network usage over time
+                  </p>
                 </div>
               </div>
             </div>
@@ -502,14 +509,17 @@ export default function SystemMonitoring() {
                             node.status === "active"
                               ? "bg-emerald-400"
                               : node.status === "error"
-                              ? "bg-red-400"
-                              : "bg-gray-400"
+                                ? "bg-red-400"
+                                : "bg-gray-400"
                           }`}
                         />
                         <div>
-                          <p className="text-white text-sm font-medium">{node.name}</p>
+                          <p className="text-white text-sm font-medium">
+                            {node.name}
+                          </p>
                           <p className="text-slate-400 text-xs">
-                            {node.cpu.toFixed(1)}% CPU | {node.memory.toFixed(1)}MB
+                            {node.cpu.toFixed(1)}% CPU |{" "}
+                            {node.memory.toFixed(1)}MB
                           </p>
                         </div>
                       </div>
@@ -526,7 +536,9 @@ export default function SystemMonitoring() {
           {/* Network Interfaces */}
           <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
             <div className="p-6">
-              <h3 className="text-lg font-light text-white mb-4">Network Interfaces</h3>
+              <h3 className="text-lg font-light text-white mb-4">
+                Network Interfaces
+              </h3>
               <div className="space-y-3">
                 {metrics.network.interfaces.map((iface, index) => (
                   <div
@@ -536,11 +548,15 @@ export default function SystemMonitoring() {
                     <div className="flex items-center gap-3">
                       <div
                         className={`w-3 h-3 rounded-full ${
-                          iface.status === "up" ? "bg-emerald-400" : "bg-red-400"
+                          iface.status === "up"
+                            ? "bg-emerald-400"
+                            : "bg-red-400"
                         }`}
                       />
                       <div>
-                        <p className="text-white text-sm font-medium">{iface.name}</p>
+                        <p className="text-white text-sm font-medium">
+                          {iface.name}
+                        </p>
                         <p className="text-slate-400 text-xs">
                           ↑{iface.tx}KB/s ↓{iface.rx}KB/s
                         </p>
@@ -562,7 +578,9 @@ export default function SystemMonitoring() {
         <div className="flex items-center gap-4">
           <span>Last Update: {lastUpdate.toLocaleTimeString()}</span>
           <span>•</span>
-          <span>ROS Master: {metrics.ros.masterRunning ? "Running" : "Stopped"}</span>
+          <span>
+            ROS Master: {metrics.ros.masterRunning ? "Running" : "Stopped"}
+          </span>
           <span>•</span>
           <span>Topics: {metrics.ros.topics}</span>
           <span>•</span>

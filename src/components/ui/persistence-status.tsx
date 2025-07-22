@@ -132,8 +132,8 @@ export function PersistenceStatus() {
                 <div className="flex items-start gap-1">
                   <Info className="h-3 w-3 mt-0.5 flex-shrink-0" />
                   <span>
-                    Settings, command history, and work state are
-                    automatically saved and restored when reopening the system
+                    Settings, command history, and work state are automatically
+                    saved and restored when reopening the system
                   </span>
                 </div>
               </div>

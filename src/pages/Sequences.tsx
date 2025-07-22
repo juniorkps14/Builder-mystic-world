@@ -7,10 +7,27 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { usePersistentState, usePersistentStore } from "@/hooks/use-persistence";
+import {
+  usePersistentState,
+  usePersistentStore,
+} from "@/hooks/use-persistence";
 import {
   Play,
   Pause,
@@ -86,7 +103,7 @@ export default function Sequences() {
       viewMode: "overview" as "overview" | "detailed",
       filterStatus: "all" as string,
       sortBy: "priority" as string,
-    }
+    },
   );
 
   // State for task management
@@ -105,7 +122,8 @@ export default function Sequences() {
     {
       id: "seq_1",
       name: "Security Patrol Route",
-      description: "Comprehensive security patrol covering all designated checkpoints",
+      description:
+        "Comprehensive security patrol covering all designated checkpoints",
       status: "idle",
       taskCount: 5,
       completedTasks: 5,
@@ -147,7 +165,8 @@ export default function Sequences() {
       status: "completed",
       duration: 180,
       priority: "high",
-      description: "Move to security checkpoint Alpha using optimal path planning",
+      description:
+        "Move to security checkpoint Alpha using optimal path planning",
       parameters: { target: "checkpoint_alpha", speed: 0.8, precision: "high" },
       progress: 100,
       lastExecuted: new Date(Date.now() - 3600000),
@@ -172,7 +191,11 @@ export default function Sequences() {
       duration: 90,
       priority: "high",
       description: "AI-powered object detection and anomaly identification",
-      parameters: { model: "yolo_v8", confidence: 0.85, classes: ["person", "vehicle"] },
+      parameters: {
+        model: "yolo_v8",
+        confidence: 0.85,
+        classes: ["person", "vehicle"],
+      },
       successRate: 94.3,
     },
     {
@@ -211,14 +234,32 @@ export default function Sequences() {
   });
 
   const [logs, setLogs] = useState([
-    { time: "14:32:15", level: "INFO", message: "Task 'Navigate to Checkpoint Alpha' completed successfully" },
-    { time: "14:31:42", level: "INFO", message: "Starting environmental scan procedure" },
-    { time: "14:31:15", level: "WARN", message: "Obstacle detected, recalculating path" },
-    { time: "14:30:58", level: "INFO", message: "Sequence 'Security Patrol Route' initiated" },
+    {
+      time: "14:32:15",
+      level: "INFO",
+      message: "Task 'Navigate to Checkpoint Alpha' completed successfully",
+    },
+    {
+      time: "14:31:42",
+      level: "INFO",
+      message: "Starting environmental scan procedure",
+    },
+    {
+      time: "14:31:15",
+      level: "WARN",
+      message: "Obstacle detected, recalculating path",
+    },
+    {
+      time: "14:30:58",
+      level: "INFO",
+      message: "Sequence 'Security Patrol Route' initiated",
+    },
   ]);
 
-  const selectedTask = tasks.find(t => t.id === sequencePrefs.selectedTaskId);
-  const selectedSequence = sequences.find(s => s.id === sequencePrefs.selectedSequenceId);
+  const selectedTask = tasks.find((t) => t.id === sequencePrefs.selectedTaskId);
+  const selectedSequence = sequences.find(
+    (s) => s.id === sequencePrefs.selectedSequenceId,
+  );
 
   // Task management functions
   const handleCreateTask = () => {
@@ -237,7 +278,13 @@ export default function Sequences() {
     };
 
     setTasks([...tasks, task]);
-    setNewTask({ name: "", type: "navigation", priority: "medium", description: "", parameters: {} });
+    setNewTask({
+      name: "",
+      type: "navigation",
+      priority: "medium",
+      description: "",
+      parameters: {},
+    });
     setIsTaskDialogOpen(false);
   };
 
@@ -250,39 +297,43 @@ export default function Sequences() {
   const handleUpdateTask = () => {
     if (!editingTask || !newTask.name) return;
 
-    setTasks(tasks.map(t =>
-      t.id === editingTask.id
-        ? { ...t, ...newTask }
-        : t
-    ));
+    setTasks(
+      tasks.map((t) => (t.id === editingTask.id ? { ...t, ...newTask } : t)),
+    );
 
     setEditingTask(null);
-    setNewTask({ name: "", type: "navigation", priority: "medium", description: "", parameters: {} });
+    setNewTask({
+      name: "",
+      type: "navigation",
+      priority: "medium",
+      description: "",
+      parameters: {},
+    });
     setIsTaskDialogOpen(false);
   };
 
   const handleDeleteTask = (taskId: string) => {
-    setTasks(tasks.filter(t => t.id !== taskId));
+    setTasks(tasks.filter((t) => t.id !== taskId));
     if (sequencePrefs.selectedTaskId === taskId) {
       updateField("selectedTaskId", null);
     }
   };
 
   const handleExecuteTask = (taskId: string) => {
-    setTasks(tasks.map(t =>
-      t.id === taskId
-        ? { ...t, status: "running" as const, progress: 0 }
-        : t
-    ));
+    setTasks(
+      tasks.map((t) =>
+        t.id === taskId ? { ...t, status: "running" as const, progress: 0 } : t,
+      ),
+    );
   };
 
   const handleRunSequence = (sequenceId: string) => {
     updateField("selectedSequenceId", sequenceId);
-    setSequences(sequences.map(s =>
-      s.id === sequenceId
-        ? { ...s, status: "running" as const }
-        : s
-    ));
+    setSequences(
+      sequences.map((s) =>
+        s.id === sequenceId ? { ...s, status: "running" as const } : s,
+      ),
+    );
   };
 
   const getStatusColor = (status: string) => {
@@ -324,7 +375,9 @@ export default function Sequences() {
       case "ai":
         return <div className="w-3 h-3 rounded-full bg-pink-500" />;
       default:
-        return <div className="w-3 h-3 rounded-full bg-white/5 border border-white/100" />;
+        return (
+          <div className="w-3 h-3 rounded-full bg-white/5 border border-white/100" />
+        );
     }
   };
 
@@ -371,9 +424,11 @@ export default function Sequences() {
                 <div className="h-10 w-10 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl flex items-center justify-center mx-auto mb-2">
                   <PlayCircle className="h-5 w-5 text-blue-400" />
                 </div>
-                <p className="text-slate-400 text-xs font-medium">Active Sequences</p>
+                <p className="text-slate-400 text-xs font-medium">
+                  Active Sequences
+                </p>
                 <p className="text-xl font-light text-white mt-1">
-                  {sequences.filter(s => s.status === "running").length}
+                  {sequences.filter((s) => s.status === "running").length}
                 </p>
               </div>
             </Card>
@@ -385,7 +440,9 @@ export default function Sequences() {
                   <Activity className="h-5 w-5 text-emerald-400" />
                 </div>
                 <p className="text-slate-400 text-xs font-medium">Progress</p>
-                <p className="text-xl font-light text-white mt-1">{executionStatus.totalProgress}%</p>
+                <p className="text-xl font-light text-white mt-1">
+                  {executionStatus.totalProgress}%
+                </p>
               </div>
             </Card>
 
@@ -395,7 +452,9 @@ export default function Sequences() {
                 <div className="h-10 w-10 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-xl flex items-center justify-center mx-auto mb-2">
                   <CheckCircle2 className="h-5 w-5 text-emerald-400" />
                 </div>
-                <p className="text-slate-400 text-xs font-medium">Success Rate</p>
+                <p className="text-slate-400 text-xs font-medium">
+                  Success Rate
+                </p>
                 <p className="text-xl font-light text-white mt-1">96.2%</p>
               </div>
             </Card>
@@ -406,9 +465,11 @@ export default function Sequences() {
                 <div className="h-10 w-10 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-xl flex items-center justify-center mx-auto mb-2">
                   <Timer className="h-5 w-5 text-purple-400" />
                 </div>
-                <p className="text-slate-400 text-xs font-medium">Active Tasks</p>
+                <p className="text-slate-400 text-xs font-medium">
+                  Active Tasks
+                </p>
                 <p className="text-xl font-light text-white mt-1">
-                  {tasks.filter(t => t.status === "running").length}
+                  {tasks.filter((t) => t.status === "running").length}
                 </p>
               </div>
             </Card>
@@ -417,7 +478,9 @@ export default function Sequences() {
           {/* Sequence Selection */}
           <Card className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 shadow-xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-light text-white">Available Sequences</h3>
+              <h3 className="text-lg font-light text-white">
+                Available Sequences
+              </h3>
               <Button
                 onClick={() => setIsSequenceDialogOpen(true)}
                 className="bg-white/10 hover:bg-white/20 border border-white/20"
@@ -442,17 +505,25 @@ export default function Sequences() {
                     <div className="flex-1">
                       <div className="flex items-center gap-3">
                         <FolderOpen className="h-4 w-4 text-blue-400" />
-                        <h4 className="font-medium text-white">{sequence.name}</h4>
-                        <Badge className={`text-xs ${getStatusColor(sequence.status)}`}>
+                        <h4 className="font-medium text-white">
+                          {sequence.name}
+                        </h4>
+                        <Badge
+                          className={`text-xs ${getStatusColor(sequence.status)}`}
+                        >
                           {sequence.status}
                         </Badge>
                       </div>
-                      <p className="text-sm text-slate-400 mt-1">{sequence.description}</p>
+                      <p className="text-sm text-slate-400 mt-1">
+                        {sequence.description}
+                      </p>
                       <div className="flex items-center gap-4 mt-2 text-xs text-slate-400">
                         <span>{sequence.taskCount} tasks</span>
                         <span>{sequence.successRate}% success</span>
                         {sequence.lastExecuted && (
-                          <span>Last: {sequence.lastExecuted.toLocaleTimeString()}</span>
+                          <span>
+                            Last: {sequence.lastExecuted.toLocaleTimeString()}
+                          </span>
                         )}
                       </div>
                     </div>
@@ -478,8 +549,13 @@ export default function Sequences() {
           <Card className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl h-full">
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-light text-white">Execution Logs</h3>
-                <Button size="sm" className="bg-white/10 hover:bg-white/20 border border-white/20">
+                <h3 className="text-lg font-light text-white">
+                  Execution Logs
+                </h3>
+                <Button
+                  size="sm"
+                  className="bg-white/10 hover:bg-white/20 border border-white/20"
+                >
                   <FileText className="h-4 w-4" />
                 </Button>
               </div>
@@ -487,16 +563,27 @@ export default function Sequences() {
               <ScrollArea className="h-[400px]">
                 <div className="space-y-2">
                   {logs.map((log, index) => (
-                    <div key={index} className="flex gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors">
-                      <span className="text-xs font-mono text-slate-400 w-16 flex-shrink-0">{log.time}</span>
-                      <span className={`text-xs font-medium w-12 flex-shrink-0 ${
-                        log.level === "INFO" ? "text-blue-400" :
-                        log.level === "WARN" ? "text-yellow-400" :
-                        "text-red-400"
-                      }`}>
+                    <div
+                      key={index}
+                      className="flex gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"
+                    >
+                      <span className="text-xs font-mono text-slate-400 w-16 flex-shrink-0">
+                        {log.time}
+                      </span>
+                      <span
+                        className={`text-xs font-medium w-12 flex-shrink-0 ${
+                          log.level === "INFO"
+                            ? "text-blue-400"
+                            : log.level === "WARN"
+                              ? "text-yellow-400"
+                              : "text-red-400"
+                        }`}
+                      >
                         {log.level}
                       </span>
-                      <span className="text-xs text-slate-300 flex-1">{log.message}</span>
+                      <span className="text-xs text-slate-300 flex-1">
+                        {log.message}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -507,12 +594,22 @@ export default function Sequences() {
                 <div className="mt-4 p-3 bg-blue-500/10 border border-blue-400/30 rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
                     <Activity className="h-4 w-4 text-blue-400" />
-                    <span className="text-sm font-medium text-blue-400">Executing Sequence</span>
+                    <span className="text-sm font-medium text-blue-400">
+                      Executing Sequence
+                    </span>
                   </div>
-                  <Progress value={executionStatus.totalProgress} className="h-1 bg-slate-700 mb-2" />
+                  <Progress
+                    value={executionStatus.totalProgress}
+                    className="h-1 bg-slate-700 mb-2"
+                  />
                   <div className="flex justify-between text-xs text-slate-400">
-                    <span>{executionStatus.tasksCompleted}/{executionStatus.totalTasks} tasks</span>
-                    <span>{executionStatus.estimatedTimeRemaining}s remaining</span>
+                    <span>
+                      {executionStatus.tasksCompleted}/
+                      {executionStatus.totalTasks} tasks
+                    </span>
+                    <span>
+                      {executionStatus.estimatedTimeRemaining}s remaining
+                    </span>
                   </div>
                 </div>
               )}
@@ -527,7 +624,9 @@ export default function Sequences() {
           <Card className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
             <div className="p-6 border-b border-white/10">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-light text-white">Task Management</h2>
+                <h2 className="text-xl font-light text-white">
+                  Task Management
+                </h2>
                 <div className="flex items-center gap-3">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -536,13 +635,22 @@ export default function Sequences() {
                       className="pl-10 bg-white/5 border-white/20 text-white placeholder-slate-400 focus:border-blue-400"
                     />
                   </div>
-                  <Button size="sm" className="bg-white/10 hover:bg-white/20 border border-white/20">
+                  <Button
+                    size="sm"
+                    className="bg-white/10 hover:bg-white/20 border border-white/20"
+                  >
                     <Filter className="h-4 w-4" />
                   </Button>
                   <Button
                     onClick={() => {
                       setEditingTask(null);
-                      setNewTask({ name: "", type: "navigation", priority: "medium", description: "", parameters: {} });
+                      setNewTask({
+                        name: "",
+                        type: "navigation",
+                        priority: "medium",
+                        description: "",
+                        parameters: {},
+                      });
                       setIsTaskDialogOpen(true);
                     }}
                     className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
@@ -577,41 +685,64 @@ export default function Sequences() {
                       <TypeIcon type={task.type} />
 
                       {/* Priority Bar */}
-                      <div className={`w-1 h-8 rounded-full ${getPriorityColor(task.priority)}`} />
+                      <div
+                        className={`w-1 h-8 rounded-full ${getPriorityColor(task.priority)}`}
+                      />
 
                       {/* Task Info */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <h3 className="font-medium text-white truncate">{task.name}</h3>
-                          <Badge className={`text-xs ${getStatusColor(task.status)}`}>
+                          <h3 className="font-medium text-white truncate">
+                            {task.name}
+                          </h3>
+                          <Badge
+                            className={`text-xs ${getStatusColor(task.status)}`}
+                          >
                             {task.status}
                           </Badge>
                         </div>
-                        <p className="text-sm text-slate-400 truncate mt-1">{task.description}</p>
+                        <p className="text-sm text-slate-400 truncate mt-1">
+                          {task.description}
+                        </p>
 
                         {task.status === "running" && task.progress && (
                           <div className="mt-2">
-                            <Progress value={task.progress} className="h-1 bg-slate-700" />
+                            <Progress
+                              value={task.progress}
+                              className="h-1 bg-slate-700"
+                            />
                           </div>
                         )}
                       </div>
 
                       {/* Duration & Success Rate */}
                       <div className="text-right">
-                        <p className="text-sm font-mono text-white">{task.duration}s</p>
+                        <p className="text-sm font-mono text-white">
+                          {task.duration}s
+                        </p>
                         {task.successRate && (
-                          <p className="text-xs text-slate-400">{task.successRate}% success</p>
+                          <p className="text-xs text-slate-400">
+                            {task.successRate}% success
+                          </p>
                         )}
                       </div>
 
                       {/* Action Buttons */}
                       <div className="flex items-center gap-2">
                         {task.status === "running" ? (
-                          <Button size="sm" variant="outline" className="border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/10">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/10"
+                          >
                             <PauseCircle className="h-4 w-4" />
                           </Button>
                         ) : task.status === "paused" ? (
-                          <Button size="sm" variant="outline" className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
+                          >
                             <PlayCircle className="h-4 w-4" />
                           </Button>
                         ) : (
@@ -666,8 +797,13 @@ export default function Sequences() {
             <Card className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-light text-white">Task Details</h3>
-                  <Button size="sm" className="bg-white/10 hover:bg-white/20 border border-white/20">
+                  <h3 className="text-lg font-light text-white">
+                    Task Details
+                  </h3>
+                  <Button
+                    size="sm"
+                    className="bg-white/10 hover:bg-white/20 border border-white/20"
+                  >
                     <Edit className="h-4 w-4" />
                   </Button>
                 </div>
@@ -682,28 +818,43 @@ export default function Sequences() {
                     <p className="text-sm font-medium text-slate-400">Type</p>
                     <div className="flex items-center gap-2 mt-1">
                       <TypeIcon type={selectedTask.type} />
-                      <span className="text-white capitalize">{selectedTask.type}</span>
+                      <span className="text-white capitalize">
+                        {selectedTask.type}
+                      </span>
                     </div>
                   </div>
 
                   <div>
                     <p className="text-sm font-medium text-slate-400">Status</p>
-                    <Badge className={`mt-1 ${getStatusColor(selectedTask.status)}`}>
+                    <Badge
+                      className={`mt-1 ${getStatusColor(selectedTask.status)}`}
+                    >
                       {selectedTask.status}
                     </Badge>
                   </div>
 
                   <div>
-                    <p className="text-sm font-medium text-slate-400">Description</p>
-                    <p className="text-sm text-slate-300 mt-1">{selectedTask.description}</p>
+                    <p className="text-sm font-medium text-slate-400">
+                      Description
+                    </p>
+                    <p className="text-sm text-slate-300 mt-1">
+                      {selectedTask.description}
+                    </p>
                   </div>
 
                   {selectedTask.progress && (
                     <div>
-                      <p className="text-sm font-medium text-slate-400">Progress</p>
+                      <p className="text-sm font-medium text-slate-400">
+                        Progress
+                      </p>
                       <div className="mt-2">
-                        <Progress value={selectedTask.progress} className="h-2 bg-slate-700" />
-                        <p className="text-xs text-slate-400 mt-1">{selectedTask.progress}% complete</p>
+                        <Progress
+                          value={selectedTask.progress}
+                          className="h-2 bg-slate-700"
+                        />
+                        <p className="text-xs text-slate-400 mt-1">
+                          {selectedTask.progress}% complete
+                        </p>
                       </div>
                     </div>
                   )}
@@ -714,7 +865,10 @@ export default function Sequences() {
                         <Play className="h-4 w-4 mr-2" />
                         Execute
                       </Button>
-                      <Button variant="outline" className="border-white/20 text-white hover:bg-white/10">
+                      <Button
+                        variant="outline"
+                        className="border-white/20 text-white hover:bg-white/10"
+                      >
                         <Settings className="h-4 w-4" />
                       </Button>
                     </div>
@@ -723,7 +877,6 @@ export default function Sequences() {
               </div>
             </Card>
           )}
-
         </div>
       </div>
 
@@ -735,25 +888,38 @@ export default function Sequences() {
               {editingTask ? "Edit Task" : "Create New Task"}
             </DialogTitle>
             <DialogDescription className="text-slate-400">
-              {editingTask ? "Modify the task parameters below." : "Define a new task for your sequence."}
+              {editingTask
+                ? "Modify the task parameters below."
+                : "Define a new task for your sequence."}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             <div>
-              <Label htmlFor="task-name" className="text-slate-300">Task Name</Label>
+              <Label htmlFor="task-name" className="text-slate-300">
+                Task Name
+              </Label>
               <Input
                 id="task-name"
                 value={newTask.name}
-                onChange={(e) => setNewTask({ ...newTask, name: e.target.value })}
+                onChange={(e) =>
+                  setNewTask({ ...newTask, name: e.target.value })
+                }
                 className="bg-white/5 border-white/20 text-white mt-1"
                 placeholder="Enter task name..."
               />
             </div>
 
             <div>
-              <Label htmlFor="task-type" className="text-slate-300">Type</Label>
-              <Select value={newTask.type} onValueChange={(value) => setNewTask({ ...newTask, type: value as Task["type"] })}>
+              <Label htmlFor="task-type" className="text-slate-300">
+                Type
+              </Label>
+              <Select
+                value={newTask.type}
+                onValueChange={(value) =>
+                  setNewTask({ ...newTask, type: value as Task["type"] })
+                }
+              >
                 <SelectTrigger className="bg-white/5 border-white/20 text-white mt-1">
                   <SelectValue />
                 </SelectTrigger>
@@ -768,8 +934,18 @@ export default function Sequences() {
             </div>
 
             <div>
-              <Label htmlFor="task-priority" className="text-slate-300">Priority</Label>
-              <Select value={newTask.priority} onValueChange={(value) => setNewTask({ ...newTask, priority: value as Task["priority"] })}>
+              <Label htmlFor="task-priority" className="text-slate-300">
+                Priority
+              </Label>
+              <Select
+                value={newTask.priority}
+                onValueChange={(value) =>
+                  setNewTask({
+                    ...newTask,
+                    priority: value as Task["priority"],
+                  })
+                }
+              >
                 <SelectTrigger className="bg-white/5 border-white/20 text-white mt-1">
                   <SelectValue />
                 </SelectTrigger>
@@ -783,11 +959,15 @@ export default function Sequences() {
             </div>
 
             <div>
-              <Label htmlFor="task-description" className="text-slate-300">Description</Label>
+              <Label htmlFor="task-description" className="text-slate-300">
+                Description
+              </Label>
               <Textarea
                 id="task-description"
                 value={newTask.description}
-                onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+                onChange={(e) =>
+                  setNewTask({ ...newTask, description: e.target.value })
+                }
                 className="bg-white/5 border-white/20 text-white mt-1"
                 placeholder="Describe the task..."
                 rows={3}
@@ -814,10 +994,15 @@ export default function Sequences() {
       </Dialog>
 
       {/* Sequence Dialog */}
-      <Dialog open={isSequenceDialogOpen} onOpenChange={setIsSequenceDialogOpen}>
+      <Dialog
+        open={isSequenceDialogOpen}
+        onOpenChange={setIsSequenceDialogOpen}
+      >
         <DialogContent className="bg-slate-900 border border-white/20 text-white max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-xl font-light">Create New Sequence</DialogTitle>
+            <DialogTitle className="text-xl font-light">
+              Create New Sequence
+            </DialogTitle>
             <DialogDescription className="text-slate-400">
               Create a new task sequence for automated execution.
             </DialogDescription>
@@ -825,7 +1010,9 @@ export default function Sequences() {
 
           <div className="space-y-4">
             <div>
-              <Label htmlFor="sequence-name" className="text-slate-300">Sequence Name</Label>
+              <Label htmlFor="sequence-name" className="text-slate-300">
+                Sequence Name
+              </Label>
               <Input
                 id="sequence-name"
                 className="bg-white/5 border-white/20 text-white mt-1"
@@ -834,7 +1021,9 @@ export default function Sequences() {
             </div>
 
             <div>
-              <Label htmlFor="sequence-description" className="text-slate-300">Description</Label>
+              <Label htmlFor="sequence-description" className="text-slate-300">
+                Description
+              </Label>
               <Textarea
                 id="sequence-description"
                 className="bg-white/5 border-white/20 text-white mt-1"

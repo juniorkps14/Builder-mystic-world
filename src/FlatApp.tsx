@@ -72,7 +72,7 @@ const FlatApp = () => {
                 <Toaster />
                 <Sonner />
                 <BrowserRouter>
-                <div className="min-h-screen tesla-ui bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex">
+                  <div className="min-h-screen tesla-ui bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex">
                     {/* Sidebar */}
                     <FlatSidebar
                       isOpen={sidebarOpen}

@@ -57,7 +57,9 @@ export default function Navigation() {
     theta: 1.57, // 90 degrees in radians
   });
 
-  const [navigationStatus, setNavigationStatus] = useState<"idle" | "navigating" | "completed" | "failed">("idle");
+  const [navigationStatus, setNavigationStatus] = useState<
+    "idle" | "navigating" | "completed" | "failed"
+  >("idle");
   const [progress, setProgress] = useState(0);
   const [estimatedTime, setEstimatedTime] = useState(120);
 
@@ -72,7 +74,7 @@ export default function Navigation() {
       timestamp: new Date(Date.now() - 300000),
     },
     {
-      id: "goal_2", 
+      id: "goal_2",
       name: "Loading Zone",
       x: 6.5,
       y: 4.2,
@@ -103,12 +105,12 @@ export default function Navigation() {
   useEffect(() => {
     if (navigationStatus === "navigating") {
       const interval = setInterval(() => {
-        setProgress(prev => {
+        setProgress((prev) => {
           if (prev >= 100) {
             setNavigationStatus("completed");
             return 100;
           }
-          setEstimatedTime(prev => Math.max(0, prev - 2));
+          setEstimatedTime((prev) => Math.max(0, prev - 2));
           return prev + 2;
         });
       }, 1000);
@@ -167,10 +169,13 @@ export default function Navigation() {
                 Autonomous navigation control and path planning
               </p>
             </div>
-            
+
             <div className="flex items-center gap-3">
-              <Badge className={`bg-gradient-to-r ${getStatusColor(navigationStatus)} text-white border-0 px-4 py-2`}>
-                {navigationStatus.charAt(0).toUpperCase() + navigationStatus.slice(1)}
+              <Badge
+                className={`bg-gradient-to-r ${getStatusColor(navigationStatus)} text-white border-0 px-4 py-2`}
+              >
+                {navigationStatus.charAt(0).toUpperCase() +
+                  navigationStatus.slice(1)}
               </Badge>
             </div>
           </div>
@@ -183,7 +188,9 @@ export default function Navigation() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-400 text-sm">Total Goals</p>
-              <p className="text-2xl font-light text-white mt-1">{stats.totalGoals}</p>
+              <p className="text-2xl font-light text-white mt-1">
+                {stats.totalGoals}
+              </p>
             </div>
             <div className="h-12 w-12 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl flex items-center justify-center">
               <Target className="h-6 w-6 text-blue-400" />
@@ -195,7 +202,9 @@ export default function Navigation() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-400 text-sm">Success Rate</p>
-              <p className="text-2xl font-light text-white mt-1">{stats.successRate}%</p>
+              <p className="text-2xl font-light text-white mt-1">
+                {stats.successRate}%
+              </p>
             </div>
             <div className="h-12 w-12 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-xl flex items-center justify-center">
               <TrendingUp className="h-6 w-6 text-emerald-400" />
@@ -207,7 +216,9 @@ export default function Navigation() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-400 text-sm">Avg Time</p>
-              <p className="text-2xl font-light text-white mt-1">{stats.averageTime}s</p>
+              <p className="text-2xl font-light text-white mt-1">
+                {stats.averageTime}s
+              </p>
             </div>
             <div className="h-12 w-12 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-xl flex items-center justify-center">
               <Clock className="h-6 w-6 text-purple-400" />
@@ -236,18 +247,32 @@ export default function Navigation() {
           {/* Current Navigation */}
           <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl">
             <div className="p-6">
-              <h2 className="text-xl font-light text-white mb-6">Navigation Control</h2>
-              
+              <h2 className="text-xl font-light text-white mb-6">
+                Navigation Control
+              </h2>
+
               {navigationStatus === "navigating" && (
                 <div className="mb-6 p-4 bg-blue-500/20 border border-blue-500/30 rounded-xl">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-blue-300 font-medium">Navigation in Progress</span>
-                    <span className="text-blue-300 text-sm">{progress.toFixed(1)}%</span>
+                    <span className="text-blue-300 font-medium">
+                      Navigation in Progress
+                    </span>
+                    <span className="text-blue-300 text-sm">
+                      {progress.toFixed(1)}%
+                    </span>
                   </div>
-                  <Progress value={progress} className="h-3 bg-slate-700 mb-3" />
+                  <Progress
+                    value={progress}
+                    className="h-3 bg-slate-700 mb-3"
+                  />
                   <div className="flex justify-between text-sm text-blue-300">
-                    <span>ETA: {Math.floor(estimatedTime / 60)}:{(estimatedTime % 60).toString().padStart(2, '0')}</span>
-                    <span>Distance remaining: {((100 - progress) * 0.1).toFixed(1)}m</span>
+                    <span>
+                      ETA: {Math.floor(estimatedTime / 60)}:
+                      {(estimatedTime % 60).toString().padStart(2, "0")}
+                    </span>
+                    <span>
+                      Distance remaining: {((100 - progress) * 0.1).toFixed(1)}m
+                    </span>
                   </div>
                 </div>
               )}
@@ -261,16 +286,28 @@ export default function Navigation() {
                   </h3>
                   <div className="space-y-3">
                     <div>
-                      <Label className="text-slate-400 text-sm">X Position</Label>
-                      <p className="text-white font-mono text-lg">{currentPosition.x.toFixed(2)}m</p>
+                      <Label className="text-slate-400 text-sm">
+                        X Position
+                      </Label>
+                      <p className="text-white font-mono text-lg">
+                        {currentPosition.x.toFixed(2)}m
+                      </p>
                     </div>
                     <div>
-                      <Label className="text-slate-400 text-sm">Y Position</Label>
-                      <p className="text-white font-mono text-lg">{currentPosition.y.toFixed(2)}m</p>
+                      <Label className="text-slate-400 text-sm">
+                        Y Position
+                      </Label>
+                      <p className="text-white font-mono text-lg">
+                        {currentPosition.y.toFixed(2)}m
+                      </p>
                     </div>
                     <div>
-                      <Label className="text-slate-400 text-sm">Orientation</Label>
-                      <p className="text-white font-mono text-lg">{(currentPosition.theta * 180 / Math.PI).toFixed(1)}°</p>
+                      <Label className="text-slate-400 text-sm">
+                        Orientation
+                      </Label>
+                      <p className="text-white font-mono text-lg">
+                        {((currentPosition.theta * 180) / Math.PI).toFixed(1)}°
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -287,7 +324,12 @@ export default function Navigation() {
                       <Input
                         type="number"
                         value={goalPosition.x}
-                        onChange={(e) => setGoalPosition(prev => ({ ...prev, x: parseFloat(e.target.value) || 0 }))}
+                        onChange={(e) =>
+                          setGoalPosition((prev) => ({
+                            ...prev,
+                            x: parseFloat(e.target.value) || 0,
+                          }))
+                        }
                         className="bg-white/10 border-white/20 text-white"
                         step="0.1"
                       />
@@ -297,17 +339,33 @@ export default function Navigation() {
                       <Input
                         type="number"
                         value={goalPosition.y}
-                        onChange={(e) => setGoalPosition(prev => ({ ...prev, y: parseFloat(e.target.value) || 0 }))}
+                        onChange={(e) =>
+                          setGoalPosition((prev) => ({
+                            ...prev,
+                            y: parseFloat(e.target.value) || 0,
+                          }))
+                        }
                         className="bg-white/10 border-white/20 text-white"
                         step="0.1"
                       />
                     </div>
                     <div>
-                      <Label className="text-slate-400 text-sm">Orientation (°)</Label>
+                      <Label className="text-slate-400 text-sm">
+                        Orientation (°)
+                      </Label>
                       <Input
                         type="number"
-                        value={(goalPosition.theta * 180 / Math.PI).toFixed(1)}
-                        onChange={(e) => setGoalPosition(prev => ({ ...prev, theta: (parseFloat(e.target.value) || 0) * Math.PI / 180 }))}
+                        value={((goalPosition.theta * 180) / Math.PI).toFixed(
+                          1,
+                        )}
+                        onChange={(e) =>
+                          setGoalPosition((prev) => ({
+                            ...prev,
+                            theta:
+                              ((parseFloat(e.target.value) || 0) * Math.PI) /
+                              180,
+                          }))
+                        }
                         className="bg-white/10 border-white/20 text-white"
                         step="1"
                       />
@@ -343,7 +401,7 @@ export default function Navigation() {
                     Reset
                   </Button>
                 )}
-                
+
                 <Button className="bg-white/10 hover:bg-white/20 border border-white/20 text-white">
                   <Settings className="h-4 w-4 mr-2" />
                   Settings
@@ -355,12 +413,16 @@ export default function Navigation() {
           {/* Map Visualization Placeholder */}
           <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl">
             <div className="p-6">
-              <h3 className="text-lg font-light text-white mb-4">Navigation Map</h3>
+              <h3 className="text-lg font-light text-white mb-4">
+                Navigation Map
+              </h3>
               <div className="aspect-video bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-white/10 flex items-center justify-center">
                 <div className="text-center">
                   <Compass className="h-16 w-16 text-blue-400 mx-auto mb-4" />
                   <p className="text-slate-300">Interactive Navigation Map</p>
-                  <p className="text-slate-400 text-sm mt-2">Real-time position and path visualization</p>
+                  <p className="text-slate-400 text-sm mt-2">
+                    Real-time position and path visualization
+                  </p>
                 </div>
               </div>
             </div>
@@ -372,18 +434,27 @@ export default function Navigation() {
           {/* Recent Goals */}
           <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
             <div className="p-6">
-              <h3 className="text-lg font-light text-white mb-4">Recent Goals</h3>
+              <h3 className="text-lg font-light text-white mb-4">
+                Recent Goals
+              </h3>
               <div className="space-y-3">
                 {recentGoals.map((goal) => (
-                  <div key={goal.id} className="bg-white/5 rounded-lg p-3 border border-white/10">
+                  <div
+                    key={goal.id}
+                    className="bg-white/5 rounded-lg p-3 border border-white/10"
+                  >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium text-white text-sm">{goal.name}</span>
+                      <span className="font-medium text-white text-sm">
+                        {goal.name}
+                      </span>
                       <Badge className={getGoalStatusColor(goal.status)}>
                         {goal.status}
                       </Badge>
                     </div>
                     <div className="text-xs text-slate-400 space-y-1">
-                      <p>Position: ({goal.x.toFixed(1)}, {goal.y.toFixed(1)})</p>
+                      <p>
+                        Position: ({goal.x.toFixed(1)}, {goal.y.toFixed(1)})
+                      </p>
                       <p>Time: {goal.timestamp.toLocaleTimeString()}</p>
                     </div>
                   </div>
@@ -395,7 +466,9 @@ export default function Navigation() {
           {/* Quick Actions */}
           <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
             <div className="p-6">
-              <h3 className="text-lg font-light text-white mb-4">Quick Actions</h3>
+              <h3 className="text-lg font-light text-white mb-4">
+                Quick Actions
+              </h3>
               <div className="space-y-3">
                 <Button className="w-full bg-white/10 hover:bg-white/20 border border-white/20">
                   <Flag className="h-4 w-4 mr-2" />

@@ -219,14 +219,14 @@ export default function Settings() {
                 Customize your experience and configure application preferences
               </p>
             </div>
-        <div className="flex items-center gap-3">
-          <input
-            type="file"
-            accept=".json"
-            onChange={handleImport}
-            className="hidden"
-            id="import-settings"
-          />
+            <div className="flex items-center gap-3">
+              <input
+                type="file"
+                accept=".json"
+                onChange={handleImport}
+                className="hidden"
+                id="import-settings"
+              />
               <Button className="bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-sm transition-all duration-300 gap-2">
                 <Upload className="h-4 w-4" />
                 Import
@@ -244,13 +244,15 @@ export default function Settings() {
                 disabled={isApplying || !isDirty}
                 className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white shadow-lg transition-all duration-300 gap-2"
               >
-            {isApplying ? (
-              <RefreshCw className="h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="h-4 w-4" />
-            )}
-            Apply Settings
-                {isDirty && <Badge className="ml-2 bg-yellow-500">Unsaved</Badge>}
+                {isApplying ? (
+                  <RefreshCw className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Save className="h-4 w-4" />
+                )}
+                Apply Settings
+                {isDirty && (
+                  <Badge className="ml-2 bg-yellow-500">Unsaved</Badge>
+                )}
               </Button>
             </div>
           </div>
