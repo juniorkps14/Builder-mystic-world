@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Card } from "@/components/ui/card";
+import { usePersistentStore } from "@/hooks/use-persistence";
 import {
   Activity,
   Bot,
@@ -26,382 +27,374 @@ import {
   TrendingUp,
   Calendar,
   Users,
+  Navigation,
+  Camera,
+  Layers,
+  Globe,
+  Radio,
+  Target,
+  Move,
+  RotateCcw,
+  Home,
+  Power,
+  ChevronRight,
+  ArrowUp,
+  ArrowDown,
+  Minus,
 } from "lucide-react";
-import "../styles/flat-vector-theme.css";
 
 export default function FlatDashboard() {
-  const [robotStatus, setRobotStatus] = useState<"idle" | "running" | "error">(
-    "idle",
+  const { store: dashboardPrefs, updateField } = usePersistentStore(
+    "dashboard-preferences",
+    {
+      robotStatus: "idle" as "idle" | "running" | "paused" | "error",
+      selectedView: "overview" as "overview" | "detailed" | "monitoring",
+      autoRefresh: true,
+    }
   );
 
-  // Mock data
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [isOnline, setIsOnline] = useState(true);
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Mock real-time data
   const systemStats = {
-    cpu: 42,
-    memory: 68,
+    cpu: 42 + Math.sin(Date.now() / 10000) * 10,
+    memory: 68 + Math.cos(Date.now() / 8000) * 5,
     disk: 73,
-    temperature: 45,
-    battery: 87,
+    temperature: 45 + Math.sin(Date.now() / 15000) * 3,
+    battery: 87 - Math.floor(Date.now() / 100000) % 20,
     uptime: "2d 14h 32m",
+    networkLatency: 12 + Math.random() * 8,
   };
 
   const robotData = {
-    position: { x: 2.45, y: 1.23, rotation: 45 },
-    speed: 0.5,
+    position: { 
+      x: 2.45 + Math.sin(Date.now() / 5000) * 0.1, 
+      y: 1.23 + Math.cos(Date.now() / 6000) * 0.1, 
+      rotation: 45 + Math.sin(Date.now() / 4000) * 10 
+    },
+    speed: 0.5 + Math.sin(Date.now() / 3000) * 0.3,
     lastCommand: "Navigate to Point A",
     activeTasks: 3,
     completedTasks: 28,
+    currentTask: "Environmental Scanning",
+    taskProgress: 65 + Math.sin(Date.now() / 2000) * 10,
   };
 
-  const quickActions = [
-    {
-      title: "Start Robot",
-      icon: Play,
-      color: "bg-green-500",
-      action: () => setRobotStatus("running"),
-    },
-    {
-      title: "Stop Robot",
-      icon: Square,
-      color: "bg-red-500",
-      action: () => setRobotStatus("idle"),
-    },
-    {
-      title: "Emergency Stop",
-      icon: AlertTriangle,
-      color: "bg-orange-500",
-      action: () => setRobotStatus("error"),
-    },
-    {
-      title: "Go Home",
-      icon: MapPin,
-      color: "bg-blue-500",
-      action: () => console.log("Going home"),
-    },
-  ];
-
-  const recentActivities = [
-    {
-      id: 1,
-      title: "Navigation completed",
-      time: "2 minutes ago",
-      icon: CheckCircle,
-      color: "text-green-500",
-    },
-    {
-      id: 2,
-      title: "Sensor data updated",
-      time: "5 minutes ago",
-      icon: Activity,
-      color: "text-blue-500",
-    },
-    {
-      id: 3,
-      title: "Task sequence started",
-      time: "10 minutes ago",
-      icon: Play,
-      color: "text-purple-500",
-    },
-    {
-      id: 4,
-      title: "System health check",
-      time: "15 minutes ago",
-      icon: Shield,
-      color: "text-orange-500",
-    },
+  const sensorData = [
+    { name: "LIDAR", status: "active", value: "360°", quality: 98 },
+    { name: "Camera", status: "active", value: "1080p", quality: 94 },
+    { name: "IMU", status: "active", value: "9-axis", quality: 99 },
+    { name: "GPS", status: "active", value: "RTK", quality: 89 },
+    { name: "Ultrasonic", status: "active", value: "8 sensors", quality: 92 },
   ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "running":
-        return "bg-green-100 text-green-700 border-green-200";
+        return "from-emerald-500 to-teal-500";
       case "error":
-        return "bg-red-100 text-red-700 border-red-200";
+        return "from-red-500 to-pink-500";
+      case "paused":
+        return "from-yellow-500 to-orange-500";
       default:
-        return "bg-gray-100 text-gray-700 border-gray-200";
+        return "from-blue-500 to-cyan-500";
     }
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
+  const getStatusIcon = () => {
+    switch (dashboardPrefs.robotStatus) {
       case "running":
-        return <Activity className="w-5 h-5 animate-pulse" />;
+        return Play;
       case "error":
-        return <AlertTriangle className="w-5 h-5" />;
+        return AlertTriangle;
+      case "paused":
+        return Pause;
       default:
-        return <Pause className="w-5 h-5" />;
+        return Square;
     }
   };
+
+  const StatusIcon = getStatusIcon();
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      {/* Welcome Header */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 text-white">
+      {/* Header with Time and Status */}
       <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="flat-title">Welcome back! 👋</h1>
-            <p className="flat-subtitle">
-              Your robot is ready and systems are running smoothly
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            <Badge className="flat-badge-success">All Systems OK</Badge>
-            <Button className="flat-button-primary">
-              <Settings className="flat-icon" />
-              Settings
-            </Button>
+        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl">
+          <div className="flex items-center justify-between">
+            <div className="space-y-2">
+              <h1 className="text-4xl font-light tracking-tight bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent">
+                Robot Command Center
+              </h1>
+              <p className="text-slate-400 font-light">
+                Autonomous system control and monitoring dashboard
+              </p>
+            </div>
+            
+            <div className="flex items-center gap-6">
+              {/* Time Display */}
+              <div className="text-right">
+                <p className="text-2xl font-light text-white">
+                  {currentTime.toLocaleTimeString('en-US', { 
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                  })}
+                </p>
+                <p className="text-sm text-slate-400">
+                  {currentTime.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    month: 'short',
+                    day: 'numeric'
+                  })}
+                </p>
+              </div>
+
+              {/* Online Status */}
+              <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${
+                isOnline 
+                  ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" 
+                  : "bg-red-500/10 text-red-400 border border-red-500/20"
+              }`}>
+                {isOnline ? <Wifi className="w-4 h-4" /> : <WifiOff className="w-4 h-4" />}
+                <span className="text-sm font-medium">
+                  {isOnline ? "Connected" : "Offline"}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Status Overview */}
-      <div className="flat-grid flat-grid-4 mb-8">
-        {/* Robot Status */}
-        <Card className="flat-card">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                <Bot className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">Robot Status</h3>
-                <p className="text-sm text-gray-500">Current state</p>
-              </div>
-            </div>
-          </div>
-          <div
-            className={`flex items-center gap-2 px-4 py-3 rounded-lg border-2 ${getStatusColor(
-              robotStatus,
-            )}`}
-          >
-            {getStatusIcon(robotStatus)}
-            <span className="font-medium capitalize">{robotStatus}</span>
-          </div>
-        </Card>
-
-        {/* Connection Status */}
-        <Card className="flat-card">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-teal-600 rounded-xl flex items-center justify-center">
-                <Wifi className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">Connection</h3>
-                <p className="text-sm text-gray-500">ROS Bridge</p>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-green-100 text-green-700 border-2 border-green-200">
-            <Wifi className="w-5 h-5" />
-            <span className="font-medium">Connected</span>
-          </div>
-        </Card>
-
-        {/* Battery Level */}
-        <Card className="flat-card">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center">
-                <Battery className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">Battery</h3>
-                <p className="text-sm text-gray-500">Power level</p>
-              </div>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-2xl font-bold text-gray-900">
-                {systemStats.battery}%
-              </span>
-              <Badge className="flat-badge-success">Good</Badge>
-            </div>
-            <Progress value={systemStats.battery} className="flat-progress" />
-          </div>
-        </Card>
-
-        {/* Temperature */}
-        <Card className="flat-card">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
-                <Thermometer className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">Temperature</h3>
-                <p className="text-sm text-gray-500">System temp</p>
-              </div>
-            </div>
-          </div>
-          <div className="text-2xl font-bold text-gray-900">
-            {systemStats.temperature}°C
-          </div>
-          <p className="text-sm text-gray-500 mt-1">Normal range</p>
-        </Card>
-      </div>
-
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        {/* Quick Actions */}
-        <Card className="flat-card lg:col-span-1">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Quick Actions
-          </h3>
-          <div className="space-y-3">
-            {quickActions.map((action, index) => {
-              const IconComponent = action.icon;
-              return (
-                <Button
-                  key={index}
-                  onClick={action.action}
-                  className={`flat-button w-full justify-start text-white ${action.color} hover:opacity-90`}
-                >
-                  <IconComponent className="flat-icon" />
-                  {action.title}
-                </Button>
-              );
-            })}
-          </div>
-        </Card>
-
-        {/* System Performance */}
-        <Card className="flat-card lg:col-span-1">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            System Performance
-          </h3>
-          <div className="space-y-4">
-            {/* CPU */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Cpu className="w-4 h-4 text-blue-500" />
-                  <span className="text-sm font-medium">CPU Usage</span>
-                </div>
-                <span className="text-sm text-gray-600">
-                  {systemStats.cpu}%
-                </span>
-              </div>
-              <Progress value={systemStats.cpu} className="flat-progress" />
-            </div>
-
-            {/* Memory */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <HardDrive className="w-4 h-4 text-green-500" />
-                  <span className="text-sm font-medium">Memory</span>
-                </div>
-                <span className="text-sm text-gray-600">
-                  {systemStats.memory}%
-                </span>
-              </div>
-              <Progress value={systemStats.memory} className="flat-progress" />
-            </div>
-
-            {/* Disk */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <HardDrive className="w-4 h-4 text-purple-500" />
-                  <span className="text-sm font-medium">Disk Space</span>
-                </div>
-                <span className="text-sm text-gray-600">
-                  {systemStats.disk}%
-                </span>
-              </div>
-              <Progress value={systemStats.disk} className="flat-progress" />
-            </div>
-          </div>
-        </Card>
-
-        {/* Recent Activities */}
-        <Card className="flat-card lg:col-span-1">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Recent Activities
-          </h3>
-          <div className="space-y-3">
-            {recentActivities.map((activity) => {
-              const IconComponent = activity.icon;
-              return (
-                <div
-                  key={activity.id}
-                  className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
-                >
-                  <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                    <IconComponent className={`w-4 h-4 ${activity.color}`} />
+      {/* Main Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+        {/* Robot Status - Large Card */}
+        <div className="lg:col-span-8">
+          <Card className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 shadow-2xl hover:bg-white/10 transition-all duration-300">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Robot Visualization */}
+              <div className="space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${getStatusColor(dashboardPrefs.robotStatus)} flex items-center justify-center shadow-lg`}>
+                    <StatusIcon className="h-8 w-8 text-white" />
                   </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">
-                      {activity.title}
+                  <div>
+                    <h2 className="text-2xl font-light text-white">DINO-01</h2>
+                    <Badge className={`bg-gradient-to-r ${getStatusColor(dashboardPrefs.robotStatus)} text-white border-0`}>
+                      {dashboardPrefs.robotStatus.toUpperCase()}
+                    </Badge>
+                  </div>
+                </div>
+
+                {/* Current Task */}
+                <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-slate-400 text-sm">Current Task</span>
+                    <span className="text-blue-400 text-sm font-mono">{robotData.taskProgress.toFixed(1)}%</span>
+                  </div>
+                  <p className="text-white font-medium mb-3">{robotData.currentTask}</p>
+                  <Progress 
+                    value={robotData.taskProgress} 
+                    className="h-2 bg-slate-700"
+                  />
+                </div>
+
+                {/* Quick Actions */}
+                <div className="grid grid-cols-2 gap-3">
+                  <Button 
+                    onClick={() => updateField("robotStatus", "running")}
+                    className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white"
+                  >
+                    <Play className="h-4 w-4 mr-2" />
+                    Start
+                  </Button>
+                  <Button 
+                    onClick={() => updateField("robotStatus", "paused")}
+                    className="bg-white/10 hover:bg-white/20 border border-white/20 text-white"
+                  >
+                    <Pause className="h-4 w-4 mr-2" />
+                    Pause
+                  </Button>
+                  <Button 
+                    onClick={() => updateField("robotStatus", "idle")}
+                    className="bg-white/10 hover:bg-white/20 border border-white/20 text-white"
+                  >
+                    <Square className="h-4 w-4 mr-2" />
+                    Stop
+                  </Button>
+                  <Button 
+                    onClick={() => updateField("robotStatus", "error")}
+                    className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white"
+                  >
+                    <AlertTriangle className="h-4 w-4 mr-2" />
+                    E-Stop
+                  </Button>
+                </div>
+              </div>
+
+              {/* Robot Data */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-light text-white mb-4">System Metrics</h3>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                    <div className="flex items-center gap-2 mb-2">
+                      <MapPin className="h-4 w-4 text-blue-400" />
+                      <span className="text-slate-400 text-sm">Position</span>
+                    </div>
+                    <p className="text-white font-mono text-sm">
+                      X: {robotData.position.x.toFixed(2)}m<br/>
+                      Y: {robotData.position.y.toFixed(2)}m<br/>
+                      θ: {robotData.position.rotation.toFixed(1)}°
                     </p>
-                    <p className="text-xs text-gray-500">{activity.time}</p>
+                  </div>
+
+                  <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Zap className="h-4 w-4 text-green-400" />
+                      <span className="text-slate-400 text-sm">Speed</span>
+                    </div>
+                    <p className="text-white font-mono text-lg">
+                      {robotData.speed.toFixed(2)} m/s
+                    </p>
+                  </div>
+
+                  <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Target className="h-4 w-4 text-purple-400" />
+                      <span className="text-slate-400 text-sm">Tasks</span>
+                    </div>
+                    <p className="text-white font-mono">
+                      {robotData.activeTasks} active<br/>
+                      {robotData.completedTasks} completed
+                    </p>
+                  </div>
+
+                  <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Radio className="h-4 w-4 text-cyan-400" />
+                      <span className="text-slate-400 text-sm">Network</span>
+                    </div>
+                    <p className="text-white font-mono text-lg">
+                      {systemStats.networkLatency.toFixed(0)}ms
+                    </p>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </Card>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* System Health */}
+        <div className="lg:col-span-4 space-y-6">
+          {/* Battery */}
+          <Card className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 shadow-xl hover:bg-white/10 transition-all duration-300">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Battery className="h-5 w-5 text-green-400" />
+                <span className="text-white font-medium">Battery</span>
+              </div>
+              <span className="text-2xl font-light text-white">{systemStats.battery}%</span>
+            </div>
+            <Progress value={systemStats.battery} className="h-3 bg-slate-700" />
+            <p className="text-slate-400 text-sm mt-2">Charging not required</p>
+          </Card>
+
+          {/* Temperature */}
+          <Card className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 shadow-xl hover:bg-white/10 transition-all duration-300">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Thermometer className="h-5 w-5 text-orange-400" />
+                <span className="text-white font-medium">Temperature</span>
+              </div>
+              <span className="text-2xl font-light text-white">{systemStats.temperature.toFixed(1)}°C</span>
+            </div>
+            <div className="flex justify-between text-sm text-slate-400">
+              <span>Optimal</span>
+              <span>Max: 85°C</span>
+            </div>
+          </Card>
+
+          {/* CPU & Memory */}
+          <Card className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 shadow-xl hover:bg-white/10 transition-all duration-300">
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Cpu className="h-4 w-4 text-blue-400" />
+                    <span className="text-white text-sm">CPU</span>
+                  </div>
+                  <span className="text-white text-sm">{systemStats.cpu.toFixed(1)}%</span>
+                </div>
+                <Progress value={systemStats.cpu} className="h-2 bg-slate-700" />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <HardDrive className="h-4 w-4 text-purple-400" />
+                    <span className="text-white text-sm">Memory</span>
+                  </div>
+                  <span className="text-white text-sm">{systemStats.memory.toFixed(1)}%</span>
+                </div>
+                <Progress value={systemStats.memory} className="h-2 bg-slate-700" />
+              </div>
+            </div>
+          </Card>
+        </div>
       </div>
 
-      {/* Bottom Statistics */}
-      <div className="flat-grid flat-grid-4">
-        <Card className="flat-card">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Clock className="w-5 h-5 text-blue-600" />
+      {/* Sensors Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+        {sensorData.map((sensor, index) => (
+          <Card key={sensor.name} className="bg-white/5 backdrop-blur-xl border border-white/10 p-4 shadow-xl hover:bg-white/10 transition-all duration-300">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-white font-medium text-sm">{sensor.name}</span>
+              <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-lg"></div>
             </div>
-            <div>
-              <p className="text-sm text-gray-500">Uptime</p>
-              <p className="text-lg font-semibold text-gray-900">
-                {systemStats.uptime}
-              </p>
+            <p className="text-slate-400 text-xs mb-2">{sensor.value}</p>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-slate-400">Quality</span>
+              <span className="text-xs font-mono text-emerald-400">{sensor.quality}%</span>
             </div>
-          </div>
-        </Card>
-
-        <Card className="flat-card">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-green-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Tasks Completed</p>
-              <p className="text-lg font-semibold text-gray-900">
-                {robotData.completedTasks}
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="flat-card">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-              <Activity className="w-5 h-5 text-purple-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Active Tasks</p>
-              <p className="text-lg font-semibold text-gray-900">
-                {robotData.activeTasks}
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="flat-card">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-              <Zap className="w-5 h-5 text-orange-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Speed</p>
-              <p className="text-lg font-semibold text-gray-900">
-                {robotData.speed} m/s
-              </p>
-            </div>
-          </div>
-        </Card>
+          </Card>
+        ))}
       </div>
+
+      {/* Quick Navigation */}
+      <Card className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 shadow-2xl">
+        <h3 className="text-lg font-light text-white mb-4">Quick Navigation</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          {[
+            { name: "Sequences", icon: Layers, path: "/sequences" },
+            { name: "Terminal", icon: Activity, path: "/terminal" },
+            { name: "Cameras", icon: Camera, path: "/cameras" },
+            { name: "Navigation", icon: Navigation, path: "/navigation" },
+            { name: "Settings", icon: Settings, path: "/settings" },
+            { name: "Monitoring", icon: TrendingUp, path: "/system-monitoring" },
+          ].map((item) => {
+            const IconComponent = item.icon;
+            return (
+              <Button
+                key={item.name}
+                variant="ghost"
+                className="h-20 bg-white/5 hover:bg-white/10 border border-white/10 flex-col gap-2 text-white"
+                onClick={() => window.location.href = item.path}
+              >
+                <IconComponent className="h-6 w-6" />
+                <span className="text-xs">{item.name}</span>
+              </Button>
+            );
+          })}
+        </div>
+      </Card>
     </div>
   );
 }
