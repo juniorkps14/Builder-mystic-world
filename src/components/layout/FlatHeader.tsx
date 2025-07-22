@@ -138,6 +138,9 @@ export const FlatHeader: React.FC<FlatHeaderProps> = ({ onMenuClick }) => {
           </span>
         </Button>
 
+        {/* Persistence Status */}
+        <PersistenceStatus />
+
         {/* System Info */}
         <div className="flex items-center gap-3 border-l pl-3 ml-3">
           <div className="hidden sm:block text-right">
