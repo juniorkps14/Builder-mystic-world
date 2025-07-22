@@ -111,7 +111,7 @@ export default function APIManagement() {
       name: "Send Velocity Command",
       method: "POST",
       endpoint: "/api/robot/cmd_vel",
-      description: "ส่งคำสั่งความเร็วไปยังหุ่นยนต์",
+      description: "Send velocity commands to the robot",
       category: "robot_control",
       status: "active",
       requestExample: {
@@ -142,7 +142,7 @@ print(result)`,
       name: "Get Robot Status",
       method: "GET",
       endpoint: "/api/robot/status",
-      description: "ดึงสถานะปัจจุบันของหุ่นยนต์",
+      description: "Get current robot status and position",
       category: "robot_control",
       status: "active",
       responseExample: {
@@ -169,7 +169,7 @@ print(f"Position: x={status['position']['x']}, y={status['position']['y']}")`,
       name: "Emergency Stop",
       method: "POST",
       endpoint: "/api/robot/emergency_stop",
-      description: "หยุดฉุกเฉินของหุ่นยนต์",
+      description: "Emergency stop for robot systems",
       category: "safety",
       status: "active",
       requestExample: { activate: true },
@@ -302,7 +302,7 @@ print(f"Image size: {img.size}")`,
       name: "Get Sensor Data",
       method: "GET",
       endpoint: "/api/sensors/all",
-      description: "ดึงข้อมูลเซ็นเซอร์ทั้งหมด",
+      description: "ดึงข้อมูลเซ็���เซอร์ทั้งหมด",
       category: "sensors",
       status: "active",
       responseExample: {
@@ -463,7 +463,7 @@ asyncio.run(robot_data_stream())`,
     { value: "system", label: "ระบบ", icon: Settings },
     { value: "sequences", label: "ลำดับงาน", icon: PlayCircle },
     { value: "safety", label: "ความปลอดภัย", icon: AlertTriangle },
-    { value: "realtime", label: "ข้อมูลแบบ Real-time", icon: Zap },
+    { value: "realtime", label: "ข��อมูลแบบ Real-time", icon: Zap },
   ];
 
   const filteredEndpoints =
@@ -674,8 +674,8 @@ if __name__ == "__main__":
           <h1 className="text-4xl font-extralight bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text text-transparent">
             API Management
           </h1>
-          <p className="text-muted-foreground font-light mt-2">
-            จัดการ API ทั้งหมดของระบบหุ่นยนต์ และทดสอบการเชื่อมต่อ
+          <p className="text-slate-300 font-light mt-2">
+            Manage all robot system APIs and test connections
           </p>
         </div>
 
