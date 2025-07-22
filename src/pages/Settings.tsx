@@ -287,7 +287,7 @@ export default function Settings() {
                   <Label>Theme</Label>
                   <Select
                     value={settings.theme}
-                    onValueChange={(value) => updateSetting("theme", value)}
+                    onValueChange={(value) => handleSettingChange("theme", value)}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -304,7 +304,7 @@ export default function Settings() {
                   <Label>Language</Label>
                   <Select
                     value={settings.language}
-                    onValueChange={(value) => updateSetting("language", value)}
+                    onValueChange={(value) => handleSettingChange("language", value)}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -323,7 +323,7 @@ export default function Settings() {
                   <Slider
                     value={[settings.fontSize]}
                     onValueChange={([value]) =>
-                      updateSetting("fontSize", value)
+                      handleSettingChange("fontSize", value)
                     }
                     min={12}
                     max={20}
@@ -340,7 +340,7 @@ export default function Settings() {
                   <Select
                     value={settings.accentColor}
                     onValueChange={(value) =>
-                      updateSetting("accentColor", value)
+                      handleSettingChange("accentColor", value)
                     }
                   >
                     <SelectTrigger>
