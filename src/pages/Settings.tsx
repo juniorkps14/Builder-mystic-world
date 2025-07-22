@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { usePersistentStore } from "@/hooks/use-persistence";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
