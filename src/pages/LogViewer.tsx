@@ -228,7 +228,7 @@ const LogViewer = () => {
       case "hardware":
         return "bg-orange-100 text-orange-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-white/5 border border-white/10 text-white";
     }
   };
 

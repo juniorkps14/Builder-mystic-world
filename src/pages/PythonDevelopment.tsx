@@ -1937,7 +1937,7 @@ if __name__ == '__main__':
                       className={`w-full text-left p-3 rounded-lg transition-colors ${
                         activeExample === key
                           ? "bg-blue-100 border-blue-300 border"
-                          : "bg-gray-50 hover:bg-gray-100"
+                          : "bg-gray-50 hover:bg-white/5 border border-white/10"
                       }`}
                     >
                       <h4 className="font-medium text-sm">{example.title}</h4>
@@ -2050,7 +2050,7 @@ if __name__ == '__main__':
               <div className="text-sm space-y-4">
                 <div className="flex items-center gap-4">
                   <span className="font-medium w-24">Sensors →</span>
-                  <span className="bg-gray-100 px-3 py-1 rounded">
+                  <span className="bg-white/5 border border-white/10 px-3 py-1 rounded">
                     Hardware Interface
                   </span>
                   <span>→</span>
@@ -2111,7 +2111,7 @@ if __name__ == '__main__':
                   {section.items.map((item, itemIndex) => (
                     <div key={itemIndex} className="flex items-start gap-3">
                       <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">{item}</p>
+                      <p className="text-sm text-slate-300">{item}</p>
                     </div>
                   ))}
                 </div>
@@ -2240,7 +2240,7 @@ echo "Installation complete! System ready for use."
 
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">Wiring Diagram</h3>
-              <div className="bg-gray-100 p-4 rounded-lg">
+              <div className="bg-white/5 border border-white/10 p-4 rounded-lg">
                 <div className="text-center text-gray-600">
                   <HardDrive className="h-16 w-16 mx-auto mb-2" />
                   <p>Complete wiring diagrams and PCB layouts</p>
@@ -2581,7 +2581,7 @@ rostopic echo /scan`}
             <Rocket className="h-6 w-6 text-blue-600" />
             <h3 className="text-lg font-semibold">Quick Deploy</h3>
           </div>
-          <p className="text-sm text-gray-700 mb-4">
+          <p className="text-sm text-slate-300 mb-4">
             Deploy complete robot system in minutes with our automated scripts
           </p>
           <Button className="w-full">Start Deployment</Button>
@@ -2592,7 +2592,7 @@ rostopic echo /scan`}
             <Monitor className="h-6 w-6 text-green-600" />
             <h3 className="text-lg font-semibold">Live Monitor</h3>
           </div>
-          <p className="text-sm text-gray-700 mb-4">
+          <p className="text-sm text-slate-300 mb-4">
             Real-time system monitoring and performance analytics
           </p>
           <Button variant="outline" className="w-full">
@@ -2605,7 +2605,7 @@ rostopic echo /scan`}
             <Users className="h-6 w-6 text-purple-600" />
             <h3 className="text-lg font-semibold">Community</h3>
           </div>
-          <p className="text-sm text-gray-700 mb-4">
+          <p className="text-sm text-slate-300 mb-4">
             Join our developer community for support and collaboration
           </p>
           <Button variant="outline" className="w-full">

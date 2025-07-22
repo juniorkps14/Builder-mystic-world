@@ -790,7 +790,7 @@ if __name__ == "__main__":
                           endpoint.status === "active"
                             ? "bg-green-100 text-green-700"
                             : endpoint.status === "inactive"
-                              ? "bg-gray-100 text-gray-700"
+                              ? "bg-white/5 border border-white/10 text-slate-300"
                               : "bg-yellow-100 text-yellow-700"
                         }
                       >

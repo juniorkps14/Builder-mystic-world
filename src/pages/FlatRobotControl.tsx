@@ -159,7 +159,7 @@ export default function FlatRobotControl() {
       case "stopped":
         return "bg-red-100 text-red-700 border-red-200";
       default:
-        return "bg-gray-100 text-gray-700 border-gray-200";
+        return "bg-white/5 border border-white/10 text-slate-300 border-gray-200";
     }
   };
 
@@ -271,7 +271,7 @@ export default function FlatRobotControl() {
           {/* Speed Control */}
           <div className="mb-6">
             <div className="flex items-center justify-between mb-3">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-slate-300">
                 Speed Control
               </label>
               <Badge className="flat-badge-primary">{speed[0]}%</Badge>
@@ -343,7 +343,7 @@ export default function FlatRobotControl() {
         <h3 className="text-lg font-semibold text-gray-900 mb-6">
           Robot Visualization
         </h3>
-        <div className="relative w-full h-96 bg-gray-100 rounded-lg overflow-hidden">
+        <div className="relative w-full h-96 bg-white/5 border border-white/10 rounded-lg overflow-hidden">
           {/* Grid Background */}
           <div
             className="absolute inset-0 opacity-20"

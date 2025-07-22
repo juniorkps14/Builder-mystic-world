@@ -209,7 +209,7 @@ export default function Sequences() {
       case "paused":
         return "bg-yellow-500/10 text-yellow-700 border-yellow-200";
       default:
-        return "bg-gray-500/10 text-gray-700 border-gray-200";
+        return "bg-gray-500/10 text-slate-300 border-gray-200";
     }
   };
 

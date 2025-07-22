@@ -1103,7 +1103,7 @@ const VirtualRviz: React.FC = () => {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Box className="h-5 w-5 text-blue-600" />
-              <span className="text-sm font-medium text-gray-800">RViz</span>
+              <span className="text-sm font-medium text-white">RViz</span>
               <span className="text-xs text-gray-600">- Dino Core</span>
             </div>
           </div>
@@ -1270,11 +1270,11 @@ const VirtualRviz: React.FC = () => {
 
       <div className="flex-1 flex overflow-hidden bg-gray-200">
         {/* Left Panel - Displays */}
-        <div className="w-80 border-r border-gray-400 bg-gray-100 flex flex-col">
+        <div className="w-80 border-r border-gray-400 bg-white/5 border border-white/10 flex flex-col">
           {/* Displays Header */}
           <div className="border-b border-gray-400 bg-gray-200 p-2">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="font-bold text-sm text-gray-800">Displays</h3>
+              <h3 className="font-bold text-sm text-white">Displays</h3>
               <Dialog
                 open={isAddDisplayOpen}
                 onOpenChange={setIsAddDisplayOpen}
@@ -1282,7 +1282,7 @@ const VirtualRviz: React.FC = () => {
                 <DialogTrigger asChild>
                   <Button
                     size="sm"
-                    className="h-6 px-2 text-xs bg-gray-300 hover:bg-gray-400 text-gray-800 border border-gray-400"
+                    className="h-6 px-2 text-xs bg-gray-300 hover:bg-gray-400 text-white border border-gray-400"
                   >
                     <Plus className="h-3 w-3 mr-1" />
                     Add
@@ -1431,7 +1431,7 @@ const VirtualRviz: React.FC = () => {
                     ) : (
                       <Folder className="h-3 w-3 text-blue-600" />
                     )}
-                    <span className="text-sm font-medium text-gray-800">
+                    <span className="text-sm font-medium text-white">
                       {category.name}
                     </span>
                     <span className="text-xs text-gray-500 ml-auto">
@@ -1459,7 +1459,7 @@ const VirtualRviz: React.FC = () => {
                           />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1">
-                              <span className="text-sm truncate text-gray-800">
+                              <span className="text-sm truncate text-white">
                                 {display.name}
                               </span>
                               {display.status === "ok" && (
@@ -1595,7 +1595,7 @@ const VirtualRviz: React.FC = () => {
 
             {/* RViz-style Status Bar at bottom */}
             <div className="absolute bottom-0 left-0 right-0 bg-gray-300 border-t border-gray-400 px-2 py-1">
-              <div className="flex items-center justify-between text-xs text-gray-700">
+              <div className="flex items-center justify-between text-xs text-slate-300">
                 <div className="flex items-center gap-4">
                   <span>
                     Camera: ({cameraPosition.x.toFixed(1)},{" "}
@@ -1673,9 +1673,9 @@ const VirtualRviz: React.FC = () => {
 
         {/* Right Panel - Properties */}
         {selectedDisplay && (
-          <div className="w-80 border-l border-gray-400 bg-gray-100 flex flex-col">
+          <div className="w-80 border-l border-gray-400 bg-white/5 border border-white/10 flex flex-col">
             <div className="border-b border-gray-400 bg-gray-200 p-2">
-              <h3 className="font-bold text-sm text-gray-800">Properties</h3>
+              <h3 className="font-bold text-sm text-white">Properties</h3>
               <p className="text-xs text-gray-600">{selectedDisplay.name}</p>
             </div>
 
