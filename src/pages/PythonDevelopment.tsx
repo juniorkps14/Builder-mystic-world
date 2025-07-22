@@ -65,7 +65,7 @@ export default function PythonDevelopment() {
   const codeExamples = {
     complete_robot_system: {
       title: "Complete Robot System Architecture",
-      description: "��ะบบหุ่นยนต์แบบสมบูรณ์สำหรับการใช้งานจริง",
+      description: "ระบบหุ่นยนต์แบบสมบูรณ์สำหรับการใช้งานจริง",
       code: `#!/usr/bin/env python3
 """
 Complete Robot System Architecture
@@ -1014,7 +1014,7 @@ Complete Robot Launch Configuration
     },
     systemd_service: {
       title: "Systemd Service Configuration",
-      description: "Auto-start service สำหรับ��ะบบ",
+      description: "Auto-start service สำหรับระบบ",
       code: `# /etc/systemd/system/robot-control.service
 [Unit]
 Description=Dino Core Robot Control System
@@ -1261,7 +1261,7 @@ volumes:
       code: `#!/usr/bin/env python3
 """
 Complete Hardware Interface Driver
-สำหรั��การเชื่อมต่อกับฮาร์ดแวร์หุ่นยนต์
+สำหรับการเชื่อมต่อกับฮาร์ดแวร์หุ่นยนต์
 """
 
 import rospy
@@ -1930,7 +1930,7 @@ if __name__ == '__main__':
                   {filteredExamples.map(([key, example]) => (
                     <button
                       key={key}
-                      onClick={() => setActiveExample(key)}
+                      onClick={() => updateDevPref("activeExample", key)}
                       className={`w-full text-left p-3 rounded-lg transition-colors ${
                         activeExample === key
                           ? "bg-blue-100 border-blue-300 border"
