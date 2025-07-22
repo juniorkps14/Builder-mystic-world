@@ -4,72 +4,72 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 :root {
-  /* Tesla Color Palette */
-  --tesla-bg-primary: #0a0a0a;
-  --tesla-bg-secondary: #1a1a1a;
-  --tesla-bg-tertiary: #2a2a2a;
-  --tesla-glass-bg: rgba(255, 255, 255, 0.05);
-  --tesla-glass-border: rgba(255, 255, 255, 0.1);
-  --tesla-glass-hover: rgba(255, 255, 255, 0.1);
-  
-  /* Tesla Accent Colors */
-  --tesla-blue: #4a9eff;
-  --tesla-blue-light: #6bb6ff;
-  --tesla-blue-dark: #2d7bd6;
-  --tesla-cyan: #00d4ff;
-  --tesla-green: #00ff88;
-  --tesla-red: #ff4757;
-  --tesla-yellow: #ffa726;
-  --tesla-purple: #ab47bc;
-  
-  /* Text Colors */
+  /* Tesla Color Palette - Brighter Version */
+  --tesla-bg-primary: #1a1a2e;
+  --tesla-bg-secondary: #2d2d4a;
+  --tesla-bg-tertiary: #3a3a5c;
+  --tesla-glass-bg: rgba(255, 255, 255, 0.12);
+  --tesla-glass-border: rgba(255, 255, 255, 0.25);
+  --tesla-glass-hover: rgba(255, 255, 255, 0.18);
+
+  /* Tesla Accent Colors - Brighter & More Vibrant */
+  --tesla-blue: #5ba7ff;
+  --tesla-blue-light: #7dc4ff;
+  --tesla-blue-dark: #3d89e6;
+  --tesla-cyan: #1ae4ff;
+  --tesla-green: #2aff9a;
+  --tesla-red: #ff6b7d;
+  --tesla-yellow: #ffb347;
+  --tesla-purple: #c865d8;
+
+  /* Text Colors - Brighter */
   --tesla-text-primary: #ffffff;
-  --tesla-text-secondary: #b0b0b0;
-  --tesla-text-tertiary: #808080;
-  --tesla-text-muted: #606060;
-  
+  --tesla-text-secondary: #e0e0e0;
+  --tesla-text-tertiary: #c0c0c0;
+  --tesla-text-muted: #a0a0a0;
+
   /* Glass Effect Variables */
   --glass-backdrop: blur(20px);
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   --glass-border-radius: 20px;
-  
+
   /* Animation Variables */
   --tesla-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --tesla-transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   --tesla-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Base Dark Theme */
+/* Base Dark Theme - Brighter */
 .tesla-ui {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: linear-gradient(135deg, var(--tesla-bg-primary) 0%, #1a1a2e 50%, var(--tesla-bg-primary) 100%);
+  background: linear-gradient(135deg, #2a2d47 0%, #3a3d5c 25%, #4a4d7c 50%, #3a3d5c 75%, #2a2d47 100%);
   color: var(--tesla-text-primary);
   min-height: 100vh;
   font-weight: 300;
   letter-spacing: -0.02em;
 }
 
-/* Glass Morphism Components */
+/* Glass Morphism Components - Brighter */
 .tesla-glass {
   background: var(--tesla-glass-bg);
   backdrop-filter: var(--glass-backdrop);
   border: 1px solid var(--tesla-glass-border);
   border-radius: var(--glass-border-radius);
-  box-shadow: var(--glass-shadow);
+  box-shadow: 0 8px 32px rgba(255, 255, 255, 0.1), 0 4px 16px rgba(91, 167, 255, 0.2);
   transition: var(--tesla-transition);
 }
 
 .tesla-glass:hover {
   background: var(--tesla-glass-hover);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
   transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 12px 40px rgba(255, 255, 255, 0.15), 0 8px 25px rgba(91, 167, 255, 0.3);
 }
 
 .tesla-glass-intense {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(40px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 /* Button Styles */
@@ -342,12 +342,12 @@
     padding: 16px;
     border-radius: 16px;
   }
-  
+
   .tesla-btn {
     padding: 10px 20px;
     font-size: 14px;
   }
-  
+
   .tesla-title {
     font-size: 2rem;
   }
