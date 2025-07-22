@@ -82,11 +82,24 @@ export default function Sequences() {
     "sequences-preferences",
     {
       selectedTaskId: null as string | null,
+      selectedSequenceId: null as string | null,
       viewMode: "overview" as "overview" | "detailed",
       filterStatus: "all" as string,
       sortBy: "priority" as string,
     }
   );
+
+  // State for task management
+  const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
+  const [isSequenceDialogOpen, setIsSequenceDialogOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [newTask, setNewTask] = useState<Partial<Task>>({
+    name: "",
+    type: "navigation",
+    priority: "medium",
+    description: "",
+    parameters: {},
+  });
 
   const [sequences, setSequences] = useState<Sequence[]>([
     {
