@@ -804,6 +804,119 @@ export default function Settings() {
           </Card>
         </TabsContent>
 
+        {/* Data Management */}
+        <TabsContent value="data">
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
+              <Database className="h-5 w-5 text-blue-500" />
+              Data Management & Persistence
+            </h3>
+
+            <div className="space-y-6">
+              {/* Persistence Overview */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-blue-600 mt-0.5" />
+                  <div>
+                    <h4 className="font-medium text-blue-900 mb-1">Auto-Persistence Enabled</h4>
+                    <p className="text-sm text-blue-700">
+                      ระบบจะบันทึกการตั้งค่า, ประวัติคำสั่ง, และสถานะการทำงาน
+                      อัตโนมัติ และกู้คืนเมื่อเปิดระบบใหม่
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* What's Being Saved */}
+              <div>
+                <h4 className="font-medium mb-4">What's Being Saved</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <Settings className="h-4 w-4 text-gray-600" />
+                      <div>
+                        <p className="font-medium text-sm">User Settings</p>
+                        <p className="text-xs text-gray-500">Theme, language, preferences</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <Terminal className="h-4 w-4 text-gray-600" />
+                      <div>
+                        <p className="font-medium text-sm">Terminal Sessions</p>
+                        <p className="text-xs text-gray-500">Active tabs, command history</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <Monitor className="h-4 w-4 text-gray-600" />
+                      <div>
+                        <p className="font-medium text-sm">Monitoring Prefs</p>
+                        <p className="text-xs text-gray-500">Chart settings, refresh rates</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <Database className="h-4 w-4 text-gray-600" />
+                      <div>
+                        <p className="font-medium text-sm">API Configurations</p>
+                        <p className="text-xs text-gray-500">Test settings, call history</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <Code className="h-4 w-4 text-gray-600" />
+                      <div>
+                        <p className="font-medium text-sm">Dev Environment</p>
+                        <p className="text-xs text-gray-500">Code examples, active views</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <Activity className="h-4 w-4 text-gray-600" />
+                      <div>
+                        <p className="font-medium text-sm">System State</p>
+                        <p className="text-xs text-gray-500">Last active pages, layouts</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Storage Information */}
+              <div>
+                <h4 className="font-medium mb-4">Storage Information</h4>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 mb-2">
+                    Data is stored locally in your browser using localStorage
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    • ข้อมูลจะคงอยู่ระหว่างเซสชัน และเมื่อปิด-เปิดเบราว์เซอร์<br/>
+                    • ข้อมูลจะถูกลบเมื่อล้างข้อมูลเบราว์เซอร์<br/>
+                    • ไม่มีการส่งข้อมูลไปยังเซิร์ฟเวอร์ ข้อมูลอยู่บนเครื่องของคุณเท่านั้น
+                  </div>
+                </div>
+              </div>
+
+              {/* Data Controls */}
+              <div>
+                <h4 className="font-medium mb-4">Data Controls</h4>
+                <div className="flex flex-wrap gap-3">
+                  <Button variant="outline" onClick={handleExport} className="gap-2">
+                    <Download className="h-4 w-4" />
+                    Export All Data
+                  </Button>
+                  <Button variant="outline" className="gap-2">
+                    <Upload className="h-4 w-4" />
+                    Import Data
+                  </Button>
+                  <Button variant="destructive" className="gap-2">
+                    <Trash2 className="h-4 w-4" />
+                    Clear All Data
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </TabsContent>
+
         {/* Advanced Settings */}
         <TabsContent value="advanced">
           <Card className="p-6">
