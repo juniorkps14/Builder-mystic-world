@@ -208,6 +208,14 @@ const navigationSections: NavSection[] = [
         color: "text-green-600",
         bgColor: "bg-green-100",
       },
+      {
+        title: "API Management",
+        icon: Database,
+        href: "/api-management",
+        badge: "SDK",
+        color: "text-blue-600",
+        bgColor: "bg-blue-100",
+      },
     ],
   },
   {

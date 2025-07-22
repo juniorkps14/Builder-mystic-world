@@ -43,6 +43,7 @@ import SystemTerminal from "./pages/SystemTerminal";
 import SystemConfiguration from "./pages/SystemConfiguration";
 import SystemMonitoring from "./pages/SystemMonitoring";
 import PythonDevelopment from "./pages/PythonDevelopment";
+import APIManagement from "./pages/APIManagement";
 import ROSSetup from "./pages/ROSSetup";
 import NotFound from "./pages/NotFound";
 
@@ -137,6 +138,10 @@ const FlatApp = () => {
                         <Route
                           path="/python-development"
                           element={<PythonDevelopment />}
+                        />
+                        <Route
+                          path="/api-management"
+                          element={<APIManagement />}
                         />
                         <Route
                           path="/system-configuration"
