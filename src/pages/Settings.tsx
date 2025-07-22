@@ -250,7 +250,7 @@ export default function Settings() {
 
       {/* Settings Tabs */}
       <Tabs defaultValue="interface" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="interface" className="gap-2">
             <Palette className="h-4 w-4" />
             Interface
@@ -270,6 +270,10 @@ export default function Settings() {
           <TabsTrigger value="performance" className="gap-2">
             <Monitor className="h-4 w-4" />
             Performance
+          </TabsTrigger>
+          <TabsTrigger value="data" className="gap-2">
+            <Database className="h-4 w-4" />
+            Data
           </TabsTrigger>
           <TabsTrigger value="advanced" className="gap-2">
             <User className="h-4 w-4" />
