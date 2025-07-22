@@ -218,6 +218,72 @@ export default function Sequences() {
   ]);
 
   const selectedTask = tasks.find(t => t.id === sequencePrefs.selectedTaskId);
+  const selectedSequence = sequences.find(s => s.id === sequencePrefs.selectedSequenceId);
+
+  // Task management functions
+  const handleCreateTask = () => {
+    if (!newTask.name) return;
+
+    const task: Task = {
+      id: `task_${Date.now()}`,
+      name: newTask.name,
+      type: newTask.type as Task["type"],
+      status: "idle",
+      duration: 60,
+      priority: newTask.priority as Task["priority"],
+      description: newTask.description || "",
+      parameters: newTask.parameters || {},
+      successRate: 0,
+    };
+
+    setTasks([...tasks, task]);
+    setNewTask({ name: "", type: "navigation", priority: "medium", description: "", parameters: {} });
+    setIsTaskDialogOpen(false);
+  };
+
+  const handleEditTask = (task: Task) => {
+    setEditingTask(task);
+    setNewTask(task);
+    setIsTaskDialogOpen(true);
+  };
+
+  const handleUpdateTask = () => {
+    if (!editingTask || !newTask.name) return;
+
+    setTasks(tasks.map(t =>
+      t.id === editingTask.id
+        ? { ...t, ...newTask }
+        : t
+    ));
+
+    setEditingTask(null);
+    setNewTask({ name: "", type: "navigation", priority: "medium", description: "", parameters: {} });
+    setIsTaskDialogOpen(false);
+  };
+
+  const handleDeleteTask = (taskId: string) => {
+    setTasks(tasks.filter(t => t.id !== taskId));
+    if (sequencePrefs.selectedTaskId === taskId) {
+      updateField("selectedTaskId", null);
+    }
+  };
+
+  const handleExecuteTask = (taskId: string) => {
+    setTasks(tasks.map(t =>
+      t.id === taskId
+        ? { ...t, status: "running" as const, progress: 0 }
+        : t
+    ));
+  };
+
+  const handleRunSequence = (sequenceId: string) => {
+    updateField("selectedSequenceId", sequenceId);
+    setSequences(sequences.map(s =>
+      s.id === sequenceId
+        ? { ...s, status: "running" as const }
+        : s
+    ));
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
