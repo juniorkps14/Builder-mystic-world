@@ -162,8 +162,19 @@ export default function SystemMonitoring() {
     }>
   >([]);
 
-  const [autoRefresh, setAutoRefresh] = useState(true);
-  const [refreshInterval, setRefreshInterval] = useState(5000);
+  // Persistent monitoring preferences
+  const { store: monitoringPrefs, updateField: updateMonitoringPref } = usePersistentStore(
+    "monitoring-preferences",
+    {
+      autoRefresh: true,
+      refreshInterval: 5000,
+      showCharts: true,
+      compactView: false,
+      theme: "dark",
+    }
+  );
+
+  const { autoRefresh, refreshInterval } = monitoringPrefs;
   const [lastUpdate, setLastUpdate] = useState(new Date());
 
   useEffect(() => {
