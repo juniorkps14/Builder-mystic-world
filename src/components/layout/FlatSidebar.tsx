@@ -25,16 +25,18 @@ import {
   HelpCircle,
   Code,
   Database,
+  X,
+  Zap,
+  Camera,
+  Navigation,
+  Gamepad2,
 } from "lucide-react";
-import "../../styles/flat-vector-theme.css";
 
 interface NavItem {
   title: string;
   icon: React.ComponentType<any>;
   href: string;
   badge?: string;
-  color: string;
-  bgColor: string;
 }
 
 interface NavSection {
@@ -50,37 +52,27 @@ const navigationSections: NavSection[] = [
         title: "Dashboard",
         icon: Home,
         href: "/",
-        color: "text-blue-600",
-        bgColor: "bg-blue-100",
       },
       {
         title: "Robot Control",
         icon: Bot,
         href: "/control",
-        color: "text-green-600",
-        bgColor: "bg-green-100",
       },
       {
         title: "Sequences",
         icon: Layers,
         href: "/sequences",
         badge: "New",
-        color: "text-purple-600",
-        bgColor: "bg-purple-100",
       },
       {
         title: "Robotic Arm",
         icon: Activity,
         href: "/robotic-arm",
-        color: "text-orange-600",
-        bgColor: "bg-orange-100",
       },
       {
         title: "Holonomic Drive",
         icon: Circle,
         href: "/holonomic-drive",
-        color: "text-cyan-600",
-        bgColor: "bg-cyan-100",
       },
     ],
   },
@@ -92,39 +84,41 @@ const navigationSections: NavSection[] = [
         icon: BarChart3,
         href: "/system-monitoring",
         badge: "Live",
-        color: "text-slate-600",
-        bgColor: "bg-slate-100",
       },
       {
         title: "Terminal",
         icon: Terminal,
         href: "/terminal",
-        badge: "Multi",
-        color: "text-green-600",
-        bgColor: "bg-green-100",
       },
       {
         title: "Cameras",
-        icon: Eye,
+        icon: Camera,
         href: "/cameras",
-        badge: "Live",
-        color: "text-red-600",
-        bgColor: "bg-red-100",
       },
       {
         title: "Sensors",
-        icon: Compass,
+        icon: Eye,
         href: "/sensors",
-        badge: "8",
-        color: "text-indigo-600",
-        bgColor: "bg-indigo-100",
       },
+    ],
+  },
+  {
+    title: "Navigation",
+    items: [
       {
         title: "Navigation",
-        icon: Map,
+        icon: Navigation,
         href: "/navigation",
-        color: "text-emerald-600",
-        bgColor: "bg-emerald-100",
+      },
+      {
+        title: "Map Viewer",
+        icon: Map,
+        href: "/map-viewer",
+      },
+      {
+        title: "Virtual RViz",
+        icon: Sparkles,
+        href: "/virtual-rviz",
       },
     ],
   },
@@ -132,220 +126,191 @@ const navigationSections: NavSection[] = [
     title: "ROS System",
     items: [
       {
-        title: "ROS Setup",
-        icon: Terminal,
-        href: "/ros-setup",
-        badge: "Guide",
-        color: "text-orange-600",
-        bgColor: "bg-orange-100",
-      },
-      {
-        title: "I/O Config",
-        icon: Cpu,
-        href: "/io-config",
-        color: "text-violet-600",
-        bgColor: "bg-violet-100",
-      },
-      {
-        title: "Features",
-        icon: Sparkles,
-        href: "/features",
-        badge: "Pro",
-        color: "text-yellow-600",
-        bgColor: "bg-yellow-100",
-      },
-      {
-        title: "TF Tree",
-        icon: GitBranch,
-        href: "/tf-tree",
-        badge: "Live",
-        color: "text-teal-600",
-        bgColor: "bg-teal-100",
-      },
-      {
-        title: "Map Viewer",
-        icon: Globe,
-        href: "/map-viewer",
-        color: "text-blue-600",
-        bgColor: "bg-blue-100",
-      },
-      {
-        title: "Virtual RViz",
-        icon: Eye,
-        href: "/virtual-rviz",
-        badge: "3D",
-        color: "text-purple-600",
-        bgColor: "bg-purple-100",
-      },
-      {
         title: "Nodes",
         icon: Network,
         href: "/nodes",
-        badge: "12",
-        color: "text-green-600",
-        bgColor: "bg-green-100",
       },
       {
         title: "Topics",
-        icon: Wifi,
+        icon: Globe,
         href: "/topics",
-        badge: "24",
-        color: "text-blue-600",
-        bgColor: "bg-blue-100",
       },
       {
         title: "Services",
-        icon: Shield,
+        icon: Wifi,
         href: "/services",
-        badge: "8",
-        color: "text-red-600",
-        bgColor: "bg-red-100",
       },
       {
-        title: "Dev Guide",
+        title: "Parameters",
+        icon: Settings,
+        href: "/parameters",
+      },
+    ],
+  },
+  {
+    title: "Development",
+    items: [
+      {
+        title: "Code Development",
         icon: Code,
+        href: "/code-development",
+      },
+      {
+        title: "Python Development",
+        icon: Cpu,
         href: "/python-development",
-        badge: "Full",
-        color: "text-green-600",
-        bgColor: "bg-green-100",
       },
       {
         title: "API Management",
         icon: Database,
         href: "/api-management",
-        badge: "SDK",
-        color: "text-blue-600",
-        bgColor: "bg-blue-100",
       },
     ],
   },
   {
-    title: "Settings",
+    title: "Configuration",
     items: [
-      {
-        title: "Settings",
-        icon: Settings,
-        href: "/settings",
-        color: "text-gray-600",
-        bgColor: "bg-gray-100",
-      },
       {
         title: "System Config",
         icon: Cpu,
         href: "/system-configuration",
-        badge: "Pro",
-        color: "text-violet-600",
-        bgColor: "bg-violet-100",
+      },
+      {
+        title: "Settings",
+        icon: Settings,
+        href: "/settings",
       },
       {
         title: "About",
         icon: HelpCircle,
         href: "/about",
-        color: "text-gray-600",
-        bgColor: "bg-gray-100",
       },
     ],
   },
 ];
 
 interface FlatSidebarProps {
-  isOpen?: boolean;
-  onClose?: () => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export const FlatSidebar: React.FC<FlatSidebarProps> = ({
-  isOpen = true,
+  isOpen,
   onClose,
 }) => {
   const location = useLocation();
 
   return (
-    <aside
-      className={`flat-sidebar ${
-        isOpen ? "translate-x-0" : "-translate-x-full"
-      } transition-transform duration-300 ease-out lg:translate-x-0`}
-    >
-      <div className="p-6">
-        {/* Logo Section */}
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-            <Activity className="w-5 h-5 text-white" />
+    <>
+      {/* Tesla-themed Sidebar */}
+      <aside
+        className={`fixed top-0 left-0 z-50 h-full bg-white/5 backdrop-blur-xl border-r border-white/20 shadow-2xl transform transition-all duration-300 ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:relative lg:translate-x-0 w-[280px]`}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-white/10">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
+              <Zap className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-lg font-light text-white tracking-tight">Dino Core</h2>
+              <p className="text-xs text-slate-300 font-light">Robot Control</p>
+            </div>
           </div>
-          <div>
-            <h2 className="font-bold text-lg text-gray-900">Dino Core</h2>
-            <p className="text-xs text-gray-500">Robot Control</p>
-          </div>
+          
+          {/* Close button for mobile */}
+          <button
+            onClick={onClose}
+            className="lg:hidden p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+          >
+            <X className="h-5 w-5 text-white" />
+          </button>
         </div>
 
-        {/* Navigation Sections */}
-        <ScrollArea className="h-[calc(100vh-180px)]">
-          <div className="space-y-6">
+        {/* Navigation */}
+        <ScrollArea className="flex-1 px-4 py-6">
+          <nav className="space-y-8">
             {navigationSections.map((section, sectionIndex) => (
-              <div key={sectionIndex} className="space-y-2">
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3">
+              <div key={section.title}>
+                <h3 className="px-3 text-xs font-medium text-slate-400 uppercase tracking-wider mb-4">
                   {section.title}
                 </h3>
-                <div className="space-y-1">
-                  {section.items.map((item, itemIndex) => {
-                    const IconComponent = item.icon;
+                <ul className="space-y-2">
+                  {section.items.map((item) => {
                     const isActive = location.pathname === item.href;
+                    const Icon = item.icon;
 
                     return (
-                      <Link
-                        key={itemIndex}
-                        to={item.href}
-                        className={`flat-nav-item group ${
-                          isActive ? "active" : ""
-                        }`}
-                        onClick={onClose}
-                      >
-                        <div
-                          className={`p-2 rounded-lg ${
-                            isActive ? "bg-white/20" : item.bgColor
+                      <li key={item.href}>
+                        <Link
+                          to={item.href}
+                          onClick={() => window.innerWidth < 1024 && onClose()}
+                          className={`group flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 ${
+                            isActive
+                              ? "bg-white/15 text-white shadow-lg border border-white/30 backdrop-blur-sm"
+                              : "text-slate-300 hover:bg-white/10 hover:text-white hover:border hover:border-white/20"
                           }`}
                         >
-                          <IconComponent
-                            className={`flat-icon ${
-                              isActive ? "text-white" : item.color
-                            }`}
-                          />
-                        </div>
-                        <span className="font-medium text-sm flex-1">
-                          {item.title}
-                        </span>
-                        {item.badge && (
-                          <Badge
-                            className={`text-xs px-2 py-1 ${
+                          {/* Icon Container */}
+                          <div
+                            className={`p-2 rounded-lg backdrop-blur-sm transition-all duration-300 ${
                               isActive
-                                ? "bg-white/20 text-white"
-                                : "bg-white/80 text-gray-700"
+                                ? "bg-gradient-to-br from-blue-500/30 to-cyan-500/30 border border-white/20"
+                                : "bg-white/10 border border-white/10 group-hover:bg-white/15"
                             }`}
                           >
-                            {item.badge}
-                          </Badge>
-                        )}
-                      </Link>
+                            <Icon
+                              className={`h-5 w-5 transition-colors duration-300 ${
+                                isActive
+                                  ? "text-white"
+                                  : "text-slate-400 group-hover:text-white"
+                              }`}
+                            />
+                          </div>
+
+                          {/* Text Content */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <span className="font-medium text-sm truncate">
+                                {item.title}
+                              </span>
+                              {item.badge && (
+                                <Badge className="ml-2 text-xs bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0">
+                                  {item.badge}
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Active Indicator */}
+                          {isActive && (
+                            <div className="w-1 h-6 bg-gradient-to-b from-blue-400 to-cyan-400 rounded-full" />
+                          )}
+                        </Link>
+                      </li>
                     );
                   })}
-                </div>
+                </ul>
               </div>
             ))}
-          </div>
+          </nav>
         </ScrollArea>
 
-        {/* Bottom Section */}
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-              <BookOpen className="w-4 h-4 text-white" />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">Need Help?</p>
-              <p className="text-xs text-gray-500">View documentation</p>
+        {/* Footer */}
+        <div className="p-4 border-t border-white/10">
+          <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+            <div className="flex items-center gap-3">
+              <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
+              <div>
+                <p className="text-sm font-medium text-white">System Online</p>
+                <p className="text-xs text-slate-400">All systems operational</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 };
