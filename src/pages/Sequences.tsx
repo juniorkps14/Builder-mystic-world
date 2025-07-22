@@ -6,6 +6,10 @@ import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import { usePersistentState, usePersistentStore } from "@/hooks/use-persistence";
 import {
   Play,
@@ -37,6 +41,10 @@ import {
   Search,
   Filter,
   SortAsc,
+  FolderOpen,
+  User,
+  Calendar,
+  Target,
 } from "lucide-react";
 
 interface Task {
@@ -94,7 +102,7 @@ export default function Sequences() {
       tags: ["security", "patrol", "autonomous"],
     },
     {
-      id: "seq_2", 
+      id: "seq_2",
       name: "Maintenance Inspection",
       description: "Automated maintenance and system health verification",
       status: "running",
@@ -297,8 +305,8 @@ export default function Sequences() {
               <p className="text-slate-400 text-sm font-medium">Execution Status</p>
               <p className="text-2xl font-light text-white mt-1">{executionStatus.totalProgress}%</p>
               <div className="mt-2">
-                <Progress 
-                  value={executionStatus.totalProgress} 
+                <Progress
+                  value={executionStatus.totalProgress}
                   className="h-2 bg-slate-700"
                 />
               </div>
@@ -348,7 +356,7 @@ export default function Sequences() {
                 <div className="flex items-center gap-3">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-                    <Input 
+                    <Input
                       placeholder="Search tasks..."
                       className="pl-10 bg-white/5 border-white/20 text-white placeholder-slate-400 focus:border-blue-400"
                     />
@@ -393,7 +401,7 @@ export default function Sequences() {
                           </Badge>
                         </div>
                         <p className="text-sm text-slate-400 truncate mt-1">{task.description}</p>
-                        
+
                         {task.status === "running" && task.progress && (
                           <div className="mt-2">
                             <Progress value={task.progress} className="h-1 bg-slate-700" />
