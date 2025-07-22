@@ -58,13 +58,39 @@ interface APICall {
 }
 
 export default function APIManagement() {
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [testEndpoint, setTestEndpoint] = useState("");
-  const [testMethod, setTestMethod] = useState("GET");
-  const [testPayload, setTestPayload] = useState("");
-  const [testResponse, setTestResponse] = useState("");
+  // Persistent API testing state
+  const { state: selectedCategory, setState: setSelectedCategory } = usePersistentState({
+    key: "api-selected-category",
+    defaultValue: "all",
+  });
+
+  const { state: testEndpoint, setState: setTestEndpoint } = usePersistentState({
+    key: "api-test-endpoint",
+    defaultValue: "",
+  });
+
+  const { state: testMethod, setState: setTestMethod } = usePersistentState({
+    key: "api-test-method",
+    defaultValue: "GET",
+  });
+
+  const { state: testPayload, setState: setTestPayload } = usePersistentState({
+    key: "api-test-payload",
+    defaultValue: "",
+  });
+
+  const { state: testResponse, setState: setTestResponse } = usePersistentState({
+    key: "api-test-response",
+    defaultValue: "",
+  });
+
   const [isLoading, setIsLoading] = useState(false);
-  const [apiCalls, setApiCalls] = useState<APICall[]>([]);
+
+  // Persistent API call history
+  const { items: apiCalls, addItem: addApiCall, clearItems: clearApiCalls } = usePersistentArray<APICall>(
+    "api-call-history",
+    50 // Keep last 50 API calls
+  );
 
   const apiEndpoints: APIEndpoint[] = [
     // Robot Control APIs
@@ -319,7 +345,7 @@ def get_system_health():
 def check_system_status():
     health = get_system_health()
 
-    # ตรวจสอบสถานะระบบ
+    # ตรวจสอบสถานะระ��บ
     if health['cpu_usage'] > 80:
         print("Warning: High CPU usage!")
 
@@ -908,7 +934,7 @@ if __name__ == "__main__":
 
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <h4 className="font-medium text-blue-900 mb-2">
-                  การติดตั้งและใช้งาน:
+                  การติดตั้งและใช้งา��:
                 </h4>
                 <pre className="text-sm text-blue-800">
                   {`# ติดตั้ง dependencies
