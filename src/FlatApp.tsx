@@ -1,3 +1,4 @@
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -55,6 +56,12 @@ const queryClient = new QueryClient();
 const FlatApp = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  // Force Tesla theme globally
+  React.useEffect(() => {
+    document.documentElement.classList.add("tesla-ui");
+    document.body.classList.add("tesla-ui");
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
@@ -65,7 +72,7 @@ const FlatApp = () => {
                 <Toaster />
                 <Sonner />
                 <BrowserRouter>
-                  <div className="min-h-screen bg-gray-50 flex">
+                <div className="min-h-screen tesla-ui bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex">
                     {/* Sidebar */}
                     <FlatSidebar
                       isOpen={sidebarOpen}
