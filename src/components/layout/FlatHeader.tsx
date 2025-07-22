@@ -137,17 +137,15 @@ export const FlatHeader: React.FC<FlatHeaderProps> = ({ onMenuClick }) => {
           </span>
         </Button>
 
-        {/* User Menu */}
+        {/* System Info */}
         <div className="flex items-center gap-3 border-l pl-3 ml-3">
           <div className="hidden sm:block text-right">
-            <p className="text-sm font-medium text-gray-900">Admin User</p>
-            <p className="text-xs text-gray-500">System Administrator</p>
+            <p className="text-sm font-medium text-gray-900">System Ready</p>
+            <p className="text-xs text-gray-500">All Systems Operational</p>
           </div>
-          <Button variant="ghost" size="sm">
-            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-              <User className="w-4 h-4 text-white" />
-            </div>
-          </Button>
+          <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-teal-500 rounded-full flex items-center justify-center">
+            <Settings className="w-4 h-4 text-white" />
+          </div>
         </div>
       </div>
     </header>
