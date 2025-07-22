@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { usePersistentState, usePersistentStore } from "@/hooks/use-persistence";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -46,13 +47,25 @@ import {
 } from "lucide-react";
 
 export default function PythonDevelopment() {
-  const [activeExample, setActiveExample] = useState("complete_robot_system");
+  // Persistent development preferences
+  const { store: devPrefs, updateField: updateDevPref } = usePersistentStore(
+    "python-dev-preferences",
+    {
+      activeExample: "complete_robot_system",
+      activeTab: "code",
+      fontSize: 14,
+      theme: "dark",
+      autoSave: true,
+    }
+  );
+
+  const { activeExample } = devPrefs;
   const [searchTerm, setSearchTerm] = useState("");
 
   const codeExamples = {
     complete_robot_system: {
       title: "Complete Robot System Architecture",
-      description: "ระบบหุ่นยนต์แบบสมบูรณ์สำหรับการใช้งานจริง",
+      description: "��ะบบหุ่นยนต์แบบสมบูรณ์สำหรับการใช้งานจริง",
       code: `#!/usr/bin/env python3
 """
 Complete Robot System Architecture
@@ -116,23 +129,23 @@ class SystemConfig:
     max_angular_speed: float = 2.0
     wheel_base: float = 0.5
     wheel_radius: float = 0.1
-    
+
     # Network Configuration
     ros_master_uri: str = "http://localhost:11311"
     websocket_port: int = 9090
     web_port: int = 8080
-    
+
     # Camera Settings
     camera_width: int = 640
     camera_height: int = 480
     camera_fps: int = 30
-    
+
     # Safety Parameters
     min_obstacle_distance: float = 0.3
     emergency_stop_distance: float = 0.15
     max_battery_temp: float = 60.0
     min_battery_voltage: float = 11.0
-    
+
     # File Paths
     config_path: str = "/opt/robot/config"
     log_path: str = "/opt/robot/logs"
@@ -145,16 +158,16 @@ class RobotControlSystem:
         self.bridge = CvBridge()
         self.emergency_stop = False
         self.system_health = {}
-        
+
         # Initialize ROS
         rospy.init_node('complete_robot_system', anonymous=True)
-        
+
         # Publishers
         self.cmd_vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
         self.status_pub = rospy.Publisher('/robot_status', String, queue_size=10)
         self.system_health_pub = rospy.Publisher('/system_health', String, queue_size=10)
         self.camera_info_pub = rospy.Publisher('/camera/camera_info', String, queue_size=10)
-        
+
         # Subscribers
         self.joy_sub = rospy.Subscriber('/joy', Joy, self.joy_callback)
         self.web_cmd_sub = rospy.Subscriber('/web_cmd_vel', Twist, self.web_cmd_callback)
@@ -163,51 +176,51 @@ class RobotControlSystem:
         self.odom_sub = rospy.Subscriber('/odom', Odometry, self.odom_callback)
         self.camera_sub = rospy.Subscriber('/camera/image_raw', Image, self.camera_callback)
         self.imu_sub = rospy.Subscriber('/imu', Imu, self.imu_callback)
-        
+
         # Action Clients
         self.move_base_client = SimpleActionClient('move_base', MoveBaseAction)
-        
+
         # Web Interface
         self.websocket_clients = set()
         self.start_websocket_server()
-        
+
         # System Monitoring
         self.monitor_thread = threading.Thread(target=self.system_monitor_loop, daemon=True)
         self.monitor_thread.start()
-        
+
         # Main Control Loop
         self.control_timer = rospy.Timer(rospy.Duration(0.1), self.control_loop)
-        
+
         rospy.loginfo("Complete Robot System initialized successfully")
 
     def joy_callback(self, msg):
         """Handle joystick input for manual control"""
         if self.emergency_stop:
             return
-            
+
         # Map joystick to movement
         linear_x = msg.axes[1] * self.config.max_linear_speed
         linear_y = msg.axes[0] * self.config.max_linear_speed  # Strafe
         angular_z = msg.axes[3] * self.config.max_angular_speed
-        
+
         # Emergency button
         if msg.buttons[0]:  # Button A
             self.trigger_emergency_stop()
             return
-            
+
         # State changes
         if msg.buttons[1]:  # Button B - Idle
             self.set_state(RobotState.IDLE)
         elif msg.buttons[2]:  # Button X - Manual mode
             self.set_state(RobotState.MOVING)
-            
+
         self.publish_velocity(linear_x, linear_y, angular_z)
 
     def web_cmd_callback(self, msg):
         """Handle web interface commands"""
         if self.emergency_stop:
             return
-            
+
         self.publish_velocity(msg.linear.x, msg.linear.y, msg.angular.z)
 
     def emergency_callback(self, msg):
@@ -221,7 +234,7 @@ class RobotControlSystem:
         """Process laser scan data for obstacle avoidance"""
         # Check for obstacles
         min_distance = min(msg.ranges)
-        
+
         if min_distance < self.config.emergency_stop_distance:
             rospy.logwarn(f"Emergency stop triggered by obstacle: {min_distance:.2f}m")
             self.trigger_emergency_stop()
@@ -234,7 +247,7 @@ class RobotControlSystem:
         """Process odometry data"""
         # Store current position for navigation
         self.current_pose = msg.pose.pose
-        
+
         # Broadcast to web clients
         odom_data = {
             'type': 'odometry',
@@ -258,17 +271,17 @@ class RobotControlSystem:
         try:
             # Convert to OpenCV image
             cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-            
+
             # Resize for web streaming
             cv_image = cv2.resize(cv_image, (self.config.camera_width, self.config.camera_height))
-            
+
             # Add overlay information
             self.add_camera_overlay(cv_image)
-            
+
             # Compress and encode
             _, buffer = cv2.imencode('.jpg', cv_image, [cv2.IMWRITE_JPEG_QUALITY, 85])
             img_base64 = base64.b64encode(buffer).decode('utf-8')
-            
+
             # Send to web clients
             camera_data = {
                 'type': 'camera_frame',
@@ -278,7 +291,7 @@ class RobotControlSystem:
                 'height': self.config.camera_height
             }
             self.broadcast_to_web_clients(json.dumps(camera_data))
-            
+
         except Exception as e:
             rospy.logerr(f"Camera processing error: {e}")
 
@@ -312,11 +325,11 @@ class RobotControlSystem:
         # System status
         status_text = f"State: {self.state.value.upper()}"
         cv2.putText(image, status_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-        
+
         # Emergency status
         if self.emergency_stop:
             cv2.putText(image, "EMERGENCY STOP", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
-        
+
         # Timestamp
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         cv2.putText(image, timestamp, (10, image.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
@@ -325,17 +338,17 @@ class RobotControlSystem:
         """Publish velocity commands with safety checks"""
         if self.emergency_stop:
             linear_x = linear_y = angular_z = 0
-            
+
         # Apply speed limits
         linear_x = max(-self.config.max_linear_speed, min(self.config.max_linear_speed, linear_x))
         linear_y = max(-self.config.max_linear_speed, min(self.config.max_linear_speed, linear_y))
         angular_z = max(-self.config.max_angular_speed, min(self.config.max_angular_speed, angular_z))
-        
+
         twist = Twist()
         twist.linear.x = linear_x
         twist.linear.y = linear_y
         twist.angular.z = angular_z
-        
+
         self.cmd_vel_pub.publish(twist)
 
     def trigger_emergency_stop(self):
@@ -343,35 +356,35 @@ class RobotControlSystem:
         self.emergency_stop = True
         self.set_state(RobotState.EMERGENCY)
         self.publish_velocity(0, 0, 0)
-        
+
         emergency_data = {
             'type': 'emergency_stop',
             'active': True,
             'timestamp': time.time()
         }
         self.broadcast_to_web_clients(json.dumps(emergency_data))
-        
+
         rospy.logwarn("EMERGENCY STOP ACTIVATED")
 
     def release_emergency_stop(self):
         """Release emergency stop"""
         self.emergency_stop = False
         self.set_state(RobotState.IDLE)
-        
+
         emergency_data = {
             'type': 'emergency_stop',
             'active': False,
             'timestamp': time.time()
         }
         self.broadcast_to_web_clients(json.dumps(emergency_data))
-        
+
         rospy.loginfo("Emergency stop released")
 
     def set_state(self, new_state: RobotState):
         """Change robot state"""
         old_state = self.state
         self.state = new_state
-        
+
         state_data = {
             'type': 'state_change',
             'old_state': old_state.value,
@@ -379,7 +392,7 @@ class RobotControlSystem:
             'timestamp': time.time()
         }
         self.broadcast_to_web_clients(json.dumps(state_data))
-        
+
         rospy.loginfo(f"State changed: {old_state.value} -> {new_state.value}")
 
     def control_loop(self, event):
@@ -404,7 +417,7 @@ class RobotControlSystem:
                 disk = psutil.disk_usage('/')
                 network = psutil.net_io_counters()
                 battery = self.get_battery_info()
-                
+
                 self.system_health = {
                     'cpu_percent': cpu_percent,
                     'memory_percent': memory.percent,
@@ -416,25 +429,25 @@ class RobotControlSystem:
                     'ros_nodes': self.get_active_ros_nodes(),
                     'timestamp': time.time()
                 }
-                
+
                 # Publish system health
                 health_msg = String()
                 health_msg.data = json.dumps(self.system_health)
                 self.system_health_pub.publish(health_msg)
-                
+
                 # Send to web clients
                 health_data = {
                     'type': 'system_health',
                     **self.system_health
                 }
                 self.broadcast_to_web_clients(json.dumps(health_data))
-                
+
                 # Check for critical conditions
                 self.check_system_health()
-                
+
             except Exception as e:
                 rospy.logerr(f"System monitoring error: {e}")
-            
+
             time.sleep(5)  # Update every 5 seconds
 
     def get_battery_info(self) -> Dict:
@@ -464,20 +477,20 @@ class RobotControlSystem:
     def check_system_health(self):
         """Check system health and trigger alerts"""
         health = self.system_health
-        
+
         # Check CPU usage
         if health.get('cpu_percent', 0) > 90:
             rospy.logwarn(f"High CPU usage: {health['cpu_percent']:.1f}%")
-        
+
         # Check memory usage
         if health.get('memory_percent', 0) > 90:
             rospy.logwarn(f"High memory usage: {health['memory_percent']:.1f}%")
-        
+
         # Check battery
         battery_voltage = health.get('battery_voltage', 12.0)
         if battery_voltage < self.config.min_battery_voltage:
             rospy.logwarn(f"Low battery voltage: {battery_voltage:.1f}V")
-        
+
         battery_temp = health.get('battery_temperature', 25.0)
         if battery_temp > self.config.max_battery_temp:
             rospy.logwarn(f"High battery temperature: {battery_temp:.1f}°C")
@@ -489,13 +502,13 @@ class RobotControlSystem:
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             start_server = websockets.serve(
-                self.handle_websocket_client, 
-                "0.0.0.0", 
+                self.handle_websocket_client,
+                "0.0.0.0",
                 self.config.websocket_port
             )
             loop.run_until_complete(start_server)
             loop.run_forever()
-        
+
         server_thread = threading.Thread(target=run_server, daemon=True)
         server_thread.start()
         rospy.loginfo(f"WebSocket server started on port {self.config.websocket_port}")
@@ -505,7 +518,7 @@ class RobotControlSystem:
         self.websocket_clients.add(websocket)
         client_addr = websocket.remote_address
         rospy.loginfo(f"WebSocket client connected: {client_addr}")
-        
+
         try:
             # Send initial system state
             initial_data = {
@@ -516,11 +529,11 @@ class RobotControlSystem:
                 'timestamp': time.time()
             }
             await websocket.send(json.dumps(initial_data))
-            
+
             # Handle incoming messages
             async for message in websocket:
                 await self.process_websocket_message(websocket, message)
-                
+
         except websockets.exceptions.ConnectionClosed:
             rospy.loginfo(f"WebSocket client disconnected: {client_addr}")
         except Exception as e:
@@ -533,7 +546,7 @@ class RobotControlSystem:
         try:
             data = json.loads(message)
             msg_type = data.get('type')
-            
+
             if msg_type == 'cmd_vel':
                 # Handle velocity commands
                 twist = Twist()
@@ -541,27 +554,27 @@ class RobotControlSystem:
                 twist.linear.y = data.get('linear_y', 0.0)
                 twist.angular.z = data.get('angular_z', 0.0)
                 self.web_cmd_callback(twist)
-                
+
             elif msg_type == 'emergency_stop':
                 # Handle emergency stop
                 self.trigger_emergency_stop()
-                
+
             elif msg_type == 'release_emergency':
                 # Release emergency stop
                 self.release_emergency_stop()
-                
+
             elif msg_type == 'navigate_to':
                 # Handle navigation command
                 x = data.get('x', 0.0)
                 y = data.get('y', 0.0)
                 theta = data.get('theta', 0.0)
                 await self.navigate_to_position(x, y, theta)
-                
+
             elif msg_type == 'get_system_info':
                 # Send system information
                 system_info = await self.get_system_info()
                 await websocket.send(json.dumps(system_info))
-                
+
         except json.JSONDecodeError:
             rospy.logwarn(f"Invalid JSON received: {message}")
         except Exception as e:
@@ -601,10 +614,10 @@ class RobotControlSystem:
         goal.target_pose.pose.position.y = y
         goal.target_pose.pose.orientation.z = theta
         goal.target_pose.pose.orientation.w = 1.0
-        
+
         self.set_state(RobotState.NAVIGATING)
         self.move_base_client.send_goal(goal)
-        
+
         # Wait for result (non-blocking)
         def goal_done_callback(state, result):
             if state == 3:  # SUCCEEDED
@@ -613,7 +626,7 @@ class RobotControlSystem:
             else:
                 self.set_state(RobotState.ERROR)
                 rospy.logwarn(f"Navigation failed with state: {state}")
-        
+
         self.move_base_client.send_goal(goal, done_cb=goal_done_callback)
 
     async def get_system_info(self) -> Dict:
@@ -642,16 +655,16 @@ def main():
     try:
         # Load configuration
         config = SystemConfig()
-        
+
         # Initialize robot system
         robot_system = RobotControlSystem(config)
-        
+
         rospy.loginfo("Complete Robot Control System started successfully")
         rospy.loginfo("System ready for operation - All features active")
-        
+
         # Keep the system running
         rospy.spin()
-        
+
     except KeyboardInterrupt:
         rospy.loginfo("Shutting down robot system...")
     except Exception as e:
@@ -665,7 +678,7 @@ if __name__ == '__main__':
       title: "Complete Launch File Configuration",
       description: "Launch file สำหรับระบบทั้งหมด",
       code: `<?xml version="1.0"?>
-<!-- 
+<!--
 Complete Robot Launch Configuration
 สำหรับการเปิดใช้งานระบบหุ่นยนต์แบบสมบูรณ์
 -->
@@ -676,7 +689,7 @@ Complete Robot Launch Configuration
   <arg name="map_file" default="$(find robot_navigation)/maps/office.yaml"/>
   <arg name="camera_device" default="/dev/video0"/>
   <arg name="lidar_port" default="/dev/ttyUSB0"/>
-  
+
   <!-- Robot Description -->
   <param name="robot_description" textfile="$(find robot_description)/urdf/robot.urdf"/>
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
@@ -845,7 +858,7 @@ Complete Robot Launch Configuration
       <param name="deadzone" value="0.1"/>
       <param name="autorepeat_rate" value="20"/>
     </node>
-    
+
     <node name="teleop_twist_joy" pkg="teleop_twist_joy" type="teleop_node" output="screen">
       <param name="axis_linear_x" value="1"/>
       <param name="axis_linear_y" value="0"/>
@@ -876,11 +889,11 @@ Complete Robot Launch Configuration
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find robot_visualization)/config/robot.rviz" if="false"/>
 
   <!-- Static Transforms -->
-  <node name="base_to_laser" pkg="tf2_ros" type="static_transform_publisher" 
+  <node name="base_to_laser" pkg="tf2_ros" type="static_transform_publisher"
         args="0.2 0 0.1 0 0 0 base_link laser"/>
-  <node name="base_to_camera" pkg="tf2_ros" type="static_transform_publisher" 
+  <node name="base_to_camera" pkg="tf2_ros" type="static_transform_publisher"
         args="0.3 0 0.2 0 0 0 base_link camera_link"/>
-  <node name="base_to_imu" pkg="tf2_ros" type="static_transform_publisher" 
+  <node name="base_to_imu" pkg="tf2_ros" type="static_transform_publisher"
         args="0 0 0.05 0 0 0 base_link imu_link"/>
 
   <!-- Web Interface -->
@@ -891,8 +904,8 @@ Complete Robot Launch Configuration
   </node>
 
   <!-- Logging and Recording -->
-  <node name="rosbag_record" pkg="rosbag" type="record" args="-O /opt/robot/logs/session.bag 
-    /cmd_vel /odom /scan /camera/image_raw/compressed /tf /tf_static /robot_status /system_health" 
+  <node name="rosbag_record" pkg="rosbag" type="record" args="-O /opt/robot/logs/session.bag
+    /cmd_vel /odom /scan /camera/image_raw/compressed /tf /tf_static /robot_status /system_health"
     if="false"/>
 
 </launch>`,
@@ -1001,7 +1014,7 @@ Complete Robot Launch Configuration
     },
     systemd_service: {
       title: "Systemd Service Configuration",
-      description: "Auto-start service สำหรับระบบ",
+      description: "Auto-start service สำหรับ��ะบบ",
       code: `# /etc/systemd/system/robot-control.service
 [Unit]
 Description=Dino Core Robot Control System
@@ -1248,7 +1261,7 @@ volumes:
       code: `#!/usr/bin/env python3
 """
 Complete Hardware Interface Driver
-สำหรับการเชื่อมต่อกับฮาร์ดแวร์หุ่นยนต์
+สำหรั��การเชื่อมต่อกับฮาร์ดแวร์หุ่นยนต์
 """
 
 import rospy
@@ -1265,39 +1278,39 @@ from nav_msgs.msg import Odometry
 class HardwareInterface:
     def __init__(self):
         rospy.init_node('hardware_interface', anonymous=True)
-        
+
         # Serial connections
         self.base_serial = None
         self.sensor_serial = None
-        
+
         # Configuration
         self.base_port = rospy.get_param('~base_port', '/dev/ttyACM0')
         self.sensor_port = rospy.get_param('~sensor_port', '/dev/ttyUSB1')
         self.baud_rate = rospy.get_param('~baud_rate', 115200)
-        
+
         # Robot parameters
         self.wheel_base = rospy.get_param('~wheel_base', 0.5)
         self.wheel_radius = rospy.get_param('~wheel_radius', 0.1)
         self.encoder_resolution = rospy.get_param('~encoder_resolution', 1024)
-        
+
         # Initialize serial connections
         self.init_serial_connections()
-        
+
         # Publishers
         self.odom_pub = rospy.Publisher('/odom', Odometry, queue_size=10)
         self.imu_pub = rospy.Publisher('/imu', Imu, queue_size=10)
         self.battery_pub = rospy.Publisher('/battery_state', BatteryState, queue_size=10)
         self.temp_pub = rospy.Publisher('/temperature', Temperature, queue_size=10)
         self.hardware_status_pub = rospy.Publisher('/hardware_status', String, queue_size=10)
-        
+
         # Subscribers
         self.cmd_vel_sub = rospy.Subscriber('/cmd_vel', Twist, self.cmd_vel_callback)
         self.led_sub = rospy.Subscriber('/led_control', String, self.led_callback)
         self.servo_sub = rospy.Subscriber('/servo_control', String, self.servo_callback)
-        
+
         # Hardware monitoring
         self.start_hardware_monitoring()
-        
+
         rospy.loginfo("Hardware Interface initialized")
 
     def init_serial_connections(self):
@@ -1313,7 +1326,7 @@ class HardwareInterface:
                 bytesize=serial.EIGHTBITS
             )
             rospy.loginfo(f"Base controller connected on {self.base_port}")
-            
+
             # Sensor controller connection
             self.sensor_serial = serial.Serial(
                 port=self.sensor_port,
@@ -1321,14 +1334,14 @@ class HardwareInterface:
                 timeout=1.0
             )
             rospy.loginfo(f"Sensor controller connected on {self.sensor_port}")
-            
+
             # Wait for hardware to initialize
             time.sleep(2)
-            
+
             # Send initialization commands
             self.send_base_command("INIT")
             self.send_sensor_command("INIT")
-            
+
         except Exception as e:
             rospy.logerr(f"Failed to initialize serial connections: {e}")
 
@@ -1339,24 +1352,24 @@ class HardwareInterface:
             vx = msg.linear.x
             vy = msg.linear.y
             vth = msg.angular.z
-            
+
             # Holonomic drive kinematics
             # For mecanum wheels or omni wheels
             wheel_fl = vx - vy - vth * (self.wheel_base / 2)
             wheel_fr = vx + vy + vth * (self.wheel_base / 2)
             wheel_bl = vx + vy - vth * (self.wheel_base / 2)
             wheel_br = vx - vy + vth * (self.wheel_base / 2)
-            
+
             # Convert to RPM
             wheel_fl_rpm = (wheel_fl / (2 * 3.14159 * self.wheel_radius)) * 60
             wheel_fr_rpm = (wheel_fr / (2 * 3.14159 * self.wheel_radius)) * 60
             wheel_bl_rpm = (wheel_bl / (2 * 3.14159 * self.wheel_radius)) * 60
             wheel_br_rpm = (wheel_br / (2 * 3.14159 * self.wheel_radius)) * 60
-            
+
             # Send command to base controller
             command = f"MOVE:{wheel_fl_rpm:.2f},{wheel_fr_rpm:.2f},{wheel_bl_rpm:.2f},{wheel_br_rpm:.2f}"
             self.send_base_command(command)
-            
+
         except Exception as e:
             rospy.logerr(f"Error processing cmd_vel: {e}")
 
@@ -1401,11 +1414,11 @@ class HardwareInterface:
         # Base controller monitoring
         base_thread = threading.Thread(target=self.base_monitor_loop, daemon=True)
         base_thread.start()
-        
+
         # Sensor monitoring
         sensor_thread = threading.Thread(target=self.sensor_monitor_loop, daemon=True)
         sensor_thread.start()
-        
+
         rospy.loginfo("Hardware monitoring threads started")
 
     def base_monitor_loop(self):
@@ -1440,10 +1453,10 @@ class HardwareInterface:
                 parts = data[5:].split(",")
                 x, y, theta = float(parts[0]), float(parts[1]), float(parts[2])
                 vx, vy, vth = float(parts[3]), float(parts[4]), float(parts[5])
-                
+
                 # Publish odometry
                 self.publish_odometry(x, y, theta, vx, vy, vth)
-                
+
             elif data.startswith("BATTERY:"):
                 # Parse battery data
                 parts = data[8:].split(",")
@@ -1451,15 +1464,15 @@ class HardwareInterface:
                 current = float(parts[1])
                 percentage = float(parts[2])
                 temperature = float(parts[3])
-                
+
                 # Publish battery state
                 self.publish_battery_state(voltage, current, percentage, temperature)
-                
+
             elif data.startswith("STATUS:"):
                 # Hardware status
                 status = data[7:]
                 self.publish_hardware_status(f"Base: {status}")
-                
+
         except Exception as e:
             rospy.logerr(f"Error processing base data: {e}")
 
@@ -1475,16 +1488,16 @@ class HardwareInterface:
                 gx, gy, gz = float(parts[3]), float(parts[4]), float(parts[5])
                 # Magnetometer
                 mx, my, mz = float(parts[6]), float(parts[7]), float(parts[8])
-                
+
                 # Publish IMU data
                 self.publish_imu_data(ax, ay, az, gx, gy, gz, mx, my, mz)
-                
+
             elif data.startswith("TEMP:"):
                 # Temperature sensors
                 parts = data[5:].split(",")
                 for i, temp in enumerate(parts):
                     self.publish_temperature(f"sensor_{i}", float(temp))
-                    
+
         except Exception as e:
             rospy.logerr(f"Error processing sensor data: {e}")
 
@@ -1494,12 +1507,12 @@ class HardwareInterface:
         odom.header.stamp = rospy.Time.now()
         odom.header.frame_id = "odom"
         odom.child_frame_id = "base_link"
-        
+
         # Position
         odom.pose.pose.position.x = x
         odom.pose.pose.position.y = y
         odom.pose.pose.position.z = 0.0
-        
+
         # Orientation (quaternion from yaw)
         import tf.transformations
         quat = tf.transformations.quaternion_from_euler(0, 0, theta)
@@ -1507,12 +1520,12 @@ class HardwareInterface:
         odom.pose.pose.orientation.y = quat[1]
         odom.pose.pose.orientation.z = quat[2]
         odom.pose.pose.orientation.w = quat[3]
-        
+
         # Velocity
         odom.twist.twist.linear.x = vx
         odom.twist.twist.linear.y = vy
         odom.twist.twist.angular.z = vth
-        
+
         self.odom_pub.publish(odom)
 
     def publish_imu_data(self, ax, ay, az, gx, gy, gz, mx, my, mz):
@@ -1520,21 +1533,21 @@ class HardwareInterface:
         imu = Imu()
         imu.header.stamp = rospy.Time.now()
         imu.header.frame_id = "imu_link"
-        
+
         # Linear acceleration
         imu.linear_acceleration.x = ax
         imu.linear_acceleration.y = ay
         imu.linear_acceleration.z = az
-        
+
         # Angular velocity
         imu.angular_velocity.x = gx
         imu.angular_velocity.y = gy
         imu.angular_velocity.z = gz
-        
+
         # Orientation (would need sensor fusion for accurate quaternion)
         # For now, set covariance to indicate unknown orientation
         imu.orientation_covariance[0] = -1
-        
+
         self.imu_pub.publish(imu)
 
     def publish_battery_state(self, voltage, current, percentage, temperature):
@@ -1546,14 +1559,14 @@ class HardwareInterface:
         battery.percentage = percentage / 100.0
         battery.temperature = temperature
         battery.present = True
-        
+
         if percentage > 80:
             battery.power_supply_status = BatteryState.POWER_SUPPLY_STATUS_FULL
         elif percentage > 20:
             battery.power_supply_status = BatteryState.POWER_SUPPLY_STATUS_DISCHARGING
         else:
             battery.power_supply_status = BatteryState.POWER_SUPPLY_STATUS_CHARGING
-            
+
         self.battery_pub.publish(battery)
 
     def publish_temperature(self, sensor_name, temperature):
@@ -1563,7 +1576,7 @@ class HardwareInterface:
         temp_msg.header.frame_id = sensor_name
         temp_msg.temperature = temperature
         temp_msg.variance = 0.1
-        
+
         self.temp_pub.publish(temp_msg)
 
     def publish_hardware_status(self, status):
