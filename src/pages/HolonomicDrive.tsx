@@ -120,13 +120,27 @@ const HolonomicDrive = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">{t("holonomic.title")}</h1>
-        <p className="text-muted-foreground">
-          4-Wheel Holonomic Drive System with Omnidirectional Movement
-        </p>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-4xl font-extralight bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text text-transparent">
+            {t("holonomic.title")}
+          </h1>
+          <p className="text-muted-foreground font-light mt-2">
+            4-Wheel Holonomic Drive System with Omnidirectional Movement
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Badge className="bg-cyan-100 text-cyan-700">
+            <Circle className="h-3 w-3 mr-1" />
+            Omni-directional
+          </Badge>
+        </div>
       </div>
+
+      <div className="space-y-6">
 
       {/* Emergency Stop & Mode */}
       <div className="flex items-center justify-between">

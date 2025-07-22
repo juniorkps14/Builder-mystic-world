@@ -103,13 +103,27 @@ const RoboticArm = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">{t("arm.title")}</h1>
-        <p className="text-muted-foreground">
-          6-DOF Robotic Arm Control with End Effector Management
-        </p>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-4xl font-extralight bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text text-transparent">
+            {t("arm.title")}
+          </h1>
+          <p className="text-muted-foreground font-light mt-2">
+            6-DOF Robotic Arm Control with End Effector Management
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Badge className="bg-orange-100 text-orange-700">
+            <Activity className="h-3 w-3 mr-1" />
+            6-DOF
+          </Badge>
+        </div>
       </div>
+
+      <div className="space-y-6">
 
       {/* Emergency Stop & Status */}
       <div className="flex items-center justify-between">

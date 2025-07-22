@@ -228,13 +228,27 @@ const TFTree = () => {
   const selectedFrameData = tfFrames.find((f) => f.name === selectedFrame);
 
   return (
-    <div className="space-y-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">TF Tree Viewer</h1>
-        <p className="text-muted-foreground">
-          Real-time Transform Frame visualization and monitoring
-        </p>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-4xl font-extralight bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text text-transparent">
+            TF Tree Viewer
+          </h1>
+          <p className="text-muted-foreground font-light mt-2">
+            Real-time Transform Frame visualization and monitoring
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Badge className="bg-teal-100 text-teal-700">
+            <GitBranch className="h-3 w-3 mr-1" />
+            Live
+          </Badge>
+        </div>
       </div>
+
+      <div className="space-y-6">
 
       {/* Controls */}
       <div className="flex items-center justify-between">
