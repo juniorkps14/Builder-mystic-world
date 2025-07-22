@@ -674,7 +674,7 @@ export default function Terminal() {
         return tab;
       }),
     );
-    setCurrentCommand("");
+    updateTerminalPref("currentCommand", "");
   };
 
   const interruptCommand = () => {
