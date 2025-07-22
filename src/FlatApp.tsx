@@ -7,6 +7,7 @@ import { FlatHeader } from "@/components/layout/FlatHeader";
 import { FlatSidebar } from "@/components/layout/FlatSidebar";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { PersistenceProvider } from "@/contexts/PersistenceContext";
 import { ROSIntegrationProvider } from "@/services/ROSIntegrationService";
 import { useState } from "react";
 
@@ -58,7 +59,8 @@ const FlatApp = () => {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <LanguageProvider>
-          <ROSIntegrationProvider>
+          <PersistenceProvider>
+            <ROSIntegrationProvider>
             <TooltipProvider>
               <Toaster />
               <Sonner />
@@ -175,6 +177,7 @@ const FlatApp = () => {
               </BrowserRouter>
             </TooltipProvider>
           </ROSIntegrationProvider>
+        </PersistenceProvider>
         </LanguageProvider>
       </ThemeProvider>
     </QueryClientProvider>

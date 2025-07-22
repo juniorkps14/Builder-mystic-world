@@ -26,9 +26,9 @@ interface PersistenceProviderProps {
   appPrefix?: string;
 }
 
-export const PersistenceProvider: React.FC<PersistenceProviderProps> = ({ 
-  children, 
-  appPrefix = 'dino-core' 
+export const PersistenceProvider: React.FC<PersistenceProviderProps> = ({
+  children,
+  appPrefix = 'dino-core'
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -62,10 +62,10 @@ export const PersistenceProvider: React.FC<PersistenceProviderProps> = ({
   }, [appPrefix]);
 
   const contextValue: PersistenceContextType = {
-    save: <T>(key: string, value: T, ttl?: number) => {
+    save: (key: string, value: any, ttl?: number) => {
       persistenceService.save(`${appPrefix}-${key}`, value, ttl);
     },
-    load: <T>(key: string, defaultValue: T): T => {
+    load: (key: string, defaultValue: any) => {
       return persistenceService.load(`${appPrefix}-${key}`, defaultValue);
     },
     remove: (key: string) => {
