@@ -38,61 +38,68 @@ export default function Settings() {
   const [isApplying, setIsApplying] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
 
-  // Settings State
-  const [settings, setSettings] = useState({
-    // Interface & Theme
-    theme: "system",
-    language: "en",
-    fontSize: 14,
-    accentColor: "blue",
-    reducedMotion: false,
-    highContrast: false,
+  // Persistent Settings State
+  const { store: settings, updateField: updateSetting, saveNow } = usePersistentStore(
+    "user-settings",
+    {
+      // Interface & Theme
+      theme: "system",
+      language: "en",
+      fontSize: 14,
+      accentColor: "blue",
+      reducedMotion: false,
+      highContrast: false,
 
-    // Display
-    showGrid: true,
-    showTooltips: true,
-    showBadges: true,
-    compactMode: false,
-    sidebarCollapsed: false,
+      // Display
+      showGrid: true,
+      showTooltips: true,
+      showBadges: true,
+      compactMode: false,
+      sidebarCollapsed: false,
 
-    // Notifications
-    enableNotifications: true,
-    soundEnabled: true,
-    systemAlerts: true,
-    taskNotifications: true,
-    errorAlerts: true,
+      // Notifications
+      enableNotifications: true,
+      soundEnabled: true,
+      systemAlerts: true,
+      taskNotifications: true,
+      errorAlerts: true,
 
-    // Robot Control
-    confirmDangerousActions: true,
-    autoSaveSequences: true,
-    defaultMovementSpeed: 50,
-    emergencyStopEnabled: true,
-    joystickSensitivity: 75,
+      // Robot Control
+      confirmDangerousActions: true,
+      autoSaveSequences: true,
+      defaultMovementSpeed: 50,
+      emergencyStopEnabled: true,
+      joystickSensitivity: 75,
 
-    // Data & Privacy
-    collectAnalytics: false,
-    shareErrorReports: true,
-    autoBackup: true,
-    backupFrequency: "daily",
-    dataRetention: 30,
+      // Data & Privacy
+      collectAnalytics: false,
+      shareErrorReports: true,
+      autoBackup: true,
+      backupFrequency: "daily",
+      dataRetention: 30,
 
-    // Performance
-    maxConcurrentTasks: 5,
-    cacheSize: 100,
-    enableGpuAcceleration: true,
-    autoOptimize: true,
-    backgroundProcessing: true,
+      // Performance
+      maxConcurrentTasks: 5,
+      cacheSize: 100,
+      enableGpuAcceleration: true,
+      autoOptimize: true,
+      backgroundProcessing: true,
 
-    // Advanced
-    developerMode: false,
-    debugMode: false,
-    experimentalFeatures: false,
-    betaUpdates: false,
-    verboseLogging: false,
-  });
+      // Advanced
+      developerMode: false,
+      debugMode: false,
+      experimentalFeatures: false,
+      betaUpdates: false,
+      verboseLogging: false,
+    },
+    {
+      autoSave: true,
+      autoSaveDelay: 1000,
+    }
+  );
 
-  const updateSetting = (key: string, value: any) => {
-    setSettings((prev) => ({ ...prev, [key]: value }));
+  const handleSettingChange = (key: string, value: any) => {
+    updateSetting(key, value);
     setIsDirty(true);
   };
 
