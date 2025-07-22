@@ -1,4 +1,6 @@
 import { RobotControl as RobotControlComponent } from "@/components/ros/RobotControl";
+import { Badge } from "@/components/ui/badge";
+import { Activity } from "lucide-react";
 
 const RobotControl = () => {
   return (
