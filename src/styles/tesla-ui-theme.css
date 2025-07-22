@@ -1,0 +1,425 @@
+/* Tesla-Inspired UI Theme */
+/* Glass morphism and modern interface elements */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+:root {
+  /* Tesla Color Palette */
+  --tesla-bg-primary: #0a0a0a;
+  --tesla-bg-secondary: #1a1a1a;
+  --tesla-bg-tertiary: #2a2a2a;
+  --tesla-glass-bg: rgba(255, 255, 255, 0.05);
+  --tesla-glass-border: rgba(255, 255, 255, 0.1);
+  --tesla-glass-hover: rgba(255, 255, 255, 0.1);
+  
+  /* Tesla Accent Colors */
+  --tesla-blue: #4a9eff;
+  --tesla-blue-light: #6bb6ff;
+  --tesla-blue-dark: #2d7bd6;
+  --tesla-cyan: #00d4ff;
+  --tesla-green: #00ff88;
+  --tesla-red: #ff4757;
+  --tesla-yellow: #ffa726;
+  --tesla-purple: #ab47bc;
+  
+  /* Text Colors */
+  --tesla-text-primary: #ffffff;
+  --tesla-text-secondary: #b0b0b0;
+  --tesla-text-tertiary: #808080;
+  --tesla-text-muted: #606060;
+  
+  /* Glass Effect Variables */
+  --glass-backdrop: blur(20px);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --glass-border-radius: 20px;
+  
+  /* Animation Variables */
+  --tesla-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --tesla-transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --tesla-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Base Dark Theme */
+.tesla-ui {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, var(--tesla-bg-primary) 0%, #1a1a2e 50%, var(--tesla-bg-primary) 100%);
+  color: var(--tesla-text-primary);
+  min-height: 100vh;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+}
+
+/* Glass Morphism Components */
+.tesla-glass {
+  background: var(--tesla-glass-bg);
+  backdrop-filter: var(--glass-backdrop);
+  border: 1px solid var(--tesla-glass-border);
+  border-radius: var(--glass-border-radius);
+  box-shadow: var(--glass-shadow);
+  transition: var(--tesla-transition);
+}
+
+.tesla-glass:hover {
+  background: var(--tesla-glass-hover);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.tesla-glass-intense {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Button Styles */
+.tesla-btn {
+  background: var(--tesla-glass-bg);
+  backdrop-filter: var(--glass-backdrop);
+  border: 1px solid var(--tesla-glass-border);
+  border-radius: 16px;
+  color: var(--tesla-text-primary);
+  font-weight: 400;
+  padding: 12px 24px;
+  transition: var(--tesla-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.tesla-btn:hover {
+  background: var(--tesla-glass-hover);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.tesla-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.tesla-btn-primary {
+  background: linear-gradient(135deg, var(--tesla-blue) 0%, var(--tesla-cyan) 100%);
+  border: 1px solid var(--tesla-blue-light);
+  color: white;
+  font-weight: 500;
+}
+
+.tesla-btn-primary:hover {
+  background: linear-gradient(135deg, var(--tesla-blue-light) 0%, var(--tesla-cyan) 100%);
+  box-shadow: 0 8px 30px rgba(74, 158, 255, 0.4);
+}
+
+.tesla-btn-danger {
+  background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+  border: 1px solid #ff6b7d;
+  color: white;
+}
+
+.tesla-btn-success {
+  background: linear-gradient(135deg, var(--tesla-green) 0%, #00e676 100%);
+  border: 1px solid var(--tesla-green);
+  color: #000;
+  font-weight: 500;
+}
+
+/* Card Styles */
+.tesla-card {
+  background: var(--tesla-glass-bg);
+  backdrop-filter: var(--glass-backdrop);
+  border: 1px solid var(--tesla-glass-border);
+  border-radius: var(--glass-border-radius);
+  box-shadow: var(--glass-shadow);
+  padding: 24px;
+  transition: var(--tesla-transition);
+}
+
+.tesla-card:hover {
+  background: var(--tesla-glass-hover);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.4);
+}
+
+.tesla-card-compact {
+  padding: 16px;
+  border-radius: 16px;
+}
+
+.tesla-card-large {
+  padding: 32px;
+  border-radius: 24px;
+}
+
+/* Input Styles */
+.tesla-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: var(--tesla-text-primary);
+  padding: 12px 16px;
+  font-weight: 300;
+  transition: var(--tesla-transition);
+}
+
+.tesla-input:focus {
+  outline: none;
+  border-color: var(--tesla-blue);
+  box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.tesla-input::placeholder {
+  color: var(--tesla-text-muted);
+  font-weight: 300;
+}
+
+/* Status Indicators */
+.tesla-status-online {
+  background: linear-gradient(135deg, var(--tesla-green) 0%, #00e676 100%);
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+}
+
+.tesla-status-offline {
+  background: linear-gradient(135deg, var(--tesla-red) 0%, #ff3742 100%);
+  box-shadow: 0 0 20px rgba(255, 71, 87, 0.3);
+}
+
+.tesla-status-warning {
+  background: linear-gradient(135deg, var(--tesla-yellow) 0%, #ffb74d 100%);
+  box-shadow: 0 0 20px rgba(255, 167, 38, 0.3);
+}
+
+.tesla-status-processing {
+  background: linear-gradient(135deg, var(--tesla-blue) 0%, var(--tesla-cyan) 100%);
+  box-shadow: 0 0 20px rgba(74, 158, 255, 0.3);
+  animation: tesla-pulse 2s ease-in-out infinite;
+}
+
+/* Progress Bars */
+.tesla-progress {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  height: 8px;
+}
+
+.tesla-progress-bar {
+  background: linear-gradient(90deg, var(--tesla-blue) 0%, var(--tesla-cyan) 100%);
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+.tesla-progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+  animation: tesla-shimmer 2s ease-in-out infinite;
+}
+
+/* Badges */
+.tesla-badge {
+  background: var(--tesla-glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--tesla-glass-border);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--tesla-text-primary);
+  transition: var(--tesla-transition);
+}
+
+.tesla-badge-success {
+  background: rgba(0, 255, 136, 0.1);
+  border-color: rgba(0, 255, 136, 0.3);
+  color: var(--tesla-green);
+}
+
+.tesla-badge-error {
+  background: rgba(255, 71, 87, 0.1);
+  border-color: rgba(255, 71, 87, 0.3);
+  color: var(--tesla-red);
+}
+
+.tesla-badge-warning {
+  background: rgba(255, 167, 38, 0.1);
+  border-color: rgba(255, 167, 38, 0.3);
+  color: var(--tesla-yellow);
+}
+
+.tesla-badge-info {
+  background: rgba(74, 158, 255, 0.1);
+  border-color: rgba(74, 158, 255, 0.3);
+  color: var(--tesla-blue);
+}
+
+/* Typography */
+.tesla-title {
+  font-weight: 200;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--tesla-text-primary) 0%, var(--tesla-text-secondary) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.tesla-subtitle {
+  color: var(--tesla-text-secondary);
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+
+.tesla-label {
+  color: var(--tesla-text-tertiary);
+  font-weight: 400;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Animations */
+@keyframes tesla-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(74, 158, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(74, 158, 255, 0.6);
+  }
+}
+
+@keyframes tesla-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes tesla-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.tesla-float {
+  animation: tesla-float 4s ease-in-out infinite;
+}
+
+/* Scrollbar Styling */
+.tesla-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tesla-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.tesla-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  transition: var(--tesla-transition);
+}
+
+.tesla-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .tesla-card {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  
+  .tesla-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+  
+  .tesla-title {
+    font-size: 2rem;
+  }
+}
+
+/* Age-Friendly Design Enhancements */
+.tesla-large-text {
+  font-size: 1.1em;
+  line-height: 1.6;
+}
+
+.tesla-high-contrast {
+  --tesla-text-primary: #ffffff;
+  --tesla-text-secondary: #e0e0e0;
+  --tesla-glass-border: rgba(255, 255, 255, 0.3);
+}
+
+.tesla-focus-visible {
+  outline: 3px solid var(--tesla-blue);
+  outline-offset: 2px;
+}
+
+/* Loading States */
+.tesla-loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.tesla-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
+  animation: tesla-shimmer 1.5s ease-in-out infinite;
+}
+
+/* Interactive Elements */
+.tesla-interactive {
+  cursor: pointer;
+  transition: var(--tesla-transition);
+}
+
+.tesla-interactive:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.tesla-interactive:active {
+  transform: scale(0.98);
+}
+
+/* Notification Styles */
+.tesla-notification {
+  background: var(--tesla-glass-bg);
+  backdrop-filter: var(--glass-backdrop);
+  border: 1px solid var(--tesla-glass-border);
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  animation: tesla-slide-in 0.3s var(--tesla-spring);
+}
+
+@keyframes tesla-slide-in {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
