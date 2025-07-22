@@ -734,9 +734,9 @@ export default function Terminal() {
   if (!activeTab) return null;
 
   return (
-    <div className="flex flex-col h-screen bg-gray-900 text-green-400 font-mono">
+    <div className="flex flex-col h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-green-400 font-mono">
       {/* Header Bar */}
-      <div className="flex items-center justify-between bg-gray-800 px-4 py-2 border-b border-gray-700">
+      <div className="flex items-center justify-between bg-white/10 backdrop-blur-xl border-b border-white/20 px-4 py-2">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <TerminalIcon className="h-5 w-5" />
