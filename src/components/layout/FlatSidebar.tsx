@@ -199,6 +199,14 @@ const navigationSections: NavSection[] = [
         color: "text-red-600",
         bgColor: "bg-red-100",
       },
+      {
+        title: "Python Dev Guide",
+        icon: Code,
+        href: "/python-development",
+        badge: "Guide",
+        color: "text-green-600",
+        bgColor: "bg-green-100",
+      },
     ],
   },
   {
