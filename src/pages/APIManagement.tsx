@@ -302,7 +302,7 @@ print(f"Image size: {img.size}")`,
       name: "Get Sensor Data",
       method: "GET",
       endpoint: "/api/sensors/all",
-      description: "ดึงข้อมูลเซ็���เซอร์ทั้งหมด",
+      description: "ดึงข้อมูลเซ็นเซอร์ทั้งหมด",
       category: "sensors",
       status: "active",
       responseExample: {
@@ -463,7 +463,7 @@ asyncio.run(robot_data_stream())`,
     { value: "system", label: "ระบบ", icon: Settings },
     { value: "sequences", label: "ลำดับงาน", icon: PlayCircle },
     { value: "safety", label: "ความปลอดภัย", icon: AlertTriangle },
-    { value: "realtime", label: "ข��อมูลแบบ Real-time", icon: Zap },
+    { value: "realtime", label: "ข้อมูลแบบ Real-time", icon: Zap },
   ];
 
   const filteredEndpoints =
@@ -667,7 +667,7 @@ if __name__ == "__main__":
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 text-white">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -734,8 +734,8 @@ if __name__ == "__main__":
                         onClick={() => setSelectedCategory(category.value)}
                         className={`w-full flex items-center justify-between p-3 rounded-lg text-left transition-colors ${
                           selectedCategory === category.value
-                            ? "bg-blue-100 text-blue-800 border-blue-300 border"
-                            : "hover:bg-gray-100"
+                            ? "bg-blue-500/20 text-blue-300 border-blue-500/30 border"
+                            : "hover:bg-white/10"
                         }`}
                       >
                         <div className="flex items-center gap-2">
@@ -777,7 +777,7 @@ if __name__ == "__main__":
                           </Badge>
                           <h3 className="font-semibold">{endpoint.name}</h3>
                         </div>
-                        <code className="text-sm bg-gray-100 px-2 py-1 rounded">
+                        <code className="text-sm bg-white/10 px-2 py-1 rounded text-slate-300">
                           {endpoint.endpoint}
                         </code>
                         <p className="text-sm text-gray-600 mt-2">
@@ -1010,7 +1010,7 @@ print(status)`}
                 {apiCalls.map((call) => (
                   <div
                     key={call.id}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                    className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/10"
                   >
                     <div className="flex items-center gap-4">
                       <Badge
