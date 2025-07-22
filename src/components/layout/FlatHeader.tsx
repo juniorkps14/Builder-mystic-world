@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PersistenceStatus } from "@/components/ui/persistence-status";
+import { TeslaThemeToggle } from "@/components/ui/tesla-theme-toggle";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useROSIntegration } from "@/services/ROSIntegrationService";
@@ -140,6 +141,9 @@ export const FlatHeader: React.FC<FlatHeaderProps> = ({ onMenuClick }) => {
 
         {/* Persistence Status */}
         <PersistenceStatus />
+
+        {/* Tesla Theme Toggle */}
+        <TeslaThemeToggle />
 
         {/* System Info */}
         <div className="flex items-center gap-3 border-l pl-3 ml-3">
