@@ -1,5 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { persistenceService, PersistenceConfig } from '../services/PersistenceService';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import {
+  persistenceService,
+  PersistenceConfig,
+} from "../services/PersistenceService";
 
 interface PersistenceContextType {
   save: <T>(key: string, value: T, ttl?: number) => void;
@@ -11,12 +14,14 @@ interface PersistenceContextType {
   isLoaded: boolean;
 }
 
-const PersistenceContext = createContext<PersistenceContextType | undefined>(undefined);
+const PersistenceContext = createContext<PersistenceContextType | undefined>(
+  undefined,
+);
 
 export const usePersistence = () => {
   const context = useContext(PersistenceContext);
   if (!context) {
-    throw new Error('usePersistence must be used within a PersistenceProvider');
+    throw new Error("usePersistence must be used within a PersistenceProvider");
   }
   return context;
 };
@@ -28,7 +33,7 @@ interface PersistenceProviderProps {
 
 export const PersistenceProvider: React.FC<PersistenceProviderProps> = ({
   children,
-  appPrefix = 'dino-core'
+  appPrefix = "dino-core",
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -38,8 +43,8 @@ export const PersistenceProvider: React.FC<PersistenceProviderProps> = ({
       try {
         // Load any initial configuration
         const config = persistenceService.load(`${appPrefix}-config`, {
-          version: '1.0.0',
-          initialized: false
+          version: "1.0.0",
+          initialized: false,
         });
 
         if (!config.initialized) {
@@ -47,13 +52,13 @@ export const PersistenceProvider: React.FC<PersistenceProviderProps> = ({
           persistenceService.save(`${appPrefix}-config`, {
             ...config,
             initialized: true,
-            initTimestamp: Date.now()
+            initTimestamp: Date.now(),
           });
         }
 
         setIsLoaded(true);
       } catch (error) {
-        console.error('Failed to initialize persistence:', error);
+        console.error("Failed to initialize persistence:", error);
         setIsLoaded(true);
       }
     };
@@ -79,7 +84,7 @@ export const PersistenceProvider: React.FC<PersistenceProviderProps> = ({
       persistenceService.clearAll(fullPrefix);
     },
     getStorageInfo: persistenceService.getStorageInfo,
-    isLoaded
+    isLoaded,
   };
 
   return (

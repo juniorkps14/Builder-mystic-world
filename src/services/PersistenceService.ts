@@ -20,7 +20,7 @@ export class PersistenceService {
       const data = {
         value,
         timestamp: Date.now(),
-        ttl: ttl || null
+        ttl: ttl || null,
       };
       localStorage.setItem(key, JSON.stringify(data));
       this.notifyListeners(key, value);
@@ -35,7 +35,7 @@ export class PersistenceService {
       if (!item) return defaultValue;
 
       const data = JSON.parse(item);
-      
+
       // Check if data has expired
       if (data.ttl && Date.now() - data.timestamp > data.ttl) {
         localStorage.removeItem(key);
@@ -79,7 +79,7 @@ export class PersistenceService {
   private notifyListeners(key: string, value: any): void {
     const keyListeners = this.listeners.get(key);
     if (keyListeners) {
-      keyListeners.forEach(callback => callback(value));
+      keyListeners.forEach((callback) => callback(value));
     }
   }
 
@@ -102,13 +102,13 @@ export class PersistenceService {
   clearAll(prefix?: string): void {
     try {
       const keys = Object.keys(localStorage);
-      keys.forEach(key => {
+      keys.forEach((key) => {
         if (!prefix || key.startsWith(prefix)) {
           localStorage.removeItem(key);
         }
       });
     } catch (error) {
-      console.warn('Failed to clear localStorage:', error);
+      console.warn("Failed to clear localStorage:", error);
     }
   }
 
@@ -121,7 +121,7 @@ export class PersistenceService {
           used += localStorage[key].length + key.length;
         }
       }
-      
+
       // Estimate available space (5MB is typical localStorage limit)
       const total = 5 * 1024 * 1024; // 5MB in bytes
       const available = total - used;

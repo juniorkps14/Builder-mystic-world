@@ -23,7 +23,11 @@ import { usePersistence } from "@/contexts/PersistenceContext";
 
 export function PersistenceStatus() {
   const { getStorageInfo, clearAll } = usePersistence();
-  const [storageInfo, setStorageInfo] = useState({ used: 0, available: 0, percentage: 0 });
+  const [storageInfo, setStorageInfo] = useState({
+    used: 0,
+    available: 0,
+    percentage: 0,
+  });
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -51,7 +55,11 @@ export function PersistenceStatus() {
   };
 
   const handleClearData = () => {
-    if (confirm("คุณแน่ใจหรือว่าต้องการลบข้อมูลที่บันทึกไว้ทั้งหมด? การกระทำนี้ไม่สามารถยกเลิกได้")) {
+    if (
+      confirm(
+        "คุณแน่ใจหรือว่าต้องการลบข้อมูลที่บันทึกไว้ทั้งหมด? การกระทำนี้ไม่สามารถยกเลิกได้",
+      )
+    ) {
       clearAll();
       setStorageInfo({ used: 0, available: 0, percentage: 0 });
     }
@@ -73,11 +81,7 @@ export function PersistenceStatus() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-8 px-2 text-xs gap-1.5"
-        >
+        <Button variant="ghost" size="sm" className="h-8 px-2 text-xs gap-1.5">
           <StatusIcon className={`h-3 w-3 ${getStatusColor()}`} />
           <span className="hidden sm:inline">
             {formatBytes(storageInfo.used)}

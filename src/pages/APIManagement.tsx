@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { usePersistentState, usePersistentArray } from "@/hooks/use-persistence";
+import {
+  usePersistentState,
+  usePersistentArray,
+} from "@/hooks/use-persistence";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -59,15 +62,18 @@ interface APICall {
 
 export default function APIManagement() {
   // Persistent API testing state
-  const { state: selectedCategory, setState: setSelectedCategory } = usePersistentState({
-    key: "api-selected-category",
-    defaultValue: "all",
-  });
+  const { state: selectedCategory, setState: setSelectedCategory } =
+    usePersistentState({
+      key: "api-selected-category",
+      defaultValue: "all",
+    });
 
-  const { state: testEndpoint, setState: setTestEndpoint } = usePersistentState({
-    key: "api-test-endpoint",
-    defaultValue: "",
-  });
+  const { state: testEndpoint, setState: setTestEndpoint } = usePersistentState(
+    {
+      key: "api-test-endpoint",
+      defaultValue: "",
+    },
+  );
 
   const { state: testMethod, setState: setTestMethod } = usePersistentState({
     key: "api-test-method",
@@ -79,17 +85,23 @@ export default function APIManagement() {
     defaultValue: "",
   });
 
-  const { state: testResponse, setState: setTestResponse } = usePersistentState({
-    key: "api-test-response",
-    defaultValue: "",
-  });
+  const { state: testResponse, setState: setTestResponse } = usePersistentState(
+    {
+      key: "api-test-response",
+      defaultValue: "",
+    },
+  );
 
   const [isLoading, setIsLoading] = useState(false);
 
   // Persistent API call history
-  const { items: apiCalls, addItem: addApiCall, clearItems: clearApiCalls } = usePersistentArray<APICall>(
+  const {
+    items: apiCalls,
+    addItem: addApiCall,
+    clearItems: clearApiCalls,
+  } = usePersistentArray<APICall>(
     "api-call-history",
-    50 // Keep last 50 API calls
+    50, // Keep last 50 API calls
   );
 
   const apiEndpoints: APIEndpoint[] = [

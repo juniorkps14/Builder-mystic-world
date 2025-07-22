@@ -44,7 +44,11 @@ export default function Settings() {
   const [isDirty, setIsDirty] = useState(false);
 
   // Persistent Settings State
-  const { store: settings, updateField: updateSetting, saveNow } = usePersistentStore(
+  const {
+    store: settings,
+    updateField: updateSetting,
+    saveNow,
+  } = usePersistentStore(
     "user-settings",
     {
       // Interface & Theme
@@ -100,7 +104,7 @@ export default function Settings() {
     {
       autoSave: true,
       autoSaveDelay: 1000,
-    }
+    },
   );
 
   const handleSettingChange = (key: string, value: any) => {
@@ -296,7 +300,9 @@ export default function Settings() {
                   <Label>Theme</Label>
                   <Select
                     value={settings.theme}
-                    onValueChange={(value) => handleSettingChange("theme", value)}
+                    onValueChange={(value) =>
+                      handleSettingChange("theme", value)
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -313,7 +319,9 @@ export default function Settings() {
                   <Label>Language</Label>
                   <Select
                     value={settings.language}
-                    onValueChange={(value) => handleSettingChange("language", value)}
+                    onValueChange={(value) =>
+                      handleSettingChange("language", value)
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -712,7 +720,10 @@ export default function Settings() {
                     type="number"
                     value={settings.dataRetention}
                     onChange={(e) =>
-                      handleSettingChange("dataRetention", parseInt(e.target.value))
+                      handleSettingChange(
+                        "dataRetention",
+                        parseInt(e.target.value),
+                      )
                     }
                     min={1}
                     max={365}
@@ -823,7 +834,9 @@ export default function Settings() {
                 <div className="flex items-start gap-3">
                   <CheckCircle className="h-5 w-5 text-blue-600 mt-0.5" />
                   <div>
-                    <h4 className="font-medium text-blue-900 mb-1">Auto-Persistence Enabled</h4>
+                    <h4 className="font-medium text-blue-900 mb-1">
+                      Auto-Persistence Enabled
+                    </h4>
                     <p className="text-sm text-blue-700">
                       ระบบจะบันทึกการตั้งค่า, ประวัติคำสั่ง, และสถานะการทำงาน
                       อัตโนมัติ และกู้คืนเมื่อเปิดระบบใหม่
@@ -841,21 +854,27 @@ export default function Settings() {
                       <Settings className="h-4 w-4 text-gray-600" />
                       <div>
                         <p className="font-medium text-sm">User Settings</p>
-                        <p className="text-xs text-gray-500">Theme, language, preferences</p>
+                        <p className="text-xs text-gray-500">
+                          Theme, language, preferences
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                       <Terminal className="h-4 w-4 text-gray-600" />
                       <div>
                         <p className="font-medium text-sm">Terminal Sessions</p>
-                        <p className="text-xs text-gray-500">Active tabs, command history</p>
+                        <p className="text-xs text-gray-500">
+                          Active tabs, command history
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                       <Monitor className="h-4 w-4 text-gray-600" />
                       <div>
                         <p className="font-medium text-sm">Monitoring Prefs</p>
-                        <p className="text-xs text-gray-500">Chart settings, refresh rates</p>
+                        <p className="text-xs text-gray-500">
+                          Chart settings, refresh rates
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -863,22 +882,30 @@ export default function Settings() {
                     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                       <Database className="h-4 w-4 text-gray-600" />
                       <div>
-                        <p className="font-medium text-sm">API Configurations</p>
-                        <p className="text-xs text-gray-500">Test settings, call history</p>
+                        <p className="font-medium text-sm">
+                          API Configurations
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Test settings, call history
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                       <Code className="h-4 w-4 text-gray-600" />
                       <div>
                         <p className="font-medium text-sm">Dev Environment</p>
-                        <p className="text-xs text-gray-500">Code examples, active views</p>
+                        <p className="text-xs text-gray-500">
+                          Code examples, active views
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                       <Activity className="h-4 w-4 text-gray-600" />
                       <div>
                         <p className="font-medium text-sm">System State</p>
-                        <p className="text-xs text-gray-500">Last active pages, layouts</p>
+                        <p className="text-xs text-gray-500">
+                          Last active pages, layouts
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -893,9 +920,11 @@ export default function Settings() {
                     Data is stored locally in your browser using localStorage
                   </div>
                   <div className="text-xs text-gray-500">
-                    • ข้อมูลจะคงอยู่ระหว่างเซสชัน และเมื���อปิด-เปิดเบราว์เซอร์<br/>
-                    • ข้อมูลจะถูกลบเมื่อล้างข้อมูลเบราว์เซอร์<br/>
-                    • ไม่มีการส่งข้อมูลไปยังเซิร์ฟเวอร์ ข้อมูลอยู่บนเครื่องของคุณเท่านั้น
+                    • ข้อมูลจะคงอยู่ระหว่างเซสชัน และเมื���อปิด-เปิดเบราว์เซอร์
+                    <br />
+                    • ข้อมูลจะถูกลบเมื่อล้างข้อมูลเบราว์เซอร์
+                    <br />• ไม่มีการส่งข้อมูลไปยังเซิร์ฟเวอร์
+                    ข้อมูลอยู่บนเครื่องของคุณเท่านั้น
                   </div>
                 </div>
               </div>
@@ -904,7 +933,11 @@ export default function Settings() {
               <div>
                 <h4 className="font-medium mb-4">Data Controls</h4>
                 <div className="flex flex-wrap gap-3">
-                  <Button variant="outline" onClick={handleExport} className="gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={handleExport}
+                    className="gap-2"
+                  >
                     <Download className="h-4 w-4" />
                     Export All Data
                   </Button>

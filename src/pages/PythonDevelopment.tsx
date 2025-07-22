@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import { usePersistentState, usePersistentStore } from "@/hooks/use-persistence";
+import {
+  usePersistentState,
+  usePersistentStore,
+} from "@/hooks/use-persistence";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -56,7 +59,7 @@ export default function PythonDevelopment() {
       fontSize: 14,
       theme: "dark",
       autoSave: true,
-    }
+    },
   );
 
   const { activeExample } = devPrefs;

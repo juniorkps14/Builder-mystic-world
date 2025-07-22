@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { usePersistentState, usePersistentStore } from "@/hooks/use-persistence";
+import {
+  usePersistentState,
+  usePersistentStore,
+} from "@/hooks/use-persistence";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -99,18 +102,17 @@ export default function Terminal() {
     autoSaveDelay: 2000,
   });
 
-  const { store: terminalPrefs, updateField: updateTerminalPref } = usePersistentStore(
-    "terminal-preferences",
-    {
+  const { store: terminalPrefs, updateField: updateTerminalPref } =
+    usePersistentStore("terminal-preferences", {
       activeTabId: "1",
       currentCommand: "",
       isConnected: true,
       fontSize: 14,
       theme: "dark",
-    }
-  );
+    });
 
-  const { activeTabId, currentCommand, isConnected, fontSize, theme } = terminalPrefs;
+  const { activeTabId, currentCommand, isConnected, fontSize, theme } =
+    terminalPrefs;
 
   const commandInputRef = useRef<HTMLInputElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
@@ -650,7 +652,10 @@ export default function Terminal() {
       ),
     );
 
-    updateTerminalPref("currentCommand", newIndex === -1 ? "" : history[newIndex]);
+    updateTerminalPref(
+      "currentCommand",
+      newIndex === -1 ? "" : history[newIndex],
+    );
   };
 
   const clearTerminal = () => {
@@ -879,7 +884,9 @@ export default function Terminal() {
             <input
               ref={commandInputRef}
               value={currentCommand}
-              onChange={(e) => updateTerminalPref("currentCommand", e.target.value)}
+              onChange={(e) =>
+                updateTerminalPref("currentCommand", e.target.value)
+              }
               onKeyDown={handleKeyDown}
               className="flex-1 bg-transparent border-none outline-none text-green-400 font-mono"
               style={{ fontSize: `${fontSize}px` }}

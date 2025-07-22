@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { usePersistence as useBasePersistence } from '../contexts/PersistenceContext';
+import { useEffect, useState, useCallback, useRef } from "react";
+import { usePersistence as useBasePersistence } from "../contexts/PersistenceContext";
 
 interface UsePersistentStateOptions {
   key: string;
@@ -14,7 +14,7 @@ export function usePersistentState<T>({
   defaultValue,
   ttl,
   autoSave = true,
-  autoSaveDelay = 1000
+  autoSaveDelay = 1000,
 }: UsePersistentStateOptions) {
   const { save, load, subscribe } = useBasePersistence();
   const [state, setState] = useState<T>(() => load(key, defaultValue));
@@ -39,7 +39,7 @@ export function usePersistentState<T>({
 
     if (autoSave && !isLoading) {
       setIsSaving(true);
-      
+
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
@@ -80,10 +80,11 @@ export function usePersistentState<T>({
 
   // Update state function
   const updateState = useCallback((newState: T | ((prevState: T) => T)) => {
-    setState(prevState => {
-      const nextState = typeof newState === 'function' 
-        ? (newState as (prevState: T) => T)(prevState)
-        : newState;
+    setState((prevState) => {
+      const nextState =
+        typeof newState === "function"
+          ? (newState as (prevState: T) => T)(prevState)
+          : newState;
       return nextState;
     });
   }, []);
@@ -93,7 +94,7 @@ export function usePersistentState<T>({
     setState: updateState,
     saveNow,
     isLoading,
-    isSaving
+    isSaving,
   };
 }
 
@@ -105,33 +106,39 @@ export function usePersistentStore<T extends Record<string, any>>(
     ttl?: number;
     autoSave?: boolean;
     autoSaveDelay?: number;
-  }
+  },
 ) {
   const {
     state: store,
     setState: setStore,
     saveNow,
     isLoading,
-    isSaving
+    isSaving,
   } = usePersistentState({
     key: storeKey,
     defaultValue: initialState,
-    ...options
+    ...options,
   });
 
-  const updateField = useCallback(<K extends keyof T>(key: K, value: T[K]) => {
-    setStore(prevStore => ({
-      ...prevStore,
-      [key]: value
-    }));
-  }, [setStore]);
+  const updateField = useCallback(
+    <K extends keyof T>(key: K, value: T[K]) => {
+      setStore((prevStore) => ({
+        ...prevStore,
+        [key]: value,
+      }));
+    },
+    [setStore],
+  );
 
-  const updateFields = useCallback((updates: Partial<T>) => {
-    setStore(prevStore => ({
-      ...prevStore,
-      ...updates
-    }));
-  }, [setStore]);
+  const updateFields = useCallback(
+    (updates: Partial<T>) => {
+      setStore((prevStore) => ({
+        ...prevStore,
+        ...updates,
+      }));
+    },
+    [setStore],
+  );
 
   const resetStore = useCallback(() => {
     setStore(initialState);
@@ -145,7 +152,7 @@ export function usePersistentStore<T extends Record<string, any>>(
     setStore,
     saveNow,
     isLoading,
-    isSaving
+    isSaving,
   };
 }
 
@@ -157,40 +164,49 @@ export function usePersistentArray<T>(
     ttl?: number;
     autoSave?: boolean;
     autoSaveDelay?: number;
-  }
+  },
 ) {
   const {
     state: items,
     setState: setItems,
     saveNow,
     isLoading,
-    isSaving
+    isSaving,
   } = usePersistentState({
     key,
     defaultValue: [] as T[],
-    ...options
+    ...options,
   });
 
-  const addItem = useCallback((item: T) => {
-    setItems(prevItems => {
-      const newItems = [item, ...prevItems];
-      return maxItems ? newItems.slice(0, maxItems) : newItems;
-    });
-  }, [setItems, maxItems]);
+  const addItem = useCallback(
+    (item: T) => {
+      setItems((prevItems) => {
+        const newItems = [item, ...prevItems];
+        return maxItems ? newItems.slice(0, maxItems) : newItems;
+      });
+    },
+    [setItems, maxItems],
+  );
 
-  const removeItem = useCallback((index: number) => {
-    setItems(prevItems => prevItems.filter((_, i) => i !== index));
-  }, [setItems]);
+  const removeItem = useCallback(
+    (index: number) => {
+      setItems((prevItems) => prevItems.filter((_, i) => i !== index));
+    },
+    [setItems],
+  );
 
   const clearItems = useCallback(() => {
     setItems([]);
   }, [setItems]);
 
-  const updateItem = useCallback((index: number, item: T) => {
-    setItems(prevItems => 
-      prevItems.map((prevItem, i) => i === index ? item : prevItem)
-    );
-  }, [setItems]);
+  const updateItem = useCallback(
+    (index: number, item: T) => {
+      setItems((prevItems) =>
+        prevItems.map((prevItem, i) => (i === index ? item : prevItem)),
+      );
+    },
+    [setItems],
+  );
 
   return {
     items,
@@ -201,6 +217,6 @@ export function usePersistentArray<T>(
     setItems,
     saveNow,
     isLoading,
-    isSaving
+    isSaving,
   };
 }
