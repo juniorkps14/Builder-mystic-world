@@ -42,6 +42,8 @@ import {
   TrendingUp,
   TrendingDown,
   Minus,
+  BarChart3,
+  Monitor,
 } from "lucide-react";
 
 interface SystemMetrics {
@@ -103,6 +105,22 @@ export default function SystemMonitoring() {
   React.useEffect(() => {
     document.body.classList.add("tesla-ui");
   }, []);
+
+  // Persistent monitoring preferences
+  const { store: monitoringPrefs, updateField: updateMonitoringPref } = usePersistentStore(
+    "monitoring-preferences",
+    {
+      autoRefresh: true,
+      refreshInterval: 5000,
+      showCharts: true,
+      compactView: false,
+      theme: "dark",
+    }
+  );
+
+  const { autoRefresh, refreshInterval } = monitoringPrefs;
+  const [lastUpdate, setLastUpdate] = useState(new Date());
+
   const [metrics, setMetrics] = useState<SystemMetrics>({
     cpu: {
       usage: 45,
@@ -166,19 +184,6 @@ export default function SystemMonitoring() {
     }>
   >([]);
 
-  // Persistent monitoring preferences
-  const { store: monitoringPrefs, updateField: updateMonitoringPref } =
-    usePersistentStore("monitoring-preferences", {
-      autoRefresh: true,
-      refreshInterval: 5000,
-      showCharts: true,
-      compactView: false,
-      theme: "dark",
-    });
-
-  const { autoRefresh, refreshInterval } = monitoringPrefs;
-  const [lastUpdate, setLastUpdate] = useState(new Date());
-
   useEffect(() => {
     const generateHistoricalData = () => {
       const data = [];
@@ -232,34 +237,11 @@ export default function SystemMonitoring() {
         },
       }));
 
-      // Update historical data
-      setHistoricalData((prev) => {
-        const newData = [...prev.slice(1)];
-        newData.push({
-          time: new Date().toLocaleTimeString("en-US", {
-            hour12: false,
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-          cpu: metrics.cpu.usage,
-          memory: (metrics.memory.used / metrics.memory.total) * 100,
-          disk: (metrics.disk.used / metrics.disk.total) * 100,
-          network: Math.random() * 100,
-        });
-        return newData;
-      });
-
       setLastUpdate(new Date());
     }, refreshInterval);
 
     return () => clearInterval(interval);
-  }, [
-    autoRefresh,
-    refreshInterval,
-    metrics.cpu.usage,
-    metrics.memory.used,
-    metrics.disk.used,
-  ]);
+  }, [autoRefresh, refreshInterval]);
 
   const formatBytes = (bytes: number): string => {
     if (bytes === 0) return "0 B";
@@ -280,101 +262,77 @@ export default function SystemMonitoring() {
     switch (status) {
       case "active":
       case "up":
-        return "text-green-600 bg-green-100";
+        return "text-emerald-400 bg-emerald-500/20 border-emerald-500/30";
       case "inactive":
       case "down":
-        return "text-gray-600 bg-gray-100";
+        return "text-gray-400 bg-gray-500/20 border-gray-500/30";
       case "error":
-        return "text-red-600 bg-red-100";
+        return "text-red-400 bg-red-500/20 border-red-500/30";
       default:
-        return "text-blue-600 bg-blue-100";
+        return "text-blue-400 bg-blue-500/20 border-blue-500/30";
     }
   };
 
   const getTrendIcon = (current: number, threshold: number) => {
     if (current > threshold + 10)
-      return <TrendingUp className="h-4 w-4 text-red-500" />;
+      return <TrendingUp className="h-4 w-4 text-red-400" />;
     if (current < threshold - 10)
-      return <TrendingDown className="h-4 w-4 text-green-500" />;
-    return <Minus className="h-4 w-4 text-gray-500" />;
+      return <TrendingDown className="h-4 w-4 text-emerald-400" />;
+    return <Minus className="h-4 w-4 text-gray-400" />;
   };
-
-  const pieData = [
-    { name: "Used", value: metrics.memory.used, color: "#ef4444" },
-    { name: "Cached", value: metrics.memory.cached, color: "#f59e0b" },
-    { name: "Free", value: metrics.memory.free, color: "#10b981" },
-  ];
-
-  const processData = [
-    {
-      name: "Running",
-      value: metrics.system.processes.running,
-      color: "#10b981",
-    },
-    {
-      name: "Sleeping",
-      value: metrics.system.processes.sleeping,
-      color: "#3b82f6",
-    },
-    {
-      name: "Zombie",
-      value: metrics.system.processes.zombie,
-      color: "#ef4444",
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 text-white">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-4xl font-extralight bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text text-transparent">
-            System Monitoring
-          </h1>
-          <p className="text-muted-foreground font-light mt-2">
-            Real-time system performance and ROS node monitoring
-          </p>
-        </div>
+      {/* Tesla Header */}
+      <div className="mb-8">
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-2xl">
+          <div className="flex items-center justify-between">
+            <div className="space-y-2">
+              <h1 className="text-4xl font-light tracking-tight bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent">
+                System Monitoring
+              </h1>
+              <p className="text-slate-300 font-light">
+                Real-time system performance and health monitoring
+              </p>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <Badge
+                className={`px-4 py-2 ${
+                  autoRefresh
+                    ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                    : "bg-gray-500/20 text-gray-300 border border-gray-500/30"
+                }`}
+              >
+                {autoRefresh ? (
+                  <>
+                    <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
+                    Auto-Refresh
+                  </>
+                ) : (
+                  <>
+                    <Clock className="h-3 w-3 mr-1" />
+                    Paused
+                  </>
+                )}
+              </Badge>
 
-        <div className="flex items-center gap-3">
-          <Badge
-            className={
-              autoRefresh
-                ? "bg-green-100 text-green-700"
-                : "bg-gray-100 text-gray-700"
-            }
-          >
-            {autoRefresh ? (
-              <>
-                <Activity className="h-3 w-3 mr-1 animate-pulse" />
-                Live
-              </>
-            ) : (
-              <>
-                <Clock className="h-3 w-3 mr-1" />
-                Paused
-              </>
-            )}
-          </Badge>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setAutoRefresh(!autoRefresh)}
-            className="gap-2"
-          >
-            {autoRefresh ? (
-              <>
-                <RefreshCw className="h-4 w-4 animate-spin" />
-                Pause
-              </>
-            ) : (
-              <>
-                <RefreshCw className="h-4 w-4" />
-                Resume
-              </>
-            )}
-          </Button>
+              <Button
+                onClick={() => updateMonitoringPref("autoRefresh", !autoRefresh)}
+                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white gap-2"
+              >
+                {autoRefresh ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 animate-spin" />
+                    Pause
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="h-4 w-4" />
+                    Resume
+                  </>
+                )}
+              </Button>
 
               <Button className="bg-white/10 hover:bg-white/20 border border-white/20 text-white gap-2">
                 <Download className="h-4 w-4" />
@@ -387,59 +345,56 @@ export default function SystemMonitoring() {
 
       {/* Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card className="p-6">
+        <Card className="bg-white/10 backdrop-blur-xl border border-white/20 p-6 shadow-xl hover:bg-white/15 transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">CPU Usage</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-slate-400 text-sm">CPU Usage</p>
+              <p className="text-2xl font-light text-white">
                 {metrics.cpu.usage.toFixed(1)}%
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-slate-400">
                 {metrics.cpu.cores} cores @ {metrics.cpu.frequency}MHz
               </p>
             </div>
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <Cpu className="h-6 w-6 text-blue-600" />
+            <div className="h-12 w-12 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl flex items-center justify-center">
+              <Cpu className="h-6 w-6 text-blue-400" />
             </div>
           </div>
           <div className="mt-4">
-            <Progress value={metrics.cpu.usage} className="h-2" />
+            <Progress value={metrics.cpu.usage} className="h-2 bg-slate-700" />
           </div>
           <div className="flex items-center justify-between mt-2">
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-slate-400">
               Temp: {metrics.cpu.temperature}°C
             </span>
             {getTrendIcon(metrics.cpu.usage, 50)}
           </div>
         </Card>
 
-        <Card className="p-6">
+        <Card className="bg-white/10 backdrop-blur-xl border border-white/20 p-6 shadow-xl hover:bg-white/15 transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Memory</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {((metrics.memory.used / metrics.memory.total) * 100).toFixed(
-                  1,
-                )}
-                %
+              <p className="text-slate-400 text-sm">Memory</p>
+              <p className="text-2xl font-light text-white">
+                {((metrics.memory.used / metrics.memory.total) * 100).toFixed(1)}%
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-slate-400">
                 {formatBytes(metrics.memory.used * 1024 * 1024)} /{" "}
                 {formatBytes(metrics.memory.total * 1024 * 1024)}
               </p>
             </div>
-            <div className="p-3 bg-green-100 rounded-lg">
-              <Database className="h-6 w-6 text-green-600" />
+            <div className="h-12 w-12 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-xl flex items-center justify-center">
+              <Database className="h-6 w-6 text-emerald-400" />
             </div>
           </div>
           <div className="mt-4">
             <Progress
               value={(metrics.memory.used / metrics.memory.total) * 100}
-              className="h-2"
+              className="h-2 bg-slate-700"
             />
           </div>
           <div className="flex items-center justify-between mt-2">
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-slate-400">
               Cached: {formatBytes(metrics.memory.cached * 1024 * 1024)}
             </span>
             {getTrendIcon(
@@ -449,324 +404,173 @@ export default function SystemMonitoring() {
           </div>
         </Card>
 
-        <Card className="p-6">
+        <Card className="bg-white/10 backdrop-blur-xl border border-white/20 p-6 shadow-xl hover:bg-white/15 transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Disk Usage</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-slate-400 text-sm">Disk Usage</p>
+              <p className="text-2xl font-light text-white">
                 {((metrics.disk.used / metrics.disk.total) * 100).toFixed(1)}%
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-slate-400">
                 {formatBytes(metrics.disk.used * 1024 * 1024)} /{" "}
                 {formatBytes(metrics.disk.total * 1024 * 1024)}
               </p>
             </div>
-            <div className="p-3 bg-purple-100 rounded-lg">
-              <HardDrive className="h-6 w-6 text-purple-600" />
+            <div className="h-12 w-12 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-xl flex items-center justify-center">
+              <HardDrive className="h-6 w-6 text-purple-400" />
             </div>
           </div>
           <div className="mt-4">
             <Progress
               value={(metrics.disk.used / metrics.disk.total) * 100}
-              className="h-2"
+              className="h-2 bg-slate-700"
             />
           </div>
           <div className="flex items-center justify-between mt-2">
-            <span className="text-xs text-gray-500">
-              I/O: {metrics.disk.io.read}MB/s ↓ {metrics.disk.io.write}MB/s ↑
+            <span className="text-xs text-slate-400">
+              Free: {formatBytes(metrics.disk.free * 1024 * 1024)}
             </span>
             {getTrendIcon((metrics.disk.used / metrics.disk.total) * 100, 80)}
           </div>
         </Card>
 
-        <Card className="p-6">
+        <Card className="bg-white/10 backdrop-blur-xl border border-white/20 p-6 shadow-xl hover:bg-white/15 transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Load Average</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {metrics.system.loadAverage[0].toFixed(2)}
+              <p className="text-slate-400 text-sm">System Load</p>
+              <p className="text-2xl font-light text-white">
+                {metrics.system.loadAverage[0].toFixed(1)}
               </p>
-              <p className="text-xs text-gray-500">
-                {metrics.system.loadAverage[1].toFixed(2)} |{" "}
-                {metrics.system.loadAverage[2].toFixed(2)}
+              <p className="text-xs text-slate-400">
+                {formatUptime(metrics.system.uptime)} uptime
               </p>
             </div>
-            <div className="p-3 bg-orange-100 rounded-lg">
-              <Activity className="h-6 w-6 text-orange-600" />
+            <div className="h-12 w-12 bg-gradient-to-br from-orange-500/20 to-red-500/20 rounded-xl flex items-center justify-center">
+              <Activity className="h-6 w-6 text-orange-400" />
             </div>
           </div>
           <div className="mt-4">
             <Progress
-              value={(metrics.system.loadAverage[0] / metrics.cpu.cores) * 100}
-              className="h-2"
+              value={metrics.system.loadAverage[0] * 20}
+              className="h-2 bg-slate-700"
             />
           </div>
           <div className="flex items-center justify-between mt-2">
-            <span className="text-xs text-gray-500">
-              Uptime: {formatUptime(metrics.system.uptime)}
+            <span className="text-xs text-slate-400">
+              Processes: {metrics.system.processes.total}
             </span>
-            {getTrendIcon(metrics.system.loadAverage[0], 2)}
+            {getTrendIcon(metrics.system.loadAverage[0] * 20, 60)}
           </div>
         </Card>
       </div>
 
-      {/* Detailed Monitoring */}
-      <Tabs defaultValue="performance" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="performance">Performance</TabsTrigger>
-          <TabsTrigger value="processes">Processes</TabsTrigger>
-          <TabsTrigger value="network">Network</TabsTrigger>
-          <TabsTrigger value="ros">ROS Nodes</TabsTrigger>
-        </TabsList>
-
-        {/* Performance Charts */}
-        <TabsContent value="performance">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">
-                System Performance (24h)
-              </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={historicalData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="time" />
-                  <YAxis domain={[0, 100]} />
-                  <Tooltip
-                    formatter={(value: number) => [`${value.toFixed(1)}%`]}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="cpu"
-                    stroke="#3b82f6"
-                    strokeWidth={2}
-                    name="CPU"
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="memory"
-                    stroke="#10b981"
-                    strokeWidth={2}
-                    name="Memory"
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="disk"
-                    stroke="#8b5cf6"
-                    strokeWidth={2}
-                    name="Disk"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </Card>
-
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">
-                Memory Distribution
-              </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={pieData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={120}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {pieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    formatter={(value: number) => [
-                      formatBytes(value * 1024 * 1024),
-                    ]}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="flex justify-center gap-4 mt-4">
-                {pieData.map((entry, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <div
-                      className="w-3 h-3 rounded"
-                      style={{ backgroundColor: entry.color }}
-                    />
-                    <span className="text-sm">{entry.name}</span>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          </div>
-        </TabsContent>
-
-        {/* Process Management */}
-        <TabsContent value="processes">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Process Overview</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Total Processes</span>
-                  <Badge>{metrics.system.processes.total}</Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Running</span>
-                  <Badge className="bg-green-100 text-green-700">
-                    {metrics.system.processes.running}
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Sleeping</span>
-                  <Badge className="bg-blue-100 text-blue-700">
-                    {metrics.system.processes.sleeping}
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Zombie</span>
-                  <Badge className="bg-red-100 text-red-700">
-                    {metrics.system.processes.zombie}
-                  </Badge>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Charts Section */}
+        <div className="lg:col-span-2">
+          <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl">
+            <div className="p-6">
+              <h3 className="text-xl font-light text-white mb-6">Performance Trends</h3>
+              
+              {/* Chart Placeholder */}
+              <div className="aspect-video bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-white/10 flex items-center justify-center">
+                <div className="text-center">
+                  <BarChart3 className="h-16 w-16 text-blue-400 mx-auto mb-4" />
+                  <p className="text-slate-300">Real-time Performance Charts</p>
+                  <p className="text-slate-400 text-sm mt-2">CPU, Memory, and Network usage over time</p>
                 </div>
               </div>
-            </Card>
-
-            <Card className="p-6 lg:col-span-2">
-              <h3 className="text-lg font-semibold mb-4">
-                Process Distribution
-              </h3>
-              <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={processData} layout="horizontal">
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" />
-                  <YAxis dataKey="name" type="category" width={80} />
-                  <Tooltip />
-                  <Bar dataKey="value" fill="#3b82f6" />
-                </BarChart>
-              </ResponsiveContainer>
-            </Card>
-          </div>
-        </TabsContent>
-
-        {/* Network Status */}
-        <TabsContent value="network">
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-6">Network Interfaces</h3>
-            <div className="space-y-4">
-              {metrics.network.interfaces.map((iface, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="p-2 bg-blue-100 rounded-lg">
-                      <Network className="h-5 w-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium">{iface.name}</h4>
-                      <p className="text-sm text-gray-500">
-                        Speed: {iface.speed > 0 ? `${iface.speed} Mbps` : "N/A"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-6">
-                    <div className="text-center">
-                      <p className="text-sm text-gray-500">RX</p>
-                      <p className="font-medium">{formatBytes(iface.rx)}/s</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-sm text-gray-500">TX</p>
-                      <p className="font-medium">{formatBytes(iface.tx)}/s</p>
-                    </div>
-                    <Badge className={getStatusColor(iface.status)}>
-                      {iface.status.toUpperCase()}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
             </div>
           </Card>
-        </TabsContent>
+        </div>
 
-        {/* ROS Node Status */}
-        <TabsContent value="ros">
-          <div className="space-y-6">
-            <Card className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold">ROS System Status</h3>
-                <div className="flex items-center gap-4">
-                  <Badge
-                    className={
-                      metrics.ros.masterRunning
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }
-                  >
-                    {metrics.ros.masterRunning ? (
-                      <>
-                        <CheckCircle className="h-3 w-3 mr-1" />
-                        Master Running
-                      </>
-                    ) : (
-                      <>
-                        <AlertTriangle className="h-3 w-3 mr-1" />
-                        Master Down
-                      </>
-                    )}
-                  </Badge>
-                  <Badge>Topics: {metrics.ros.topics}</Badge>
-                  <Badge>Services: {metrics.ros.services}</Badge>
+        {/* ROS Nodes & System Info */}
+        <div className="space-y-6">
+          {/* ROS Nodes */}
+          <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
+            <div className="p-6">
+              <h3 className="text-lg font-light text-white mb-4">ROS Nodes</h3>
+              <ScrollArea className="h-[200px]">
+                <div className="space-y-3">
+                  {metrics.ros.nodes.map((node, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-3 h-3 rounded-full ${
+                            node.status === "active"
+                              ? "bg-emerald-400"
+                              : node.status === "error"
+                              ? "bg-red-400"
+                              : "bg-gray-400"
+                          }`}
+                        />
+                        <div>
+                          <p className="text-white text-sm font-medium">{node.name}</p>
+                          <p className="text-slate-400 text-xs">
+                            {node.cpu.toFixed(1)}% CPU | {node.memory.toFixed(1)}MB
+                          </p>
+                        </div>
+                      </div>
+                      <Badge className={getStatusColor(node.status)}>
+                        {node.status}
+                      </Badge>
+                    </div>
+                  ))}
                 </div>
-              </div>
+              </ScrollArea>
+            </div>
+          </Card>
 
+          {/* Network Interfaces */}
+          <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
+            <div className="p-6">
+              <h3 className="text-lg font-light text-white mb-4">Network Interfaces</h3>
               <div className="space-y-3">
-                {metrics.ros.nodes.map((node, index) => (
+                {metrics.network.interfaces.map((iface, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10"
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="p-2 bg-purple-100 rounded-lg">
-                        <Server className="h-5 w-5 text-purple-600" />
-                      </div>
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-3 h-3 rounded-full ${
+                          iface.status === "up" ? "bg-emerald-400" : "bg-red-400"
+                        }`}
+                      />
                       <div>
-                        <h4 className="font-medium">{node.name}</h4>
-                        <p className="text-sm text-gray-500">
-                          CPU: {node.cpu.toFixed(1)}% | Memory:{" "}
-                          {node.memory.toFixed(1)} MB
+                        <p className="text-white text-sm font-medium">{iface.name}</p>
+                        <p className="text-slate-400 text-xs">
+                          ↑{iface.tx}KB/s ↓{iface.rx}KB/s
                         </p>
                       </div>
                     </div>
-
-                    <div className="flex items-center gap-4">
-                      <div className="text-right">
-                        <Progress value={node.cpu} className="w-20 h-2" />
-                        <p className="text-xs text-gray-500 mt-1">CPU Usage</p>
-                      </div>
-                      <Badge className={getStatusColor(node.status)}>
-                        {node.status.toUpperCase()}
-                      </Badge>
-                    </div>
+                    <Badge className={getStatusColor(iface.status)}>
+                      {iface.status}
+                    </Badge>
                   </div>
                 ))}
               </div>
-            </Card>
-          </div>
-        </TabsContent>
-      </Tabs>
+            </div>
+          </Card>
+        </div>
+      </div>
 
       {/* Footer Status */}
       <div className="mt-8 flex items-center justify-between text-sm text-slate-400 bg-white/10 p-4 rounded-lg border border-white/20">
         <div className="flex items-center gap-4">
-          <span>Last updated: {lastUpdate.toLocaleTimeString()}</span>
-          <span>Refresh interval: {refreshInterval / 1000}s</span>
+          <span>Last Update: {lastUpdate.toLocaleTimeString()}</span>
+          <span>•</span>
+          <span>ROS Master: {metrics.ros.masterRunning ? "Running" : "Stopped"}</span>
+          <span>•</span>
+          <span>Topics: {metrics.ros.topics}</span>
+          <span>•</span>
+          <span>Services: {metrics.ros.services}</span>
         </div>
-        <div className="flex items-center gap-4">
-          <Badge className="bg-blue-100 text-blue-700">
-            <Eye className="h-3 w-3 mr-1" />
-            Monitoring {Object.keys(metrics).length} systems
-          </Badge>
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+          <span>System Healthy</span>
         </div>
       </div>
     </div>
