@@ -41,6 +41,7 @@ import LogViewer from "./pages/LogViewer";
 import ROSTerminal from "./pages/ROSTerminal";
 import SystemTerminal from "./pages/SystemTerminal";
 import SystemConfiguration from "./pages/SystemConfiguration";
+import SystemMonitoring from "./pages/SystemMonitoring";
 import ROSSetup from "./pages/ROSSetup";
 import NotFound from "./pages/NotFound";
 
@@ -115,10 +116,14 @@ const FlatApp = () => {
                         <Route path="/services" element={<Services />} />
                         <Route path="/parameters" element={<Parameters />} />
                         <Route path="/logs" element={<LogViewer />} />
-                        <Route path="/terminal" element={<ROSTerminal />} />
+                        <Route path="/terminal" element={<Terminal />} />
                         <Route
                           path="/system-terminal"
                           element={<SystemTerminal />}
+                        />
+                        <Route
+                          path="/system-monitoring"
+                          element={<SystemMonitoring />}
                         />
                         <Route
                           path="/microcontroller-connections"

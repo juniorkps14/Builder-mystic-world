@@ -86,6 +86,22 @@ const navigationSections: NavSection[] = [
     title: "Monitoring",
     items: [
       {
+        title: "System Monitor",
+        icon: BarChart3,
+        href: "/system-monitoring",
+        badge: "Live",
+        color: "text-slate-600",
+        bgColor: "bg-slate-100",
+      },
+      {
+        title: "Terminal",
+        icon: Terminal,
+        href: "/terminal",
+        badge: "Multi",
+        color: "text-green-600",
+        bgColor: "bg-green-100",
+      },
+      {
         title: "Cameras",
         icon: Eye,
         href: "/cameras",
@@ -107,13 +123,6 @@ const navigationSections: NavSection[] = [
         href: "/navigation",
         color: "text-emerald-600",
         bgColor: "bg-emerald-100",
-      },
-      {
-        title: "System Monitor",
-        icon: BarChart3,
-        href: "/system",
-        color: "text-slate-600",
-        bgColor: "bg-slate-100",
       },
     ],
   },
@@ -201,6 +210,14 @@ const navigationSections: NavSection[] = [
         href: "/settings",
         color: "text-gray-600",
         bgColor: "bg-gray-100",
+      },
+      {
+        title: "System Config",
+        icon: Cpu,
+        href: "/system-configuration",
+        badge: "Pro",
+        color: "text-violet-600",
+        bgColor: "bg-violet-100",
       },
       {
         title: "About",
