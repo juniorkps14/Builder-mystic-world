@@ -99,6 +99,10 @@ interface SystemMetrics {
 }
 
 export default function SystemMonitoring() {
+  // Apply Tesla theme
+  React.useEffect(() => {
+    document.body.classList.add("tesla-ui");
+  }, []);
   const [metrics, setMetrics] = useState<SystemMetrics>({
     cpu: {
       usage: 45,
