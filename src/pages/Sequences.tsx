@@ -360,69 +360,165 @@ export default function Sequences() {
         </div>
       </div>
 
-      {/* Status Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {/* Active Sequences Card */}
-        <Card className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 hover:bg-white/10 transition-all duration-300 shadow-xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-400 text-sm font-medium">Active Sequences</p>
-              <p className="text-2xl font-light text-white mt-1">
-                {sequences.filter(s => s.status === "running").length}
-              </p>
-            </div>
-            <div className="h-12 w-12 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl flex items-center justify-center">
-              <PlayCircle className="h-6 w-6 text-blue-400" />
-            </div>
-          </div>
-        </Card>
-
-        {/* Execution Status Card */}
-        <Card className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 hover:bg-white/10 transition-all duration-300 shadow-xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-400 text-sm font-medium">Execution Status</p>
-              <p className="text-2xl font-light text-white mt-1">{executionStatus.totalProgress}%</p>
-              <div className="mt-2">
-                <Progress
-                  value={executionStatus.totalProgress}
-                  className="h-2 bg-slate-700"
-                />
+      {/* Status Cards and Controls Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {/* Status Cards */}
+        <div className="lg:col-span-2">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            {/* Active Sequences Card */}
+            <Card className="bg-white/5 backdrop-blur-xl border border-white/10 p-4 hover:bg-white/10 transition-all duration-300 shadow-xl">
+              <div className="text-center">
+                <div className="h-10 w-10 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl flex items-center justify-center mx-auto mb-2">
+                  <PlayCircle className="h-5 w-5 text-blue-400" />
+                </div>
+                <p className="text-slate-400 text-xs font-medium">Active Sequences</p>
+                <p className="text-xl font-light text-white mt-1">
+                  {sequences.filter(s => s.status === "running").length}
+                </p>
               </div>
-            </div>
-            <div className="h-12 w-12 bg-gradient-to-br from-emerald-500/20 to-green-500/20 rounded-xl flex items-center justify-center">
-              <Activity className="h-6 w-6 text-emerald-400" />
-            </div>
-          </div>
-        </Card>
+            </Card>
 
-        {/* System Info Card */}
-        <Card className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 hover:bg-white/10 transition-all duration-300 shadow-xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-400 text-sm font-medium">Success Rate</p>
-              <p className="text-2xl font-light text-white mt-1">96.2%</p>
-            </div>
-            <div className="h-12 w-12 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-xl flex items-center justify-center">
-              <CheckCircle2 className="h-6 w-6 text-emerald-400" />
-            </div>
-          </div>
-        </Card>
+            {/* Execution Status Card */}
+            <Card className="bg-white/5 backdrop-blur-xl border border-white/10 p-4 hover:bg-white/10 transition-all duration-300 shadow-xl">
+              <div className="text-center">
+                <div className="h-10 w-10 bg-gradient-to-br from-emerald-500/20 to-green-500/20 rounded-xl flex items-center justify-center mx-auto mb-2">
+                  <Activity className="h-5 w-5 text-emerald-400" />
+                </div>
+                <p className="text-slate-400 text-xs font-medium">Progress</p>
+                <p className="text-xl font-light text-white mt-1">{executionStatus.totalProgress}%</p>
+              </div>
+            </Card>
 
-        {/* Recent Logs Card */}
-        <Card className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 hover:bg-white/10 transition-all duration-300 shadow-xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-400 text-sm font-medium">Active Tasks</p>
-              <p className="text-2xl font-light text-white mt-1">
-                {tasks.filter(t => t.status === "running").length}
-              </p>
-            </div>
-            <div className="h-12 w-12 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-xl flex items-center justify-center">
-              <Timer className="h-6 w-6 text-purple-400" />
-            </div>
+            {/* Success Rate Card */}
+            <Card className="bg-white/5 backdrop-blur-xl border border-white/10 p-4 hover:bg-white/10 transition-all duration-300 shadow-xl">
+              <div className="text-center">
+                <div className="h-10 w-10 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-xl flex items-center justify-center mx-auto mb-2">
+                  <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                </div>
+                <p className="text-slate-400 text-xs font-medium">Success Rate</p>
+                <p className="text-xl font-light text-white mt-1">96.2%</p>
+              </div>
+            </Card>
+
+            {/* Active Tasks Card */}
+            <Card className="bg-white/5 backdrop-blur-xl border border-white/10 p-4 hover:bg-white/10 transition-all duration-300 shadow-xl">
+              <div className="text-center">
+                <div className="h-10 w-10 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-xl flex items-center justify-center mx-auto mb-2">
+                  <Timer className="h-5 w-5 text-purple-400" />
+                </div>
+                <p className="text-slate-400 text-xs font-medium">Active Tasks</p>
+                <p className="text-xl font-light text-white mt-1">
+                  {tasks.filter(t => t.status === "running").length}
+                </p>
+              </div>
+            </Card>
           </div>
-        </Card>
+
+          {/* Sequence Selection */}
+          <Card className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 shadow-xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-light text-white">Available Sequences</h3>
+              <Button
+                onClick={() => setIsSequenceDialogOpen(true)}
+                className="bg-white/10 hover:bg-white/20 border border-white/20"
+                size="sm"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                New Sequence
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 gap-3">
+              {sequences.map((sequence) => (
+                <div
+                  key={sequence.id}
+                  onClick={() => updateField("selectedSequenceId", sequence.id)}
+                  className={`p-4 rounded-lg border transition-all duration-200 cursor-pointer ${
+                    sequencePrefs.selectedSequenceId === sequence.id
+                      ? "bg-blue-500/10 border-blue-400"
+                      : "bg-white/5 border-white/10 hover:bg-white/10"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3">
+                        <FolderOpen className="h-4 w-4 text-blue-400" />
+                        <h4 className="font-medium text-white">{sequence.name}</h4>
+                        <Badge className={`text-xs ${getStatusColor(sequence.status)}`}>
+                          {sequence.status}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-slate-400 mt-1">{sequence.description}</p>
+                      <div className="flex items-center gap-4 mt-2 text-xs text-slate-400">
+                        <span>{sequence.taskCount} tasks</span>
+                        <span>{sequence.successRate}% success</span>
+                        {sequence.lastExecuted && (
+                          <span>Last: {sequence.lastExecuted.toLocaleTimeString()}</span>
+                        )}
+                      </div>
+                    </div>
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRunSequence(sequence.id);
+                      }}
+                      className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600"
+                      size="sm"
+                    >
+                      <Play className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
+
+        {/* Execution Logs - Moved from bottom to top section */}
+        <div className="lg:col-span-1">
+          <Card className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl h-full">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-light text-white">Execution Logs</h3>
+                <Button size="sm" className="bg-white/10 hover:bg-white/20 border border-white/20">
+                  <FileText className="h-4 w-4" />
+                </Button>
+              </div>
+
+              <ScrollArea className="h-[400px]">
+                <div className="space-y-2">
+                  {logs.map((log, index) => (
+                    <div key={index} className="flex gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors">
+                      <span className="text-xs font-mono text-slate-400 w-16 flex-shrink-0">{log.time}</span>
+                      <span className={`text-xs font-medium w-12 flex-shrink-0 ${
+                        log.level === "INFO" ? "text-blue-400" :
+                        log.level === "WARN" ? "text-yellow-400" :
+                        "text-red-400"
+                      }`}>
+                        {log.level}
+                      </span>
+                      <span className="text-xs text-slate-300 flex-1">{log.message}</span>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+
+              {/* Current execution status */}
+              {executionStatus.isRunning && (
+                <div className="mt-4 p-3 bg-blue-500/10 border border-blue-400/30 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Activity className="h-4 w-4 text-blue-400" />
+                    <span className="text-sm font-medium text-blue-400">Executing Sequence</span>
+                  </div>
+                  <Progress value={executionStatus.totalProgress} className="h-1 bg-slate-700 mb-2" />
+                  <div className="flex justify-between text-xs text-slate-400">
+                    <span>{executionStatus.tasksCompleted}/{executionStatus.totalTasks} tasks</span>
+                    <span>{executionStatus.estimatedTimeRemaining}s remaining</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </Card>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
