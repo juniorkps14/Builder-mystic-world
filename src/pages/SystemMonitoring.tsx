@@ -324,7 +324,7 @@ export default function SystemMonitoring() {
   ];
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 text-white">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -376,10 +376,12 @@ export default function SystemMonitoring() {
             )}
           </Button>
 
-          <Button variant="outline" size="sm" className="gap-2">
-            <Download className="h-4 w-4" />
-            Export
-          </Button>
+              <Button className="bg-white/10 hover:bg-white/20 border border-white/20 text-white gap-2">
+                <Download className="h-4 w-4" />
+                Export
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -755,7 +757,7 @@ export default function SystemMonitoring() {
       </Tabs>
 
       {/* Footer Status */}
-      <div className="mt-8 flex items-center justify-between text-sm text-gray-500 bg-white p-4 rounded-lg">
+      <div className="mt-8 flex items-center justify-between text-sm text-slate-400 bg-white/10 p-4 rounded-lg border border-white/20">
         <div className="flex items-center gap-4">
           <span>Last updated: {lastUpdate.toLocaleTimeString()}</span>
           <span>Refresh interval: {refreshInterval / 1000}s</span>
