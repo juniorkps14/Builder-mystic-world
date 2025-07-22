@@ -244,6 +244,7 @@ const About = () => {
           <Badge variant="default">Beta</Badge>
         </div>
       </Card>
+      </div>
     </div>
   );
 };
