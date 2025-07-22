@@ -604,7 +604,7 @@ export default function Sequences() {
                         )}
                       </div>
 
-                      {/* Action Button */}
+                      {/* Action Buttons */}
                       <div className="flex items-center gap-2">
                         {task.status === "running" ? (
                           <Button size="sm" variant="outline" className="border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/10">
@@ -615,10 +615,40 @@ export default function Sequences() {
                             <PlayCircle className="h-4 w-4" />
                           </Button>
                         ) : (
-                          <Button size="sm" variant="outline" className="border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleExecuteTask(task.id);
+                            }}
+                          >
                             <Play className="h-4 w-4" />
                           </Button>
                         )}
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditTask(task);
+                          }}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-red-500/50 text-red-400 hover:bg-red-500/10"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteTask(task.id);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                         <ChevronRight className="h-4 w-4 text-slate-400" />
                       </div>
                     </div>
