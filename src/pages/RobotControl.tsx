@@ -2,12 +2,24 @@ import { RobotControl as RobotControlComponent } from "@/components/ros/RobotCon
 
 const RobotControl = () => {
   return (
-    <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">Robot Control</h1>
-        <p className="text-muted-foreground">
-          Manual and autonomous robot control interface
-        </p>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-4xl font-extralight bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text text-transparent">
+            Robot Control
+          </h1>
+          <p className="text-muted-foreground font-light mt-2">
+            Manual and autonomous robot control interface
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Badge className="bg-green-100 text-green-700">
+            <Activity className="h-3 w-3 mr-1" />
+            Active
+          </Badge>
+        </div>
       </div>
       <RobotControlComponent />
     </div>
