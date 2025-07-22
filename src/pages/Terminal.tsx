@@ -290,7 +290,7 @@ export default function Terminal() {
         Math.random() * 800 + 200,
       ); // Random delay 200-1000ms
 
-      setCurrentCommand("");
+      updateTerminalPref("currentCommand", "");
     },
     [activeTab, activeTabId],
   );
@@ -700,7 +700,7 @@ export default function Terminal() {
         return tab;
       }),
     );
-    setCurrentCommand("");
+    updateTerminalPref("currentCommand", "");
   };
 
   const copyAllOutput = () => {
