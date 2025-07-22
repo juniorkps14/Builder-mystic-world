@@ -12,7 +12,7 @@ import { useState } from "react";
 
 // Import new flat pages
 import FlatDashboard from "./pages/FlatDashboard";
-import FlatRobotControl from "./pages/FlatRobotControl";
+import HolonomicRobotControl from "./pages/HolonomicRobotControl";
 
 // Import existing pages (will be updated gradually)
 import Sequences from "./pages/Sequences";
