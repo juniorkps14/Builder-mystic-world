@@ -213,7 +213,7 @@ export default function Terminal() {
       };
 
       setTabs((prev) => [...prev, newTab]);
-      setActiveTabId(newId);
+      updateTerminalPref("activeTabId", newId);
     },
     [tabs.length],
   );
@@ -226,7 +226,7 @@ export default function Terminal() {
       setTabs(newTabs);
 
       if (activeTabId === tabId) {
-        setActiveTabId(newTabs[0]?.id || "");
+        updateTerminalPref("activeTabId", newTabs[0]?.id || "");
       }
     },
     [tabs, activeTabId],
@@ -650,7 +650,7 @@ export default function Terminal() {
       ),
     );
 
-    setCurrentCommand(newIndex === -1 ? "" : history[newIndex]);
+    updateTerminalPref("currentCommand", newIndex === -1 ? "" : history[newIndex]);
   };
 
   const clearTerminal = () => {
@@ -804,7 +804,7 @@ export default function Terminal() {
                     ? "bg-gray-900 text-green-400 border-b-2 border-green-400"
                     : "text-gray-400 hover:bg-gray-700"
                 }`}
-                onClick={() => setActiveTabId(tab.id)}
+                onClick={() => updateTerminalPref("activeTabId", tab.id)}
               >
                 <span className="text-sm">{typeConfig?.icon}</span>
                 <span className="text-sm truncate">{tab.name}</span>
@@ -879,7 +879,7 @@ export default function Terminal() {
             <input
               ref={commandInputRef}
               value={currentCommand}
-              onChange={(e) => setCurrentCommand(e.target.value)}
+              onChange={(e) => updateTerminalPref("currentCommand", e.target.value)}
               onKeyDown={handleKeyDown}
               className="flex-1 bg-transparent border-none outline-none text-green-400 font-mono"
               style={{ fontSize: `${fontSize}px` }}
