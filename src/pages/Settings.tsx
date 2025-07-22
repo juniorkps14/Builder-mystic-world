@@ -347,7 +347,7 @@ export default function Settings() {
                     step={1}
                     className="mt-2"
                   />
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-sm text-slate-400 mt-1">
                     {settings.fontSize}px
                   </p>
                 </div>
@@ -381,7 +381,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Show Grid Lines</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Display grid lines in interfaces
                     </p>
                   </div>
@@ -396,7 +396,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Show Tooltips</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Display helpful tooltips on hover
                     </p>
                   </div>
@@ -411,7 +411,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Show Badges</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Display status badges and counters
                     </p>
                   </div>
@@ -426,7 +426,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Compact Mode</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Use smaller interface elements
                     </p>
                   </div>
@@ -441,7 +441,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>High Contrast</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Improve visibility with high contrast
                     </p>
                   </div>
@@ -468,7 +468,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Enable Notifications</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Allow system notifications
                     </p>
                   </div>
@@ -483,7 +483,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Sound Enabled</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Play notification sounds
                     </p>
                   </div>
@@ -498,7 +498,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>System Alerts</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Show system status alerts
                     </p>
                   </div>
@@ -515,7 +515,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Task Notifications</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Notify when tasks complete
                     </p>
                   </div>
@@ -530,7 +530,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Error Alerts</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Show error notifications
                     </p>
                   </div>
@@ -557,7 +557,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Confirm Dangerous Actions</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Require confirmation for potentially harmful actions
                     </p>
                   </div>
@@ -572,7 +572,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Auto-save Sequences</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Automatically save sequence changes
                     </p>
                   </div>
@@ -587,7 +587,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Emergency Stop</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Enable emergency stop functionality
                     </p>
                   </div>
@@ -613,7 +613,7 @@ export default function Settings() {
                     step={1}
                     className="mt-2"
                   />
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-sm text-slate-400 mt-1">
                     {settings.defaultMovementSpeed}%
                   </p>
                 </div>
@@ -630,7 +630,7 @@ export default function Settings() {
                     step={5}
                     className="mt-2"
                   />
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-sm text-slate-400 mt-1">
                     {settings.joystickSensitivity}%
                   </p>
                 </div>
@@ -650,7 +650,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Collect Analytics</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Help improve the system by sharing usage data
                     </p>
                   </div>
@@ -665,7 +665,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Share Error Reports</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Automatically send crash reports
                     </p>
                   </div>
@@ -680,7 +680,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Auto Backup</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Automatically backup settings and data
                     </p>
                   </div>
@@ -772,7 +772,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>GPU Acceleration</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Use GPU for rendering and calculations
                     </p>
                   </div>
@@ -789,7 +789,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Auto Optimize</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Automatically optimize performance
                     </p>
                   </div>
@@ -804,7 +804,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Background Processing</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Continue tasks in background
                     </p>
                   </div>
@@ -854,56 +854,56 @@ export default function Settings() {
                       <Settings className="h-4 w-4 text-slate-400" />
                       <div>
                         <p className="font-medium text-sm">User Settings</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-slate-400">
                           Theme, language, preferences
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <Terminal className="h-4 w-4 text-gray-600" />
+                    <div className="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-lg">
+                      <Terminal className="h-4 w-4 text-slate-400" />
                       <div>
                         <p className="font-medium text-sm">Terminal Sessions</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-slate-400">
                           Active tabs, command history
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <Monitor className="h-4 w-4 text-gray-600" />
+                    <div className="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-lg">
+                      <Monitor className="h-4 w-4 text-slate-400" />
                       <div>
                         <p className="font-medium text-sm">Monitoring Prefs</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-slate-400">
                           Chart settings, refresh rates
                         </p>
                       </div>
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <Database className="h-4 w-4 text-gray-600" />
+                    <div className="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-lg">
+                      <Database className="h-4 w-4 text-slate-400" />
                       <div>
                         <p className="font-medium text-sm">
                           API Configurations
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-slate-400">
                           Test settings, call history
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <Code className="h-4 w-4 text-gray-600" />
+                    <div className="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-lg">
+                      <Code className="h-4 w-4 text-slate-400" />
                       <div>
                         <p className="font-medium text-sm">Dev Environment</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-slate-400">
                           Code examples, active views
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <Activity className="h-4 w-4 text-gray-600" />
+                    <div className="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-lg">
+                      <Activity className="h-4 w-4 text-slate-400" />
                       <div>
                         <p className="font-medium text-sm">System State</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-slate-400">
                           Last active pages, layouts
                         </p>
                       </div>
@@ -919,7 +919,7 @@ export default function Settings() {
                   <div className="text-sm text-slate-300 mb-2">
                     Data is stored locally in your browser using localStorage
                   </div>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-slate-400">
                     • ข้อมูลจะคงอยู่ระหว่างเซสชัน และเมื���อปิด-เปิดเบราว์เซอร์
                     <br />
                     • ข้อมูลจะถูกลบเมื่อล้างข้อมูลเบราว์เซอร์
@@ -974,7 +974,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Developer Mode</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Enable development tools and features
                     </p>
                   </div>
@@ -989,7 +989,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Debug Mode</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Show debug information
                     </p>
                   </div>
@@ -1004,7 +1004,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Experimental Features</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Enable experimental functionality
                     </p>
                   </div>
@@ -1021,7 +1021,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Beta Updates</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Receive beta version updates
                     </p>
                   </div>
@@ -1036,7 +1036,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Verbose Logging</Label>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-400">
                       Enable detailed logging
                     </p>
                   </div>

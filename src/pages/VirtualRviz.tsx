@@ -1095,7 +1095,7 @@ const VirtualRviz: React.FC = () => {
   ];
 
   return (
-    <div className="h-screen flex flex-col bg-gray-100">
+    <div className="h-screen flex flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       {/* RViz-style Header Bar */}
       <div className="bg-gray-300 border-b border-gray-400 px-2 py-1">
         <div className="flex items-center justify-between">
