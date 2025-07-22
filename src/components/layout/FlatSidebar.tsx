@@ -24,6 +24,7 @@ import {
   BookOpen,
   HelpCircle,
   Code,
+  Database,
 } from "lucide-react";
 import "../../styles/flat-vector-theme.css";
 
