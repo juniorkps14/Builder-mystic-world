@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 
 const Logs = () => {
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 text-white">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
