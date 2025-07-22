@@ -57,7 +57,7 @@ export function PersistenceStatus() {
   const handleClearData = () => {
     if (
       confirm(
-        "คุณแน่ใจหรือว่าต้องการลบข้อมูลที่บันทึกไว้ทั้งหมด? การกระทำนี้ไม่สามารถยกเลิกได้",
+        "Are you sure you want to delete all saved data? This action cannot be undone.",
       )
     ) {
       clearAll();
