@@ -527,7 +527,7 @@ export default function Sequences() {
           <Card className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
             <div className="p-6 border-b border-white/10">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-light text-white">Task Queue</h2>
+                <h2 className="text-xl font-light text-white">Task Management</h2>
                 <div className="flex items-center gap-3">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -538,6 +538,18 @@ export default function Sequences() {
                   </div>
                   <Button size="sm" className="bg-white/10 hover:bg-white/20 border border-white/20">
                     <Filter className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setEditingTask(null);
+                      setNewTask({ name: "", type: "navigation", priority: "medium", description: "", parameters: {} });
+                      setIsTaskDialogOpen(true);
+                    }}
+                    className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
+                    size="sm"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Task
                   </Button>
                 </div>
               </div>
