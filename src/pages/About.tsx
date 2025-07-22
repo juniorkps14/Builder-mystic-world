@@ -55,7 +55,31 @@ const About = () => {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-4xl font-extralight bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text text-transparent">
+            About Dino Core
+          </h1>
+          <p className="text-muted-foreground font-light mt-2">
+            Modern Robot Control System
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Badge className="bg-blue-100 text-blue-700">
+            <Bot className="h-3 w-3 mr-1" />
+            v2.0.0
+          </Badge>
+          <Badge className="bg-green-100 text-green-700">
+            <Heart className="h-3 w-3 mr-1" />
+            Made with AI
+          </Badge>
+        </div>
+      </div>
+
+      <div className="space-y-8">
       {/* Header */}
       <div className="text-center">
         <div className="flex items-center justify-center gap-3 mb-4">
