@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import { usePersistentState, usePersistentStore } from "@/hooks/use-persistence";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -52,51 +53,64 @@ interface TerminalTab {
 }
 
 export default function Terminal() {
-  const [tabs, setTabs] = useState<TerminalTab[]>([
-    {
-      id: "1",
-      name: "bash",
-      type: "bash",
-      lines: [
-        {
-          id: "1",
-          type: "system",
-          content:
-            "Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.15.0-91-generic x86_64)",
-          timestamp: new Date(),
+  // Persistent terminal state
+  const { state: tabs, setState: setTabs } = usePersistentState<TerminalTab[]>({
+    key: "terminal-tabs",
+    defaultValue: [
+      {
+        id: "1",
+        name: "bash",
+        type: "bash",
+        lines: [
+          {
+            id: "1",
+            type: "system",
+            content:
+              "Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.15.0-91-generic x86_64)",
+            timestamp: new Date(),
+          },
+          {
+            id: "2",
+            type: "system",
+            content: "Last login: " + new Date().toLocaleString(),
+            timestamp: new Date(),
+          },
+          {
+            id: "3",
+            type: "system",
+            content: 'Type "help" for available commands',
+            timestamp: new Date(),
+          },
+        ],
+        history: [],
+        historyIndex: -1,
+        currentDirectory: "/home/robot",
+        isRunning: false,
+        environment: {
+          HOME: "/home/robot",
+          USER: "robot",
+          SHELL: "/bin/bash",
+          PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+          ROS_DISTRO: "noetic",
         },
-        {
-          id: "2",
-          type: "system",
-          content: "Last login: " + new Date().toLocaleString(),
-          timestamp: new Date(),
-        },
-        {
-          id: "3",
-          type: "system",
-          content: 'Type "help" for available commands',
-          timestamp: new Date(),
-        },
-      ],
-      history: [],
-      historyIndex: -1,
-      currentDirectory: "/home/robot",
-      isRunning: false,
-      environment: {
-        HOME: "/home/robot",
-        USER: "robot",
-        SHELL: "/bin/bash",
-        PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
-        ROS_DISTRO: "noetic",
       },
-    },
-  ]);
+    ],
+    autoSave: true,
+    autoSaveDelay: 2000,
+  });
 
-  const [activeTabId, setActiveTabId] = useState("1");
-  const [currentCommand, setCurrentCommand] = useState("");
-  const [isConnected, setIsConnected] = useState(true);
-  const [fontSize, setFontSize] = useState(14);
-  const [theme, setTheme] = useState("dark");
+  const { store: terminalPrefs, updateField: updateTerminalPref } = usePersistentStore(
+    "terminal-preferences",
+    {
+      activeTabId: "1",
+      currentCommand: "",
+      isConnected: true,
+      fontSize: 14,
+      theme: "dark",
+    }
+  );
+
+  const { activeTabId, currentCommand, isConnected, fontSize, theme } = terminalPrefs;
 
   const commandInputRef = useRef<HTMLInputElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
