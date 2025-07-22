@@ -3,11 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { EnhancedSequenceManager } from "@/components/ros/EnhancedSequenceManager";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Save,
-  Download,
-  Upload,
-} from "lucide-react";
+import { Save, Download, Upload } from "lucide-react";
 
 const Sequences: React.FC = () => {
   const { t } = useLanguage();

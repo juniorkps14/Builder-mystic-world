@@ -101,10 +101,10 @@ Jetson Xavier NX
 ```yaml
 # config/robot_config.yaml
 robot:
-  max_linear_speed: 1.0      # m/s
-  max_angular_speed: 2.0     # rad/s
-  wheel_base: 0.5           # meters
-  wheel_radius: 0.1         # meters
+  max_linear_speed: 1.0 # m/s
+  max_angular_speed: 2.0 # rad/s
+  wheel_base: 0.5 # meters
+  wheel_radius: 0.1 # meters
 
 camera:
   device: "/dev/video0"
@@ -118,7 +118,7 @@ lidar:
   frame_id: "laser"
 
 safety:
-  min_obstacle_distance: 0.3  # meters
+  min_obstacle_distance: 0.3 # meters
   emergency_stop_pin: 18
 ```
 
@@ -189,6 +189,7 @@ print("API test completed!")
 ### Common Issues
 
 #### 1. ROS Master not found
+
 ```bash
 # Check ROS environment
 echo $ROS_MASTER_URI
@@ -197,6 +198,7 @@ roscore
 ```
 
 #### 2. Permission denied for devices
+
 ```bash
 # Add user to groups
 sudo usermod -a -G dialout,video $USER
@@ -204,6 +206,7 @@ sudo chmod 666 /dev/ttyUSB0 /dev/ttyACM0 /dev/video0
 ```
 
 #### 3. Camera not detected
+
 ```bash
 # List camera devices
 ls /dev/video*
@@ -214,6 +217,7 @@ cheese  # GUI camera test
 ```
 
 #### 4. Network connection issues
+
 ```bash
 # Check network status
 ip addr show
@@ -224,6 +228,7 @@ sudo systemctl restart networking
 ```
 
 #### 5. Port already in use
+
 ```bash
 # Check ports
 sudo netstat -tulpn | grep :8080
@@ -236,12 +241,14 @@ sudo pkill -f "port 8080"
 ## 📱 Access Points
 
 ### Local Access
+
 - **Web Interface**: http://localhost:8080
 - **API Documentation**: http://localhost:8080/api-management
 - **System Monitor**: http://localhost:8080/system-monitoring
 - **Terminal**: http://localhost:8080/terminal
 
 ### Remote Access
+
 - **Robot IP**: http://192.168.1.100:8080
 - **SSH**: ssh robot@192.168.1.100
 - **VNC** (if enabled): vnc://192.168.1.100:5901

@@ -292,7 +292,7 @@ nano docker-compose.yml
 ```
 
 ```yaml
-version: '3.8'
+version: "3.8"
 
 services:
   # ROS Master
@@ -344,7 +344,13 @@ services:
     privileged: true
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "python3", "-c", "import requests; requests.get('http://localhost:9090/health')"]
+      test:
+        [
+          "CMD",
+          "python3",
+          "-c",
+          "import requests; requests.get('http://localhost:9090/health')",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -422,11 +428,11 @@ services:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-      - '--web.console.templates=/etc/prometheus/consoles'
-      - '--web.enable-lifecycle'
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--web.enable-lifecycle"
     restart: unless-stopped
 
   grafana:
@@ -553,46 +559,46 @@ spec:
         app: robot-control
     spec:
       containers:
-      - name: robot-control
-        image: your-registry/robot-control:latest
-        ports:
-        - containerPort: 9090
-        env:
-        - name: ROS_MASTER_URI
-          value: "http://roscore:11311"
-        volumeMounts:
-        - name: config
-          mountPath: /opt/robot/config
-        - name: dev
-          mountPath: /dev
-        securityContext:
-          privileged: true
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "500m"
-          limits:
-            memory: "2Gi"
-            cpu: "2000m"
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 9090
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /ready
-            port: 9090
-          initialDelaySeconds: 5
-          periodSeconds: 5
+        - name: robot-control
+          image: your-registry/robot-control:latest
+          ports:
+            - containerPort: 9090
+          env:
+            - name: ROS_MASTER_URI
+              value: "http://roscore:11311"
+          volumeMounts:
+            - name: config
+              mountPath: /opt/robot/config
+            - name: dev
+              mountPath: /dev
+          securityContext:
+            privileged: true
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "2000m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9090
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 9090
+            initialDelaySeconds: 5
+            periodSeconds: 5
       volumes:
-      - name: config
-        configMap:
-          name: robot-config
-      - name: dev
-        hostPath:
-          path: /dev
+        - name: config
+          configMap:
+            name: robot-config
+        - name: dev
+          hostPath:
+            path: /dev
 ---
 # k8s/service.yaml
 apiVersion: v1
@@ -604,9 +610,9 @@ spec:
   selector:
     app: robot-control
   ports:
-  - port: 9090
-    targetPort: 9090
-    protocol: TCP
+    - port: 9090
+      targetPort: 9090
+      protocol: TCP
   type: LoadBalancer
 ```
 

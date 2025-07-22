@@ -6,7 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Database,
   Network,
@@ -30,11 +36,11 @@ import {
 interface APIEndpoint {
   id: string;
   name: string;
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'WEBSOCKET';
+  method: "GET" | "POST" | "PUT" | "DELETE" | "WEBSOCKET";
   endpoint: string;
   description: string;
   category: string;
-  status: 'active' | 'inactive' | 'deprecated';
+  status: "active" | "inactive" | "deprecated";
   requestExample?: any;
   responseExample?: any;
   pythonExample?: string;
@@ -58,20 +64,20 @@ export default function APIManagement() {
   const [testResponse, setTestResponse] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [apiCalls, setApiCalls] = useState<APICall[]>([]);
-  
+
   const apiEndpoints: APIEndpoint[] = [
     // Robot Control APIs
     {
-      id: '1',
-      name: 'Send Velocity Command',
-      method: 'POST',
-      endpoint: '/api/robot/cmd_vel',
-      description: 'ส่งคำสั่งความเร็วไปยังหุ่นยนต์',
-      category: 'robot_control',
-      status: 'active',
+      id: "1",
+      name: "Send Velocity Command",
+      method: "POST",
+      endpoint: "/api/robot/cmd_vel",
+      description: "ส่งคำสั่งความเร็วไปยังหุ่นยนต์",
+      category: "robot_control",
+      status: "active",
       requestExample: {
         linear: { x: 0.5, y: 0.0, z: 0.0 },
-        angular: { x: 0.0, y: 0.0, z: 0.5 }
+        angular: { x: 0.0, y: 0.0, z: 0.5 },
       },
       responseExample: { success: true, message: "Command sent" },
       pythonExample: `import requests
@@ -90,21 +96,21 @@ def send_velocity_command(linear_x, linear_y, angular_z):
 
 # ตัวอย่างการใช้งาน
 result = send_velocity_command(0.5, 0.0, 0.5)  # เดินหน้า + เลี้ยวขวา
-print(result)`
+print(result)`,
     },
     {
-      id: '2',
-      name: 'Get Robot Status',
-      method: 'GET',
-      endpoint: '/api/robot/status',
-      description: 'ดึงสถานะปัจจุบันของหุ่นยนต์',
-      category: 'robot_control',
-      status: 'active',
+      id: "2",
+      name: "Get Robot Status",
+      method: "GET",
+      endpoint: "/api/robot/status",
+      description: "ดึงสถานะปัจจุบันของหุ่นยนต์",
+      category: "robot_control",
+      status: "active",
       responseExample: {
         state: "idle",
         position: { x: 1.5, y: 2.3, theta: 0.5 },
         battery: 87,
-        emergency_stop: false
+        emergency_stop: false,
       },
       pythonExample: `import requests
 
@@ -117,16 +123,16 @@ def get_robot_status():
 status = get_robot_status()
 print(f"Robot state: {status['state']}")
 print(f"Battery: {status['battery']}%")
-print(f"Position: x={status['position']['x']}, y={status['position']['y']}")`
+print(f"Position: x={status['position']['x']}, y={status['position']['y']}")`,
     },
     {
-      id: '3',
-      name: 'Emergency Stop',
-      method: 'POST',
-      endpoint: '/api/robot/emergency_stop',
-      description: 'หยุดฉุกเฉินของหุ่นยนต์',
-      category: 'safety',
-      status: 'active',
+      id: "3",
+      name: "Emergency Stop",
+      method: "POST",
+      endpoint: "/api/robot/emergency_stop",
+      description: "หยุดฉุกเฉินของหุ่นยนต์",
+      category: "safety",
+      status: "active",
       requestExample: { activate: true },
       responseExample: { success: true, emergency_active: true },
       pythonExample: `import requests
@@ -140,20 +146,20 @@ def emergency_stop(activate=True):
 
 # ตัวอย่างการใช้งาน
 result = emergency_stop(True)   # เปิดใช้งาน emergency stop
-result = emergency_stop(False)  # ปิด emergency stop`
+result = emergency_stop(False)  # ปิด emergency stop`,
     },
     // Navigation APIs
     {
-      id: '4',
-      name: 'Navigate to Position',
-      method: 'POST',
-      endpoint: '/api/navigation/goto',
-      description: 'สั่งให้หุ่นยนต์เดินทางไปยังตำแหน่งที่กำหนด',
-      category: 'navigation',
-      status: 'active',
+      id: "4",
+      name: "Navigate to Position",
+      method: "POST",
+      endpoint: "/api/navigation/goto",
+      description: "สั่งให้หุ่นยนต์เดินทางไปยังตำแหน่งที่กำหนด",
+      category: "navigation",
+      status: "active",
       requestExample: {
         target: { x: 5.0, y: 3.0, theta: 1.57 },
-        frame_id: "map"
+        frame_id: "map",
       },
       responseExample: { goal_id: "goal_123", status: "sent" },
       pythonExample: `import requests
@@ -170,21 +176,21 @@ def navigate_to_position(x, y, theta=0.0):
 
 # ตัวอย่างการใช้งาน
 result = navigate_to_position(5.0, 3.0, 1.57)
-print(f"Goal ID: {result['goal_id']}")`
+print(f"Goal ID: {result['goal_id']}")`,
     },
     {
-      id: '5',
-      name: 'Get Current Map',
-      method: 'GET',
-      endpoint: '/api/navigation/map',
-      description: 'ดึงแผนที่ปัจจุบัน',
-      category: 'navigation',
-      status: 'active',
+      id: "5",
+      name: "Get Current Map",
+      method: "GET",
+      endpoint: "/api/navigation/map",
+      description: "ดึงแผนที่ปัจจุบัน",
+      category: "navigation",
+      status: "active",
       responseExample: {
         map_data: "base64_encoded_map",
         resolution: 0.05,
         width: 400,
-        height: 400
+        height: 400,
       },
       pythonExample: `import requests
 import base64
@@ -210,22 +216,22 @@ def save_map_image(map_data, filename="map.png"):
 
 # ตัวอย่างการใช้งาน
 map_data = get_current_map()
-save_map_image(map_data, "current_map.png")`
+save_map_image(map_data, "current_map.png")`,
     },
     // Sensor APIs
     {
-      id: '6',
-      name: 'Get Camera Feed',
-      method: 'GET',
-      endpoint: '/api/sensors/camera/image',
-      description: 'ดึงภาพจากกล้อง',
-      category: 'sensors',
-      status: 'active',
+      id: "6",
+      name: "Get Camera Feed",
+      method: "GET",
+      endpoint: "/api/sensors/camera/image",
+      description: "ดึงภาพจากกล้อง",
+      category: "sensors",
+      status: "active",
       responseExample: {
         image: "base64_encoded_image",
         timestamp: 1703123456.789,
         width: 640,
-        height: 480
+        height: 480,
       },
       pythonExample: `import requests
 import base64
@@ -250,20 +256,20 @@ def save_camera_image(image_data, filename="camera.jpg"):
 # ตัวอย่างการใช้งาน
 image_data = get_camera_image()
 img = save_camera_image(image_data, "latest_photo.jpg")
-print(f"Image size: {img.size}")`
+print(f"Image size: {img.size}")`,
     },
     {
-      id: '7',
-      name: 'Get Sensor Data',
-      method: 'GET',
-      endpoint: '/api/sensors/all',
-      description: 'ดึงข้อมูลเซ็นเซอร์ทั้งหมด',
-      category: 'sensors',
-      status: 'active',
+      id: "7",
+      name: "Get Sensor Data",
+      method: "GET",
+      endpoint: "/api/sensors/all",
+      description: "ดึงข้อมูลเซ็นเซอร์ทั้งหมด",
+      category: "sensors",
+      status: "active",
       responseExample: {
         lidar: { ranges: [1.2, 1.5, 2.0], angle_min: -1.57, angle_max: 1.57 },
         imu: { acceleration: { x: 0.1, y: 0.2, z: 9.8 } },
-        battery: { voltage: 12.5, percentage: 87 }
+        battery: { voltage: 12.5, percentage: 87 },
       },
       pythonExample: `import requests
 
@@ -284,23 +290,23 @@ def monitor_sensors():
         time.sleep(1)
 
 # ตัวอย่างการใช้งาน
-monitor_sensors()`
+monitor_sensors()`,
     },
     // System APIs
     {
-      id: '8',
-      name: 'Get System Health',
-      method: 'GET',
-      endpoint: '/api/system/health',
-      description: 'ตรวจสอบสุขภาพระบบ',
-      category: 'system',
-      status: 'active',
+      id: "8",
+      name: "Get System Health",
+      method: "GET",
+      endpoint: "/api/system/health",
+      description: "ตรวจสอบสุขภาพระบบ",
+      category: "system",
+      status: "active",
       responseExample: {
         cpu_usage: 45.2,
         memory_usage: 68.5,
         disk_usage: 23.1,
         ros_nodes: 12,
-        uptime: 86400
+        uptime: 86400,
       },
       pythonExample: `import requests
 
@@ -323,25 +329,25 @@ def check_system_status():
     print(f"Active ROS nodes: {health['ros_nodes']}")
 
 # ตัวอย่างการใช้งาน
-check_system_status()`
+check_system_status()`,
     },
     // Sequence APIs
     {
-      id: '9',
-      name: 'Execute Sequence',
-      method: 'POST',
-      endpoint: '/api/sequences/execute',
-      description: 'เรียกใช้ sequence ที่กำหนด',
-      category: 'sequences',
-      status: 'active',
+      id: "9",
+      name: "Execute Sequence",
+      method: "POST",
+      endpoint: "/api/sequences/execute",
+      description: "เรียกใช้ sequence ที่กำหนด",
+      category: "sequences",
+      status: "active",
       requestExample: {
         sequence_name: "patrol_routine",
-        parameters: { speed: 0.5, loops: 3 }
+        parameters: { speed: 0.5, loops: 3 },
       },
-      responseExample: { 
-        execution_id: "exec_123", 
+      responseExample: {
+        execution_id: "exec_123",
         status: "started",
-        estimated_duration: 300
+        estimated_duration: 300,
       },
       pythonExample: `import requests
 
@@ -366,17 +372,17 @@ exec_id = result['execution_id']
 
 # ติดตามสถานะ
 status = get_sequence_status(exec_id)
-print(f"Sequence status: {status['status']}")`
+print(f"Sequence status: {status['status']}")`,
     },
     // WebSocket APIs
     {
-      id: '10',
-      name: 'Real-time Data Stream',
-      method: 'WEBSOCKET',
-      endpoint: 'ws://localhost:9090',
-      description: 'รับข้อมูลแบบ real-time ผ่าน WebSocket',
-      category: 'realtime',
-      status: 'active',
+      id: "10",
+      name: "Real-time Data Stream",
+      method: "WEBSOCKET",
+      endpoint: "ws://localhost:9090",
+      description: "รับข้อมูลแบบ real-time ผ่าน WebSocket",
+      category: "realtime",
+      status: "active",
       pythonExample: `import asyncio
 import websockets
 import json
@@ -406,8 +412,8 @@ async def robot_data_stream():
                 print(f"Sensors updated: {data.keys()}")
 
 # ตัวอย่างการใช้งาน
-asyncio.run(robot_data_stream())`
-    }
+asyncio.run(robot_data_stream())`,
+    },
   ];
 
   const categories = [
@@ -421,32 +427,38 @@ asyncio.run(robot_data_stream())`
     { value: "realtime", label: "ข้อมูลแบบ Real-time", icon: Zap },
   ];
 
-  const filteredEndpoints = selectedCategory === "all" 
-    ? apiEndpoints 
-    : apiEndpoints.filter(ep => ep.category === selectedCategory);
+  const filteredEndpoints =
+    selectedCategory === "all"
+      ? apiEndpoints
+      : apiEndpoints.filter((ep) => ep.category === selectedCategory);
 
   const executeAPITest = async () => {
     setIsLoading(true);
     setTestResponse("");
-    
+
     try {
       const startTime = Date.now();
-      
+
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, Math.random() * 1000 + 500));
-      
+      await new Promise((resolve) =>
+        setTimeout(resolve, Math.random() * 1000 + 500),
+      );
+
       const endTime = Date.now();
       const duration = endTime - startTime;
-      
+
       // Mock response
       const mockResponse = {
         success: true,
-        data: { message: "API test successful", timestamp: new Date().toISOString() },
-        duration: duration
+        data: {
+          message: "API test successful",
+          timestamp: new Date().toISOString(),
+        },
+        duration: duration,
       };
-      
+
       setTestResponse(JSON.stringify(mockResponse, null, 2));
-      
+
       // Add to call history
       const newCall: APICall = {
         id: Date.now().toString(),
@@ -455,11 +467,10 @@ asyncio.run(robot_data_stream())`
         method: testMethod,
         status: 200,
         duration,
-        success: true
+        success: true,
       };
-      
-      setApiCalls(prev => [newCall, ...prev.slice(0, 9)]);
-      
+
+      setApiCalls((prev) => [newCall, ...prev.slice(0, 9)]);
     } catch (error) {
       setTestResponse(JSON.stringify({ error: "API call failed" }, null, 2));
     } finally {
@@ -601,17 +612,17 @@ if __name__ == "__main__":
     result = robot.navigate_to(5.0, 3.0, 1.57)
     print(f"Navigation goal: {result['goal_id']}")
 `;
-    
+
     return sdkCode;
   };
 
   const downloadSDK = () => {
     const sdkCode = generatePythonSDK();
-    const blob = new Blob([sdkCode], { type: 'text/plain' });
+    const blob = new Blob([sdkCode], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'robot_api_sdk.py';
+    a.download = "robot_api_sdk.py";
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -628,11 +639,11 @@ if __name__ == "__main__":
             จัดการ API ทั้งหมดของระบบหุ่นยนต์ และทดสอบการเชื่อมต่อ
           </p>
         </div>
-        
+
         <div className="flex items-center gap-3">
           <Badge className="bg-green-100 text-green-700">
             <Activity className="h-3 w-3 mr-1" />
-            {apiEndpoints.filter(ep => ep.status === 'active').length} Active
+            {apiEndpoints.filter((ep) => ep.status === "active").length} Active
           </Badge>
           <Button onClick={downloadSDK} className="gap-2">
             <Download className="h-4 w-4" />
@@ -671,18 +682,21 @@ if __name__ == "__main__":
                 <div className="space-y-2">
                   {categories.map((category) => {
                     const IconComponent = category.icon;
-                    const count = category.value === "all" 
-                      ? apiEndpoints.length 
-                      : apiEndpoints.filter(ep => ep.category === category.value).length;
-                    
+                    const count =
+                      category.value === "all"
+                        ? apiEndpoints.length
+                        : apiEndpoints.filter(
+                            (ep) => ep.category === category.value,
+                          ).length;
+
                     return (
                       <button
                         key={category.value}
                         onClick={() => setSelectedCategory(category.value)}
                         className={`w-full flex items-center justify-between p-3 rounded-lg text-left transition-colors ${
                           selectedCategory === category.value
-                            ? 'bg-blue-100 text-blue-800 border-blue-300 border'
-                            : 'hover:bg-gray-100'
+                            ? "bg-blue-100 text-blue-800 border-blue-300 border"
+                            : "hover:bg-gray-100"
                         }`}
                       >
                         <div className="flex items-center gap-2">
@@ -707,13 +721,19 @@ if __name__ == "__main__":
                     <div className="flex items-start justify-between mb-4">
                       <div>
                         <div className="flex items-center gap-3 mb-2">
-                          <Badge className={
-                            endpoint.method === 'GET' ? 'bg-green-100 text-green-700' :
-                            endpoint.method === 'POST' ? 'bg-blue-100 text-blue-700' :
-                            endpoint.method === 'PUT' ? 'bg-orange-100 text-orange-700' :
-                            endpoint.method === 'DELETE' ? 'bg-red-100 text-red-700' :
-                            'bg-purple-100 text-purple-700'
-                          }>
+                          <Badge
+                            className={
+                              endpoint.method === "GET"
+                                ? "bg-green-100 text-green-700"
+                                : endpoint.method === "POST"
+                                  ? "bg-blue-100 text-blue-700"
+                                  : endpoint.method === "PUT"
+                                    ? "bg-orange-100 text-orange-700"
+                                    : endpoint.method === "DELETE"
+                                      ? "bg-red-100 text-red-700"
+                                      : "bg-purple-100 text-purple-700"
+                            }
+                          >
                             {endpoint.method}
                           </Badge>
                           <h3 className="font-semibold">{endpoint.name}</h3>
@@ -721,14 +741,20 @@ if __name__ == "__main__":
                         <code className="text-sm bg-gray-100 px-2 py-1 rounded">
                           {endpoint.endpoint}
                         </code>
-                        <p className="text-sm text-gray-600 mt-2">{endpoint.description}</p>
+                        <p className="text-sm text-gray-600 mt-2">
+                          {endpoint.description}
+                        </p>
                       </div>
-                      
-                      <Badge className={
-                        endpoint.status === 'active' ? 'bg-green-100 text-green-700' :
-                        endpoint.status === 'inactive' ? 'bg-gray-100 text-gray-700' :
-                        'bg-yellow-100 text-yellow-700'
-                      }>
+
+                      <Badge
+                        className={
+                          endpoint.status === "active"
+                            ? "bg-green-100 text-green-700"
+                            : endpoint.status === "inactive"
+                              ? "bg-gray-100 text-gray-700"
+                              : "bg-yellow-100 text-yellow-700"
+                        }
+                      >
                         {endpoint.status}
                       </Badge>
                     </div>
@@ -737,16 +763,20 @@ if __name__ == "__main__":
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {endpoint.requestExample && (
                         <div>
-                          <h4 className="font-medium text-sm mb-2">Request Example:</h4>
+                          <h4 className="font-medium text-sm mb-2">
+                            Request Example:
+                          </h4>
                           <pre className="bg-gray-900 text-green-400 p-3 rounded text-xs overflow-x-auto">
                             {JSON.stringify(endpoint.requestExample, null, 2)}
                           </pre>
                         </div>
                       )}
-                      
+
                       {endpoint.responseExample && (
                         <div>
-                          <h4 className="font-medium text-sm mb-2">Response Example:</h4>
+                          <h4 className="font-medium text-sm mb-2">
+                            Response Example:
+                          </h4>
                           <pre className="bg-gray-900 text-green-400 p-3 rounded text-xs overflow-x-auto">
                             {JSON.stringify(endpoint.responseExample, null, 2)}
                           </pre>
@@ -766,10 +796,12 @@ if __name__ == "__main__":
             {/* Test Form */}
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">ทดสอบ API</h3>
-              
+
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">HTTP Method</label>
+                  <label className="block text-sm font-medium mb-2">
+                    HTTP Method
+                  </label>
                   <Select value={testMethod} onValueChange={setTestMethod}>
                     <SelectTrigger>
                       <SelectValue />
@@ -782,19 +814,23 @@ if __name__ == "__main__":
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium mb-2">Endpoint</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Endpoint
+                  </label>
                   <Input
                     value={testEndpoint}
                     onChange={(e) => setTestEndpoint(e.target.value)}
                     placeholder="/api/robot/status"
                   />
                 </div>
-                
-                {testMethod !== 'GET' && (
+
+                {testMethod !== "GET" && (
                   <div>
-                    <label className="block text-sm font-medium mb-2">Request Body (JSON)</label>
+                    <label className="block text-sm font-medium mb-2">
+                      Request Body (JSON)
+                    </label>
                     <Textarea
                       value={testPayload}
                       onChange={(e) => setTestPayload(e.target.value)}
@@ -803,9 +839,9 @@ if __name__ == "__main__":
                     />
                   </div>
                 )}
-                
-                <Button 
-                  onClick={executeAPITest} 
+
+                <Button
+                  onClick={executeAPITest}
                   disabled={isLoading}
                   className="w-full gap-2"
                 >
@@ -840,10 +876,11 @@ if __name__ == "__main__":
                   </Button>
                 )}
               </div>
-              
+
               <ScrollArea className="h-80">
                 <pre className="bg-gray-900 text-green-400 p-4 rounded text-sm whitespace-pre-wrap">
-                  {testResponse || 'No response yet. Execute an API call to see the result.'}
+                  {testResponse ||
+                    "No response yet. Execute an API call to see the result."}
                 </pre>
               </ScrollArea>
             </Card>
@@ -867,11 +904,13 @@ if __name__ == "__main__":
                   Download robot_api_sdk.py
                 </Button>
               </div>
-              
+
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="font-medium text-blue-900 mb-2">การติดตั้งและใช้งาน:</h4>
+                <h4 className="font-medium text-blue-900 mb-2">
+                  การติดตั้งและใช้งาน:
+                </h4>
                 <pre className="text-sm text-blue-800">
-{`# ติดตั้ง dependencies
+                  {`# ติดตั้ง dependencies
 pip install requests websockets pillow
 
 # ใช้งาน SDK
@@ -886,28 +925,30 @@ print(status)`}
 
             {/* Individual Examples */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {filteredEndpoints.filter(ep => ep.pythonExample).map((endpoint) => (
-                <Card key={endpoint.id} className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h4 className="font-medium">{endpoint.name}</h4>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => copyToClipboard(endpoint.pythonExample!)}
-                      className="gap-2"
-                    >
-                      <Copy className="h-4 w-4" />
-                      Copy
-                    </Button>
-                  </div>
-                  
-                  <ScrollArea className="h-64">
-                    <pre className="bg-gray-900 text-green-400 p-3 rounded text-xs whitespace-pre-wrap">
-                      {endpoint.pythonExample}
-                    </pre>
-                  </ScrollArea>
-                </Card>
-              ))}
+              {filteredEndpoints
+                .filter((ep) => ep.pythonExample)
+                .map((endpoint) => (
+                  <Card key={endpoint.id} className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className="font-medium">{endpoint.name}</h4>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => copyToClipboard(endpoint.pythonExample!)}
+                        className="gap-2"
+                      >
+                        <Copy className="h-4 w-4" />
+                        Copy
+                      </Button>
+                    </div>
+
+                    <ScrollArea className="h-64">
+                      <pre className="bg-gray-900 text-green-400 p-3 rounded text-xs whitespace-pre-wrap">
+                        {endpoint.pythonExample}
+                      </pre>
+                    </ScrollArea>
+                  </Card>
+                ))}
             </div>
           </div>
         </TabsContent>
@@ -915,8 +956,10 @@ print(status)`}
         {/* API Logs */}
         <TabsContent value="logs">
           <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">การเรียกใช้ API ล��าสุด</h3>
-            
+            <h3 className="text-lg font-semibold mb-4">
+              การเรียกใช้ API ล��าสุด
+            </h3>
+
             {apiCalls.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
@@ -926,32 +969,45 @@ print(status)`}
             ) : (
               <div className="space-y-3">
                 {apiCalls.map((call) => (
-                  <div key={call.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div
+                    key={call.id}
+                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                  >
                     <div className="flex items-center gap-4">
-                      <Badge className={
-                        call.method === 'GET' ? 'bg-green-100 text-green-700' :
-                        call.method === 'POST' ? 'bg-blue-100 text-blue-700' :
-                        'bg-purple-100 text-purple-700'
-                      }>
+                      <Badge
+                        className={
+                          call.method === "GET"
+                            ? "bg-green-100 text-green-700"
+                            : call.method === "POST"
+                              ? "bg-blue-100 text-blue-700"
+                              : "bg-purple-100 text-purple-700"
+                        }
+                      >
                         {call.method}
                       </Badge>
-                      
+
                       <div>
-                        <code className="text-sm font-mono">{call.endpoint}</code>
+                        <code className="text-sm font-mono">
+                          {call.endpoint}
+                        </code>
                         <p className="text-xs text-gray-500">
                           {call.timestamp.toLocaleString()}
                         </p>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-4">
                       <span className="text-sm text-gray-600">
                         {call.duration}ms
                       </span>
-                      
-                      <Badge className={
-                        call.success ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                      }>
+
+                      <Badge
+                        className={
+                          call.success
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-700"
+                        }
+                      >
                         {call.status}
                       </Badge>
                     </div>

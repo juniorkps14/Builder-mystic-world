@@ -141,433 +141,437 @@ const HolonomicDrive = () => {
       </div>
 
       <div className="space-y-6">
+        {/* Emergency Stop & Mode */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button
+              size="lg"
+              variant={isEmergencyStop ? "default" : "destructive"}
+              onClick={() => setIsEmergencyStop(!isEmergencyStop)}
+              className="gap-2"
+            >
+              <Square className="h-5 w-5" />
+              EMERGENCY STOP
+            </Button>
+            <Badge variant={driveMode === "manual" ? "default" : "secondary"}>
+              {driveMode.toUpperCase()} MODE
+            </Badge>
+          </div>
 
-      {/* Emergency Stop & Mode */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button
-            size="lg"
-            variant={isEmergencyStop ? "default" : "destructive"}
-            onClick={() => setIsEmergencyStop(!isEmergencyStop)}
-            className="gap-2"
-          >
-            <Square className="h-5 w-5" />
-            EMERGENCY STOP
-          </Button>
-          <Badge variant={driveMode === "manual" ? "default" : "secondary"}>
-            {driveMode.toUpperCase()} MODE
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Button
+              variant={driveMode === "manual" ? "default" : "outline"}
+              onClick={() => setDriveMode("manual")}
+            >
+              Manual
+            </Button>
+            <Button
+              variant={driveMode === "auto" ? "default" : "outline"}
+              onClick={() => setDriveMode("auto")}
+            >
+              Auto
+            </Button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button
-            variant={driveMode === "manual" ? "default" : "outline"}
-            onClick={() => setDriveMode("manual")}
-          >
-            Manual
-          </Button>
-          <Button
-            variant={driveMode === "auto" ? "default" : "outline"}
-            onClick={() => setDriveMode("auto")}
-          >
-            Auto
-          </Button>
-        </div>
-      </div>
+        <Tabs defaultValue="velocity" className="space-y-4">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="velocity" className="gap-2">
+              <Gauge className="h-4 w-4" />
+              {t("holonomic.velocity")}
+            </TabsTrigger>
+            <TabsTrigger value="wheels" className="gap-2">
+              <Circle className="h-4 w-4" />
+              {t("holonomic.wheels")}
+            </TabsTrigger>
+            <TabsTrigger value="kinematics" className="gap-2">
+              <Settings className="h-4 w-4" />
+              {t("holonomic.kinematics")}
+            </TabsTrigger>
+            <TabsTrigger value="presets" className="gap-2">
+              <Navigation className="h-4 w-4" />
+              Presets
+            </TabsTrigger>
+          </TabsList>
 
-      <Tabs defaultValue="velocity" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="velocity" className="gap-2">
-            <Gauge className="h-4 w-4" />
-            {t("holonomic.velocity")}
-          </TabsTrigger>
-          <TabsTrigger value="wheels" className="gap-2">
-            <Circle className="h-4 w-4" />
-            {t("holonomic.wheels")}
-          </TabsTrigger>
-          <TabsTrigger value="kinematics" className="gap-2">
-            <Settings className="h-4 w-4" />
-            {t("holonomic.kinematics")}
-          </TabsTrigger>
-          <TabsTrigger value="presets" className="gap-2">
-            <Navigation className="h-4 w-4" />
-            Presets
-          </TabsTrigger>
-        </TabsList>
+          {/* Velocity Control */}
+          <TabsContent value="velocity" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Manual Velocity Control */}
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold mb-4">
+                  {t("holonomic.velocity")} Control
+                </h3>
 
-        {/* Velocity Control */}
-        <TabsContent value="velocity" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Manual Velocity Control */}
+                <div className="space-y-6">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      {t("holonomic.linear")} X:{" "}
+                      {velocity.linear_x[0].toFixed(2)} m/s
+                    </label>
+                    <Slider
+                      value={velocity.linear_x}
+                      onValueChange={(value) =>
+                        handleVelocityChange("linear_x", value)
+                      }
+                      min={-kinematics.max_linear_vel[0]}
+                      max={kinematics.max_linear_vel[0]}
+                      step={0.01}
+                      disabled={isEmergencyStop}
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                      <span>Backward</span>
+                      <span>Forward</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      {t("holonomic.strafe")} Y:{" "}
+                      {velocity.linear_y[0].toFixed(2)} m/s
+                    </label>
+                    <Slider
+                      value={velocity.linear_y}
+                      onValueChange={(value) =>
+                        handleVelocityChange("linear_y", value)
+                      }
+                      min={-kinematics.max_linear_vel[0]}
+                      max={kinematics.max_linear_vel[0]}
+                      step={0.01}
+                      disabled={isEmergencyStop}
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                      <span>Right</span>
+                      <span>Left</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      {t("holonomic.angular")} Z:{" "}
+                      {velocity.angular_z[0].toFixed(2)} rad/s
+                    </label>
+                    <Slider
+                      value={velocity.angular_z}
+                      onValueChange={(value) =>
+                        handleVelocityChange("angular_z", value)
+                      }
+                      min={-kinematics.max_angular_vel[0]}
+                      max={kinematics.max_angular_vel[0]}
+                      step={0.01}
+                      disabled={isEmergencyStop}
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                      <span>CCW</span>
+                      <span>CW</span>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={stopAllMotion}
+                      variant="destructive"
+                      className="gap-2"
+                      disabled={isEmergencyStop}
+                    >
+                      <Square className="h-4 w-4" />
+                      STOP
+                    </Button>
+                    <Button variant="outline" disabled={isEmergencyStop}>
+                      Coast
+                    </Button>
+                    <Button variant="outline" disabled={isEmergencyStop}>
+                      Brake
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Direction Pad */}
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold mb-4">
+                  Direction Control
+                </h3>
+
+                <div className="grid grid-cols-3 gap-3 mb-6">
+                  {/* Top row */}
+                  <Button
+                    variant="outline"
+                    className="aspect-square"
+                    disabled={isEmergencyStop}
+                    onClick={() => executePresetMove(presetMoves[6])} // Diagonal FL
+                  >
+                    ↖
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="aspect-square"
+                    disabled={isEmergencyStop}
+                    onClick={() => executePresetMove(presetMoves[0])} // Forward
+                  >
+                    <ArrowUp className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="aspect-square"
+                    disabled={isEmergencyStop}
+                    onClick={() => executePresetMove(presetMoves[7])} // Diagonal FR
+                  >
+                    ↗
+                  </Button>
+
+                  {/* Middle row */}
+                  <Button
+                    variant="outline"
+                    className="aspect-square"
+                    disabled={isEmergencyStop}
+                    onClick={() => executePresetMove(presetMoves[2])} // Strafe Left
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    className="aspect-square"
+                    onClick={stopAllMotion}
+                    disabled={isEmergencyStop}
+                  >
+                    <Square className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="aspect-square"
+                    disabled={isEmergencyStop}
+                    onClick={() => executePresetMove(presetMoves[3])} // Strafe Right
+                  >
+                    <ArrowRight className="h-5 w-5" />
+                  </Button>
+
+                  {/* Bottom row */}
+                  <Button
+                    variant="outline"
+                    className="aspect-square"
+                    disabled={isEmergencyStop}
+                  >
+                    ↙
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="aspect-square"
+                    disabled={isEmergencyStop}
+                    onClick={() => executePresetMove(presetMoves[1])} // Backward
+                  >
+                    <ArrowDown className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="aspect-square"
+                    disabled={isEmergencyStop}
+                  >
+                    ↘
+                  </Button>
+                </div>
+
+                {/* Rotation Controls */}
+                <div className="flex justify-center gap-3">
+                  <Button
+                    variant="outline"
+                    className="gap-2"
+                    disabled={isEmergencyStop}
+                    onClick={() => executePresetMove(presetMoves[4])} // Rotate Left
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    Rotate Left
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="gap-2"
+                    disabled={isEmergencyStop}
+                    onClick={() => executePresetMove(presetMoves[5])} // Rotate Right
+                  >
+                    <RotateCw className="h-4 w-4" />
+                    Rotate Right
+                  </Button>
+                </div>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Wheel Status */}
+          <TabsContent value="wheels" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {Object.entries(wheels).map(([wheelName, wheel]) => (
+                <Card key={wheelName} className="p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="font-medium capitalize">
+                      {wheelName.replace("_", " ")}
+                    </h4>
+                    <Badge
+                      variant={
+                        wheel.status === "active" ? "default" : "destructive"
+                      }
+                    >
+                      {wheel.status}
+                    </Badge>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span>Speed:</span>
+                      <span className="font-mono">
+                        {wheel.speed.toFixed(2)} rad/s
+                      </span>
+                    </div>
+
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <span>Current:</span>
+                        <span className="font-mono">{wheel.current} A</span>
+                      </div>
+                      <Progress
+                        value={(wheel.current / 5) * 100}
+                        className="h-2"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <span>Temperature:</span>
+                        <span className="font-mono">{wheel.temperature}°C</span>
+                      </div>
+                      <Progress
+                        value={(wheel.temperature / 80) * 100}
+                        className="h-2"
+                      />
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* Kinematics Configuration */}
+          <TabsContent value="kinematics" className="space-y-4">
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">
-                {t("holonomic.velocity")} Control
+                {t("holonomic.kinematics")} Parameters
               </h3>
 
               <div className="space-y-6">
                 <div>
                   <label className="text-sm font-medium mb-2 block">
-                    {t("holonomic.linear")} X: {velocity.linear_x[0].toFixed(2)}{" "}
-                    m/s
+                    Wheel Radius: {kinematics.wheel_radius[0].toFixed(3)} m
                   </label>
                   <Slider
-                    value={velocity.linear_x}
+                    value={kinematics.wheel_radius}
                     onValueChange={(value) =>
-                      handleVelocityChange("linear_x", value)
+                      setKinematics((prev) => ({
+                        ...prev,
+                        wheel_radius: value,
+                      }))
                     }
-                    min={-kinematics.max_linear_vel[0]}
-                    max={kinematics.max_linear_vel[0]}
-                    step={0.01}
-                    disabled={isEmergencyStop}
+                    min={0.05}
+                    max={0.2}
+                    step={0.001}
                   />
-                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>Backward</span>
-                    <span>Forward</span>
-                  </div>
                 </div>
 
                 <div>
                   <label className="text-sm font-medium mb-2 block">
-                    {t("holonomic.strafe")} Y: {velocity.linear_y[0].toFixed(2)}{" "}
-                    m/s
+                    Wheel Base: {kinematics.wheel_base[0].toFixed(3)} m
                   </label>
                   <Slider
-                    value={velocity.linear_y}
+                    value={kinematics.wheel_base}
                     onValueChange={(value) =>
-                      handleVelocityChange("linear_y", value)
+                      setKinematics((prev) => ({ ...prev, wheel_base: value }))
                     }
-                    min={-kinematics.max_linear_vel[0]}
-                    max={kinematics.max_linear_vel[0]}
-                    step={0.01}
-                    disabled={isEmergencyStop}
+                    min={0.2}
+                    max={1.0}
+                    step={0.001}
                   />
-                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>Right</span>
-                    <span>Left</span>
-                  </div>
                 </div>
 
                 <div>
                   <label className="text-sm font-medium mb-2 block">
-                    {t("holonomic.angular")} Z:{" "}
-                    {velocity.angular_z[0].toFixed(2)} rad/s
+                    Track Width: {kinematics.track_width[0].toFixed(3)} m
                   </label>
                   <Slider
-                    value={velocity.angular_z}
+                    value={kinematics.track_width}
                     onValueChange={(value) =>
-                      handleVelocityChange("angular_z", value)
+                      setKinematics((prev) => ({ ...prev, track_width: value }))
                     }
-                    min={-kinematics.max_angular_vel[0]}
-                    max={kinematics.max_angular_vel[0]}
-                    step={0.01}
-                    disabled={isEmergencyStop}
+                    min={0.2}
+                    max={1.0}
+                    step={0.001}
                   />
-                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>CCW</span>
-                    <span>CW</span>
-                  </div>
                 </div>
 
                 <Separator />
 
-                <div className="flex gap-2">
-                  <Button
-                    onClick={stopAllMotion}
-                    variant="destructive"
-                    className="gap-2"
-                    disabled={isEmergencyStop}
-                  >
-                    <Square className="h-4 w-4" />
-                    STOP
-                  </Button>
-                  <Button variant="outline" disabled={isEmergencyStop}>
-                    Coast
-                  </Button>
-                  <Button variant="outline" disabled={isEmergencyStop}>
-                    Brake
-                  </Button>
-                </div>
-              </div>
-            </Card>
-
-            {/* Direction Pad */}
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Direction Control</h3>
-
-              <div className="grid grid-cols-3 gap-3 mb-6">
-                {/* Top row */}
-                <Button
-                  variant="outline"
-                  className="aspect-square"
-                  disabled={isEmergencyStop}
-                  onClick={() => executePresetMove(presetMoves[6])} // Diagonal FL
-                >
-                  ↖
-                </Button>
-                <Button
-                  variant="outline"
-                  className="aspect-square"
-                  disabled={isEmergencyStop}
-                  onClick={() => executePresetMove(presetMoves[0])} // Forward
-                >
-                  <ArrowUp className="h-5 w-5" />
-                </Button>
-                <Button
-                  variant="outline"
-                  className="aspect-square"
-                  disabled={isEmergencyStop}
-                  onClick={() => executePresetMove(presetMoves[7])} // Diagonal FR
-                >
-                  ↗
-                </Button>
-
-                {/* Middle row */}
-                <Button
-                  variant="outline"
-                  className="aspect-square"
-                  disabled={isEmergencyStop}
-                  onClick={() => executePresetMove(presetMoves[2])} // Strafe Left
-                >
-                  <ArrowLeft className="h-5 w-5" />
-                </Button>
-                <Button
-                  variant="destructive"
-                  className="aspect-square"
-                  onClick={stopAllMotion}
-                  disabled={isEmergencyStop}
-                >
-                  <Square className="h-5 w-5" />
-                </Button>
-                <Button
-                  variant="outline"
-                  className="aspect-square"
-                  disabled={isEmergencyStop}
-                  onClick={() => executePresetMove(presetMoves[3])} // Strafe Right
-                >
-                  <ArrowRight className="h-5 w-5" />
-                </Button>
-
-                {/* Bottom row */}
-                <Button
-                  variant="outline"
-                  className="aspect-square"
-                  disabled={isEmergencyStop}
-                >
-                  ↙
-                </Button>
-                <Button
-                  variant="outline"
-                  className="aspect-square"
-                  disabled={isEmergencyStop}
-                  onClick={() => executePresetMove(presetMoves[1])} // Backward
-                >
-                  <ArrowDown className="h-5 w-5" />
-                </Button>
-                <Button
-                  variant="outline"
-                  className="aspect-square"
-                  disabled={isEmergencyStop}
-                >
-                  ↘
-                </Button>
-              </div>
-
-              {/* Rotation Controls */}
-              <div className="flex justify-center gap-3">
-                <Button
-                  variant="outline"
-                  className="gap-2"
-                  disabled={isEmergencyStop}
-                  onClick={() => executePresetMove(presetMoves[4])} // Rotate Left
-                >
-                  <RotateCcw className="h-4 w-4" />
-                  Rotate Left
-                </Button>
-                <Button
-                  variant="outline"
-                  className="gap-2"
-                  disabled={isEmergencyStop}
-                  onClick={() => executePresetMove(presetMoves[5])} // Rotate Right
-                >
-                  <RotateCw className="h-4 w-4" />
-                  Rotate Right
-                </Button>
-              </div>
-            </Card>
-          </div>
-        </TabsContent>
-
-        {/* Wheel Status */}
-        <TabsContent value="wheels" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {Object.entries(wheels).map(([wheelName, wheel]) => (
-              <Card key={wheelName} className="p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="font-medium capitalize">
-                    {wheelName.replace("_", " ")}
-                  </h4>
-                  <Badge
-                    variant={
-                      wheel.status === "active" ? "default" : "destructive"
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Max Linear Velocity:{" "}
+                    {kinematics.max_linear_vel[0].toFixed(2)} m/s
+                  </label>
+                  <Slider
+                    value={kinematics.max_linear_vel}
+                    onValueChange={(value) =>
+                      setKinematics((prev) => ({
+                        ...prev,
+                        max_linear_vel: value,
+                      }))
                     }
+                    min={0.1}
+                    max={5.0}
+                    step={0.01}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Max Angular Velocity:{" "}
+                    {kinematics.max_angular_vel[0].toFixed(2)} rad/s
+                  </label>
+                  <Slider
+                    value={kinematics.max_angular_vel}
+                    onValueChange={(value) =>
+                      setKinematics((prev) => ({
+                        ...prev,
+                        max_angular_vel: value,
+                      }))
+                    }
+                    min={0.1}
+                    max={6.28}
+                    step={0.01}
+                  />
+                </div>
+              </div>
+            </Card>
+          </TabsContent>
+
+          {/* Preset Movements */}
+          <TabsContent value="presets" className="space-y-4">
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold mb-4">Preset Movements</h3>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {presetMoves.map((move, index) => (
+                  <Button
+                    key={index}
+                    variant="outline"
+                    className="aspect-square flex flex-col gap-2"
+                    disabled={isEmergencyStop}
+                    onClick={() => executePresetMove(move)}
                   >
-                    {wheel.status}
-                  </Badge>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span>Speed:</span>
-                    <span className="font-mono">
-                      {wheel.speed.toFixed(2)} rad/s
-                    </span>
-                  </div>
-
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-sm">
-                      <span>Current:</span>
-                      <span className="font-mono">{wheel.current} A</span>
-                    </div>
-                    <Progress
-                      value={(wheel.current / 5) * 100}
-                      className="h-2"
-                    />
-                  </div>
-
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-sm">
-                      <span>Temperature:</span>
-                      <span className="font-mono">{wheel.temperature}°C</span>
-                    </div>
-                    <Progress
-                      value={(wheel.temperature / 80) * 100}
-                      className="h-2"
-                    />
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        {/* Kinematics Configuration */}
-        <TabsContent value="kinematics" className="space-y-4">
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">
-              {t("holonomic.kinematics")} Parameters
-            </h3>
-
-            <div className="space-y-6">
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Wheel Radius: {kinematics.wheel_radius[0].toFixed(3)} m
-                </label>
-                <Slider
-                  value={kinematics.wheel_radius}
-                  onValueChange={(value) =>
-                    setKinematics((prev) => ({ ...prev, wheel_radius: value }))
-                  }
-                  min={0.05}
-                  max={0.2}
-                  step={0.001}
-                />
+                    <move.icon className="h-6 w-6" />
+                    <span className="text-xs">{move.name}</span>
+                  </Button>
+                ))}
               </div>
-
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Wheel Base: {kinematics.wheel_base[0].toFixed(3)} m
-                </label>
-                <Slider
-                  value={kinematics.wheel_base}
-                  onValueChange={(value) =>
-                    setKinematics((prev) => ({ ...prev, wheel_base: value }))
-                  }
-                  min={0.2}
-                  max={1.0}
-                  step={0.001}
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Track Width: {kinematics.track_width[0].toFixed(3)} m
-                </label>
-                <Slider
-                  value={kinematics.track_width}
-                  onValueChange={(value) =>
-                    setKinematics((prev) => ({ ...prev, track_width: value }))
-                  }
-                  min={0.2}
-                  max={1.0}
-                  step={0.001}
-                />
-              </div>
-
-              <Separator />
-
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Max Linear Velocity: {kinematics.max_linear_vel[0].toFixed(2)}{" "}
-                  m/s
-                </label>
-                <Slider
-                  value={kinematics.max_linear_vel}
-                  onValueChange={(value) =>
-                    setKinematics((prev) => ({
-                      ...prev,
-                      max_linear_vel: value,
-                    }))
-                  }
-                  min={0.1}
-                  max={5.0}
-                  step={0.01}
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Max Angular Velocity:{" "}
-                  {kinematics.max_angular_vel[0].toFixed(2)} rad/s
-                </label>
-                <Slider
-                  value={kinematics.max_angular_vel}
-                  onValueChange={(value) =>
-                    setKinematics((prev) => ({
-                      ...prev,
-                      max_angular_vel: value,
-                    }))
-                  }
-                  min={0.1}
-                  max={6.28}
-                  step={0.01}
-                />
-              </div>
-            </div>
-          </Card>
-        </TabsContent>
-
-        {/* Preset Movements */}
-        <TabsContent value="presets" className="space-y-4">
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Preset Movements</h3>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {presetMoves.map((move, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  className="aspect-square flex flex-col gap-2"
-                  disabled={isEmergencyStop}
-                  onClick={() => executePresetMove(move)}
-                >
-                  <move.icon className="h-6 w-6" />
-                  <span className="text-xs">{move.name}</span>
-                </Button>
-              ))}
-            </div>
-          </Card>
-        </TabsContent>
-      </Tabs>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

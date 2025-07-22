@@ -40,6 +40,7 @@ Dino Core เป็นระบบควบคุมหุ่นยนต์แ�
 ### 🔧 เทคโนโลยีที่ใช้
 
 #### Frontend
+
 - **React 18** with TypeScript
 - **Tailwind CSS** + Flat Vector Theme
 - **Shadcn/ui** Components
@@ -47,6 +48,7 @@ Dino Core เป็นระบบควบคุมหุ่นยนต์แ�
 - **WebSocket** for real-time communication
 
 #### Backend & Control
+
 - **ROS Noetic/Humble** - Robot Operating System
 - **Python 3.8+** - Control logic
 - **OpenCV** - Computer vision
@@ -54,6 +56,7 @@ Dino Core เป็นระบบควบคุมหุ่นยนต์แ�
 - **PostgreSQL/Redis** - Data storage & caching
 
 #### Hardware Integration
+
 - **Holonomic Drive System** - 4x Mecanum wheels
 - **RPLiDAR A1/A2** - 360° laser scanner
 - **RGB Camera** - USB 3.0 vision system
@@ -192,16 +195,16 @@ image.save("robot_photo.jpg")
 
 ### REST API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/robot/status` | ดึงสถานะหุ่นยนต์ |
-| `POST` | `/api/robot/cmd_vel` | ส่งคำสั่งการเคลื่อนที่ |
-| `POST` | `/api/robot/emergency_stop` | หยุดฉุกเฉิน |
-| `POST` | `/api/navigation/goto` | สั่งนำทางไปยังตำแหน่ง |
-| `GET` | `/api/navigation/map` | ดึงแผนที่ปัจจุบัน |
-| `GET` | `/api/sensors/camera/image` | ดึงภาพจากกล้อง |
-| `GET` | `/api/sensors/all` | ดึงข้อมูลเซ็นเซอร์ทั้งหมด |
-| `GET` | `/api/system/health` | ตรวจสอบสุขภาพระบบ |
+| Method | Endpoint                    | Description               |
+| ------ | --------------------------- | ------------------------- |
+| `GET`  | `/api/robot/status`         | ดึงสถานะหุ่นยนต์          |
+| `POST` | `/api/robot/cmd_vel`        | ส่งคำสั่งการเคลื่อนที่    |
+| `POST` | `/api/robot/emergency_stop` | หยุดฉุกเฉิน               |
+| `POST` | `/api/navigation/goto`      | สั่งนำทางไปยังตำแหน่ง     |
+| `GET`  | `/api/navigation/map`       | ดึงแผนที่ปัจจุบัน         |
+| `GET`  | `/api/sensors/camera/image` | ดึงภาพจากกล้อง            |
+| `GET`  | `/api/sensors/all`          | ดึงข้อมูลเซ็นเซอร์ทั้งหมด |
+| `GET`  | `/api/system/health`        | ตรวจสอบสุขภาพระบบ         |
 
 ### WebSocket API
 
@@ -288,14 +291,14 @@ sudo netplan apply
 
 ```yaml
 # docker-compose.yml
-version: '3.8'
+version: "3.8"
 services:
   roscore:
     image: ros:noetic-robot
     command: roscore
     ports:
       - "11311:11311"
-    
+
   robot-control:
     build: .
     depends_on:
@@ -307,7 +310,7 @@ services:
       - ./config:/opt/robot/config
       - /dev:/dev
     privileged: true
-    
+
   database:
     image: postgres:14
     environment:
@@ -378,6 +381,7 @@ journalctl -f -u robot-control
 ### ปัญหาที่พบบ่อย
 
 #### 1. Robot ไม่ตอบสนองคำสั่ง
+
 ```bash
 # ตรวจสอบ emergency stop
 rostopic echo /emergency_stop
@@ -390,6 +394,7 @@ ls /dev/ttyUSB* /dev/ttyACM*
 ```
 
 #### 2. Navigation ไม่ทำงาน
+
 ```bash
 # ตรวจสอบแผนที่
 rostopic echo /map
@@ -402,6 +407,7 @@ rosservice call /move_base/clear_costmaps
 ```
 
 #### 3. Camera ไม่แสดงภาพ
+
 ```bash
 # ตรวจสอบ camera device
 ls /dev/video*
@@ -415,6 +421,7 @@ rosrun cv_camera cv_camera_node
 ```
 
 #### 4. WebSocket ขาดการเชื่อมต่อ
+
 ```bash
 # ตรวจสอบ port
 netstat -tulpn | grep 9090

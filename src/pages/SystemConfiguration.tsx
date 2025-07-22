@@ -7,7 +7,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import {
   Save,
@@ -37,7 +43,7 @@ import {
 export default function SystemConfiguration() {
   const [isApplying, setIsApplying] = useState(false);
   const [lastBackup, setLastBackup] = useState(new Date());
-  
+
   // System Settings State
   const [systemSettings, setSystemSettings] = useState({
     // ROS Configuration
@@ -46,7 +52,7 @@ export default function SystemConfiguration() {
     rosBridgePort: 9090,
     rosWorkspace: "/opt/ros/noetic",
     autoStartRos: true,
-    
+
     // Network Configuration
     wifiEnabled: true,
     ethernetEnabled: true,
@@ -54,35 +60,35 @@ export default function SystemConfiguration() {
     ipAddress: "192.168.1.100",
     netmask: "255.255.255.0",
     gateway: "192.168.1.1",
-    
+
     // ESP32 Configuration
     esp32Enabled: false,
     esp32WifiSSID: "",
     esp32WifiPassword: "",
     esp32EthernetEnabled: false,
-    
+
     // System Performance
     cpuGovernor: "performance",
     maxCpuFreq: 100,
     swappiness: 10,
     enableGpu: true,
-    
+
     // Security
     firewallEnabled: true,
     sshEnabled: true,
     sshPort: 22,
     autoUpdates: false,
-    
+
     // Backup & Storage
     autoBackup: true,
     backupInterval: 24,
     maxBackups: 10,
     backupLocation: "/home/robot/backups",
-    
+
     // Launch Files
     autoLaunchFiles: [],
     customLaunchFiles: [],
-    
+
     // System Monitoring
     enableLogging: true,
     logLevel: "INFO",
@@ -93,13 +99,13 @@ export default function SystemConfiguration() {
   const handleApply = async () => {
     setIsApplying(true);
     console.log("Applying system configuration...", systemSettings);
-    
+
     // Simulate applying settings
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     // Save to JSON
-    localStorage.setItem('systemConfiguration', JSON.stringify(systemSettings));
-    
+    localStorage.setItem("systemConfiguration", JSON.stringify(systemSettings));
+
     setIsApplying(false);
   };
 
@@ -107,35 +113,35 @@ export default function SystemConfiguration() {
     const backupData = {
       timestamp: new Date().toISOString(),
       systemSettings,
-      version: "2.0.0"
+      version: "2.0.0",
     };
-    
+
     const blob = new Blob([JSON.stringify(backupData, null, 2)], {
-      type: 'application/json'
+      type: "application/json",
     });
-    
+
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `system-backup-${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `system-backup-${new Date().toISOString().split("T")[0]}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    
+
     setLastBackup(new Date());
   };
 
   const handleRestore = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    
+
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
         const backupData = JSON.parse(e.target?.result as string);
         setSystemSettings(backupData.systemSettings);
-        console.log('System configuration restored from backup');
+        console.log("System configuration restored from backup");
       } catch (error) {
-        console.error('Failed to restore backup:', error);
+        console.error("Failed to restore backup:", error);
       }
     };
     reader.readAsText(file);
@@ -163,7 +169,7 @@ export default function SystemConfiguration() {
           />
           <Button
             variant="outline"
-            onClick={() => document.getElementById('restore-backup')?.click()}
+            onClick={() => document.getElementById("restore-backup")?.click()}
             className="gap-2"
           >
             <Upload className="h-4 w-4" />
@@ -221,59 +227,94 @@ export default function SystemConfiguration() {
               <div className="space-y-4">
                 <div>
                   <Label>ROS Version</Label>
-                  <Select 
-                    value={systemSettings.rosVersion} 
-                    onValueChange={(value) => setSystemSettings(prev => ({ ...prev, rosVersion: value }))}
+                  <Select
+                    value={systemSettings.rosVersion}
+                    onValueChange={(value) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        rosVersion: value,
+                      }))
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="noetic">ROS Noetic (Ubuntu 20.04)</SelectItem>
-                      <SelectItem value="humble">ROS2 Humble (Ubuntu 22.04)</SelectItem>
-                      <SelectItem value="iron">ROS2 Iron (Ubuntu 22.04)</SelectItem>
-                      <SelectItem value="rolling">ROS2 Rolling (Latest)</SelectItem>
+                      <SelectItem value="noetic">
+                        ROS Noetic (Ubuntu 20.04)
+                      </SelectItem>
+                      <SelectItem value="humble">
+                        ROS2 Humble (Ubuntu 22.04)
+                      </SelectItem>
+                      <SelectItem value="iron">
+                        ROS2 Iron (Ubuntu 22.04)
+                      </SelectItem>
+                      <SelectItem value="rolling">
+                        ROS2 Rolling (Latest)
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div>
                   <Label>ROS Master URI</Label>
                   <Input
                     value={systemSettings.rosMasterUri}
-                    onChange={(e) => setSystemSettings(prev => ({ ...prev, rosMasterUri: e.target.value }))}
+                    onChange={(e) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        rosMasterUri: e.target.value,
+                      }))
+                    }
                     placeholder="http://localhost:11311"
                   />
                 </div>
-                
+
                 <div>
                   <Label>ROS Bridge Port</Label>
                   <Input
                     type="number"
                     value={systemSettings.rosBridgePort}
-                    onChange={(e) => setSystemSettings(prev => ({ ...prev, rosBridgePort: parseInt(e.target.value) }))}
+                    onChange={(e) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        rosBridgePort: parseInt(e.target.value),
+                      }))
+                    }
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-4">
                 <div>
                   <Label>ROS Workspace</Label>
                   <Input
                     value={systemSettings.rosWorkspace}
-                    onChange={(e) => setSystemSettings(prev => ({ ...prev, rosWorkspace: e.target.value }))}
+                    onChange={(e) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        rosWorkspace: e.target.value,
+                      }))
+                    }
                     placeholder="/opt/ros/noetic"
                   />
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Auto-start ROS on boot</Label>
-                    <p className="text-sm text-gray-500">Automatically start ROS services when system boots</p>
+                    <p className="text-sm text-gray-500">
+                      Automatically start ROS services when system boots
+                    </p>
                   </div>
                   <Switch
                     checked={systemSettings.autoStartRos}
-                    onCheckedChange={(checked) => setSystemSettings(prev => ({ ...prev, autoStartRos: checked }))}
+                    onCheckedChange={(checked) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        autoStartRos: checked,
+                      }))
+                    }
                   />
                 </div>
               </div>
@@ -291,29 +332,46 @@ export default function SystemConfiguration() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Enable WiFi</Label>
-                    <p className="text-sm text-gray-500">Enable wireless network interface</p>
+                    <p className="text-sm text-gray-500">
+                      Enable wireless network interface
+                    </p>
                   </div>
                   <Switch
                     checked={systemSettings.wifiEnabled}
-                    onCheckedChange={(checked) => setSystemSettings(prev => ({ ...prev, wifiEnabled: checked }))}
+                    onCheckedChange={(checked) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        wifiEnabled: checked,
+                      }))
+                    }
                   />
                 </div>
-                
+
                 <div>
                   <Label>ESP32 WiFi SSID</Label>
                   <Input
                     value={systemSettings.esp32WifiSSID}
-                    onChange={(e) => setSystemSettings(prev => ({ ...prev, esp32WifiSSID: e.target.value }))}
+                    onChange={(e) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        esp32WifiSSID: e.target.value,
+                      }))
+                    }
                     placeholder="RobotNetwork"
                   />
                 </div>
-                
+
                 <div>
                   <Label>ESP32 WiFi Password</Label>
                   <Input
                     type="password"
                     value={systemSettings.esp32WifiPassword}
-                    onChange={(e) => setSystemSettings(prev => ({ ...prev, esp32WifiPassword: e.target.value }))}
+                    onChange={(e) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        esp32WifiPassword: e.target.value,
+                      }))
+                    }
                     placeholder="Enter WiFi password"
                   />
                 </div>
@@ -322,55 +380,86 @@ export default function SystemConfiguration() {
 
             {/* Ethernet Configuration */}
             <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-6">Ethernet Configuration</h3>
+              <h3 className="text-lg font-semibold mb-6">
+                Ethernet Configuration
+              </h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Enable Ethernet</Label>
-                    <p className="text-sm text-gray-500">Enable wired network interface</p>
+                    <p className="text-sm text-gray-500">
+                      Enable wired network interface
+                    </p>
                   </div>
                   <Switch
                     checked={systemSettings.ethernetEnabled}
-                    onCheckedChange={(checked) => setSystemSettings(prev => ({ ...prev, ethernetEnabled: checked }))}
+                    onCheckedChange={(checked) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        ethernetEnabled: checked,
+                      }))
+                    }
                   />
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Static IP</Label>
-                    <p className="text-sm text-gray-500">Use static IP address</p>
+                    <p className="text-sm text-gray-500">
+                      Use static IP address
+                    </p>
                   </div>
                   <Switch
                     checked={systemSettings.staticIp}
-                    onCheckedChange={(checked) => setSystemSettings(prev => ({ ...prev, staticIp: checked }))}
+                    onCheckedChange={(checked) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        staticIp: checked,
+                      }))
+                    }
                   />
                 </div>
-                
+
                 {systemSettings.staticIp && (
                   <>
                     <div>
                       <Label>IP Address</Label>
                       <Input
                         value={systemSettings.ipAddress}
-                        onChange={(e) => setSystemSettings(prev => ({ ...prev, ipAddress: e.target.value }))}
+                        onChange={(e) =>
+                          setSystemSettings((prev) => ({
+                            ...prev,
+                            ipAddress: e.target.value,
+                          }))
+                        }
                         placeholder="192.168.1.100"
                       />
                     </div>
-                    
+
                     <div>
                       <Label>Netmask</Label>
                       <Input
                         value={systemSettings.netmask}
-                        onChange={(e) => setSystemSettings(prev => ({ ...prev, netmask: e.target.value }))}
+                        onChange={(e) =>
+                          setSystemSettings((prev) => ({
+                            ...prev,
+                            netmask: e.target.value,
+                          }))
+                        }
                         placeholder="255.255.255.0"
                       />
                     </div>
-                    
+
                     <div>
                       <Label>Gateway</Label>
                       <Input
                         value={systemSettings.gateway}
-                        onChange={(e) => setSystemSettings(prev => ({ ...prev, gateway: e.target.value }))}
+                        onChange={(e) =>
+                          setSystemSettings((prev) => ({
+                            ...prev,
+                            gateway: e.target.value,
+                          }))
+                        }
                         placeholder="192.168.1.1"
                       />
                     </div>
@@ -389,9 +478,14 @@ export default function SystemConfiguration() {
               <div className="space-y-4">
                 <div>
                   <Label>CPU Governor</Label>
-                  <Select 
-                    value={systemSettings.cpuGovernor} 
-                    onValueChange={(value) => setSystemSettings(prev => ({ ...prev, cpuGovernor: value }))}
+                  <Select
+                    value={systemSettings.cpuGovernor}
+                    onValueChange={(value) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        cpuGovernor: value,
+                      }))
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -404,7 +498,7 @@ export default function SystemConfiguration() {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div>
                   <Label>Max CPU Frequency (%)</Label>
                   <div className="space-y-2">
@@ -413,12 +507,20 @@ export default function SystemConfiguration() {
                       min="10"
                       max="100"
                       value={systemSettings.maxCpuFreq}
-                      onChange={(e) => setSystemSettings(prev => ({ ...prev, maxCpuFreq: parseInt(e.target.value) }))}
+                      onChange={(e) =>
+                        setSystemSettings((prev) => ({
+                          ...prev,
+                          maxCpuFreq: parseInt(e.target.value),
+                        }))
+                      }
                     />
-                    <Progress value={systemSettings.maxCpuFreq} className="w-full" />
+                    <Progress
+                      value={systemSettings.maxCpuFreq}
+                      className="w-full"
+                    />
                   </div>
                 </div>
-                
+
                 <div>
                   <Label>Swappiness</Label>
                   <Input
@@ -426,32 +528,53 @@ export default function SystemConfiguration() {
                     min="0"
                     max="100"
                     value={systemSettings.swappiness}
-                    onChange={(e) => setSystemSettings(prev => ({ ...prev, swappiness: parseInt(e.target.value) }))}
+                    onChange={(e) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        swappiness: parseInt(e.target.value),
+                      }))
+                    }
                   />
-                  <p className="text-sm text-gray-500">Lower values prefer RAM over swap</p>
+                  <p className="text-sm text-gray-500">
+                    Lower values prefer RAM over swap
+                  </p>
                 </div>
               </div>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Enable GPU Acceleration</Label>
-                    <p className="text-sm text-gray-500">Use GPU for vision processing</p>
+                    <p className="text-sm text-gray-500">
+                      Use GPU for vision processing
+                    </p>
                   </div>
                   <Switch
                     checked={systemSettings.enableGpu}
-                    onCheckedChange={(checked) => setSystemSettings(prev => ({ ...prev, enableGpu: checked }))}
+                    onCheckedChange={(checked) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        enableGpu: checked,
+                      }))
+                    }
                   />
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Enable System Metrics</Label>
-                    <p className="text-sm text-gray-500">Collect performance metrics</p>
+                    <p className="text-sm text-gray-500">
+                      Collect performance metrics
+                    </p>
                   </div>
                   <Switch
                     checked={systemSettings.enableMetrics}
-                    onCheckedChange={(checked) => setSystemSettings(prev => ({ ...prev, enableMetrics: checked }))}
+                    onCheckedChange={(checked) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        enableMetrics: checked,
+                      }))
+                    }
                   />
                 </div>
               </div>
@@ -468,44 +591,70 @@ export default function SystemConfiguration() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Enable Firewall</Label>
-                    <p className="text-sm text-gray-500">UFW firewall protection</p>
+                    <p className="text-sm text-gray-500">
+                      UFW firewall protection
+                    </p>
                   </div>
                   <Switch
                     checked={systemSettings.firewallEnabled}
-                    onCheckedChange={(checked) => setSystemSettings(prev => ({ ...prev, firewallEnabled: checked }))}
+                    onCheckedChange={(checked) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        firewallEnabled: checked,
+                      }))
+                    }
                   />
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Enable SSH</Label>
-                    <p className="text-sm text-gray-500">Remote access via SSH</p>
+                    <p className="text-sm text-gray-500">
+                      Remote access via SSH
+                    </p>
                   </div>
                   <Switch
                     checked={systemSettings.sshEnabled}
-                    onCheckedChange={(checked) => setSystemSettings(prev => ({ ...prev, sshEnabled: checked }))}
+                    onCheckedChange={(checked) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        sshEnabled: checked,
+                      }))
+                    }
                   />
                 </div>
-                
+
                 <div>
                   <Label>SSH Port</Label>
                   <Input
                     type="number"
                     value={systemSettings.sshPort}
-                    onChange={(e) => setSystemSettings(prev => ({ ...prev, sshPort: parseInt(e.target.value) }))}
+                    onChange={(e) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        sshPort: parseInt(e.target.value),
+                      }))
+                    }
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Auto Updates</Label>
-                    <p className="text-sm text-gray-500">Automatic security updates</p>
+                    <p className="text-sm text-gray-500">
+                      Automatic security updates
+                    </p>
                   </div>
                   <Switch
                     checked={systemSettings.autoUpdates}
-                    onCheckedChange={(checked) => setSystemSettings(prev => ({ ...prev, autoUpdates: checked }))}
+                    onCheckedChange={(checked) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        autoUpdates: checked,
+                      }))
+                    }
                   />
                 </div>
               </div>
@@ -522,14 +671,21 @@ export default function SystemConfiguration() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Auto Backup</Label>
-                    <p className="text-sm text-gray-500">Automatic system backups</p>
+                    <p className="text-sm text-gray-500">
+                      Automatic system backups
+                    </p>
                   </div>
                   <Switch
                     checked={systemSettings.autoBackup}
-                    onCheckedChange={(checked) => setSystemSettings(prev => ({ ...prev, autoBackup: checked }))}
+                    onCheckedChange={(checked) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        autoBackup: checked,
+                      }))
+                    }
                   />
                 </div>
-                
+
                 <div>
                   <Label>Backup Interval (hours)</Label>
                   <Input
@@ -537,10 +693,15 @@ export default function SystemConfiguration() {
                     min="1"
                     max="168"
                     value={systemSettings.backupInterval}
-                    onChange={(e) => setSystemSettings(prev => ({ ...prev, backupInterval: parseInt(e.target.value) }))}
+                    onChange={(e) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        backupInterval: parseInt(e.target.value),
+                      }))
+                    }
                   />
                 </div>
-                
+
                 <div>
                   <Label>Max Backups to Keep</Label>
                   <Input
@@ -548,21 +709,31 @@ export default function SystemConfiguration() {
                     min="1"
                     max="50"
                     value={systemSettings.maxBackups}
-                    onChange={(e) => setSystemSettings(prev => ({ ...prev, maxBackups: parseInt(e.target.value) }))}
+                    onChange={(e) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        maxBackups: parseInt(e.target.value),
+                      }))
+                    }
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-4">
                 <div>
                   <Label>Backup Location</Label>
                   <Input
                     value={systemSettings.backupLocation}
-                    onChange={(e) => setSystemSettings(prev => ({ ...prev, backupLocation: e.target.value }))}
+                    onChange={(e) =>
+                      setSystemSettings((prev) => ({
+                        ...prev,
+                        backupLocation: e.target.value,
+                      }))
+                    }
                     placeholder="/home/robot/backups"
                   />
                 </div>
-                
+
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-medium">Last Backup</span>
@@ -582,7 +753,9 @@ export default function SystemConfiguration() {
         {/* Launch Files Configuration */}
         <TabsContent value="launch">
           <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-6">Launch Files & Startup</h3>
+            <h3 className="text-lg font-semibold mb-6">
+              Launch Files & Startup
+            </h3>
             <div className="space-y-6">
               <div>
                 <Label>Auto-launch Files on Startup</Label>
@@ -591,15 +764,19 @@ export default function SystemConfiguration() {
                 </p>
                 <Textarea
                   placeholder="Enter launch file paths, one per line&#10;/opt/ros/noetic/share/robot_bringup/launch/robot.launch&#10;/home/robot/catkin_ws/src/my_package/launch/sensors.launch"
-                  value={systemSettings.autoLaunchFiles.join('\n')}
-                  onChange={(e) => setSystemSettings(prev => ({ 
-                    ...prev, 
-                    autoLaunchFiles: e.target.value.split('\n').filter(line => line.trim()) 
-                  }))}
+                  value={systemSettings.autoLaunchFiles.join("\n")}
+                  onChange={(e) =>
+                    setSystemSettings((prev) => ({
+                      ...prev,
+                      autoLaunchFiles: e.target.value
+                        .split("\n")
+                        .filter((line) => line.trim()),
+                    }))
+                  }
                   rows={5}
                 />
               </div>
-              
+
               <div>
                 <Label>Custom Launch Files</Label>
                 <p className="text-sm text-gray-500 mb-3">
@@ -607,11 +784,15 @@ export default function SystemConfiguration() {
                 </p>
                 <Textarea
                   placeholder="Enter custom launch file paths&#10;/home/robot/custom_launch/debug.launch&#10;/home/robot/custom_launch/calibration.launch"
-                  value={systemSettings.customLaunchFiles.join('\n')}
-                  onChange={(e) => setSystemSettings(prev => ({ 
-                    ...prev, 
-                    customLaunchFiles: e.target.value.split('\n').filter(line => line.trim()) 
-                  }))}
+                  value={systemSettings.customLaunchFiles.join("\n")}
+                  onChange={(e) =>
+                    setSystemSettings((prev) => ({
+                      ...prev,
+                      customLaunchFiles: e.target.value
+                        .split("\n")
+                        .filter((line) => line.trim()),
+                    }))
+                  }
                   rows={5}
                 />
               </div>

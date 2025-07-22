@@ -4,7 +4,13 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Plus,
   X,
@@ -26,7 +32,7 @@ import {
 
 interface TerminalLine {
   id: string;
-  type: 'command' | 'output' | 'error' | 'system';
+  type: "command" | "output" | "error" | "system";
   content: string;
   timestamp: Date;
   directory?: string;
@@ -35,7 +41,7 @@ interface TerminalLine {
 interface TerminalTab {
   id: string;
   name: string;
-  type: 'bash' | 'ros' | 'python' | 'ssh';
+  type: "bash" | "ros" | "python" | "ssh";
   lines: TerminalLine[];
   history: string[];
   historyIndex: number;
@@ -48,59 +54,60 @@ interface TerminalTab {
 export default function Terminal() {
   const [tabs, setTabs] = useState<TerminalTab[]>([
     {
-      id: '1',
-      name: 'bash',
-      type: 'bash',
+      id: "1",
+      name: "bash",
+      type: "bash",
       lines: [
         {
-          id: '1',
-          type: 'system',
-          content: 'Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.15.0-91-generic x86_64)',
+          id: "1",
+          type: "system",
+          content:
+            "Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.15.0-91-generic x86_64)",
           timestamp: new Date(),
         },
         {
-          id: '2',
-          type: 'system',
-          content: 'Last login: ' + new Date().toLocaleString(),
+          id: "2",
+          type: "system",
+          content: "Last login: " + new Date().toLocaleString(),
           timestamp: new Date(),
         },
         {
-          id: '3',
-          type: 'system',
+          id: "3",
+          type: "system",
           content: 'Type "help" for available commands',
           timestamp: new Date(),
-        }
+        },
       ],
       history: [],
       historyIndex: -1,
-      currentDirectory: '/home/robot',
+      currentDirectory: "/home/robot",
       isRunning: false,
       environment: {
-        'HOME': '/home/robot',
-        'USER': 'robot',
-        'SHELL': '/bin/bash',
-        'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
-        'ROS_DISTRO': 'noetic',
+        HOME: "/home/robot",
+        USER: "robot",
+        SHELL: "/bin/bash",
+        PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        ROS_DISTRO: "noetic",
       },
-    }
+    },
   ]);
-  
-  const [activeTabId, setActiveTabId] = useState('1');
-  const [currentCommand, setCurrentCommand] = useState('');
+
+  const [activeTabId, setActiveTabId] = useState("1");
+  const [currentCommand, setCurrentCommand] = useState("");
   const [isConnected, setIsConnected] = useState(true);
   const [fontSize, setFontSize] = useState(14);
-  const [theme, setTheme] = useState('dark');
-  
+  const [theme, setTheme] = useState("dark");
+
   const commandInputRef = useRef<HTMLInputElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
-  
-  const activeTab = tabs.find(tab => tab.id === activeTabId);
+
+  const activeTab = tabs.find((tab) => tab.id === activeTabId);
 
   const terminalTypes = [
-    { value: 'bash', label: 'Bash', icon: '💻', color: 'text-green-400' },
-    { value: 'ros', label: 'ROS', icon: '🤖', color: 'text-blue-400' },
-    { value: 'python', label: 'Python', icon: '🐍', color: 'text-yellow-400' },
-    { value: 'ssh', label: 'SSH', icon: '🔐', color: 'text-red-400' },
+    { value: "bash", label: "Bash", icon: "💻", color: "text-green-400" },
+    { value: "ros", label: "ROS", icon: "🤖", color: "text-blue-400" },
+    { value: "python", label: "Python", icon: "🐍", color: "text-yellow-400" },
+    { value: "ssh", label: "SSH", icon: "🔐", color: "text-red-400" },
   ];
 
   // Auto-scroll to bottom when new content is added
@@ -117,266 +124,299 @@ export default function Terminal() {
     }
   }, [activeTabId]);
 
-  const addTab = useCallback((type: 'bash' | 'ros' | 'python' | 'ssh' = 'bash') => {
-    const newId = Date.now().toString();
-    const typeConfig = terminalTypes.find(t => t.value === type);
-    
-    const welcomeMessages: Record<string, TerminalLine[]> = {
-      bash: [
-        {
-          id: newId + '_1',
-          type: 'system',
-          content: `${typeConfig?.icon} Starting new bash session...`,
-          timestamp: new Date(),
-        }
-      ],
-      ros: [
-        {
-          id: newId + '_1',
-          type: 'system',
-          content: '🤖 ROS Noetic environment loaded',
-          timestamp: new Date(),
+  const addTab = useCallback(
+    (type: "bash" | "ros" | "python" | "ssh" = "bash") => {
+      const newId = Date.now().toString();
+      const typeConfig = terminalTypes.find((t) => t.value === type);
+
+      const welcomeMessages: Record<string, TerminalLine[]> = {
+        bash: [
+          {
+            id: newId + "_1",
+            type: "system",
+            content: `${typeConfig?.icon} Starting new bash session...`,
+            timestamp: new Date(),
+          },
+        ],
+        ros: [
+          {
+            id: newId + "_1",
+            type: "system",
+            content: "🤖 ROS Noetic environment loaded",
+            timestamp: new Date(),
+          },
+          {
+            id: newId + "_2",
+            type: "system",
+            content: "ROS_MASTER_URI=http://localhost:11311",
+            timestamp: new Date(),
+          },
+        ],
+        python: [
+          {
+            id: newId + "_1",
+            type: "system",
+            content: "Python 3.8.10 (default, Nov 22 2023, 10:22:35)",
+            timestamp: new Date(),
+          },
+          {
+            id: newId + "_2",
+            type: "system",
+            content:
+              'Type "help", "copyright", "credits" or "license" for more information.',
+            timestamp: new Date(),
+          },
+        ],
+        ssh: [
+          {
+            id: newId + "_1",
+            type: "system",
+            content: "🔐 SSH connection ready",
+            timestamp: new Date(),
+          },
+        ],
+      };
+
+      const newTab: TerminalTab = {
+        id: newId,
+        name: `${type}-${tabs.length + 1}`,
+        type,
+        lines: welcomeMessages[type] || welcomeMessages.bash,
+        history: [],
+        historyIndex: -1,
+        currentDirectory: type === "ros" ? "/opt/ros/noetic" : "/home/robot",
+        isRunning: false,
+        environment: {
+          HOME: "/home/robot",
+          USER: "robot",
+          SHELL: type === "python" ? "/usr/bin/python3" : "/bin/bash",
+          PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+          ...(type === "ros" && {
+            ROS_DISTRO: "noetic",
+            ROS_MASTER_URI: "http://localhost:11311",
+          }),
         },
-        {
-          id: newId + '_2',
-          type: 'system',
-          content: 'ROS_MASTER_URI=http://localhost:11311',
-          timestamp: new Date(),
-        }
-      ],
-      python: [
-        {
-          id: newId + '_1',
-          type: 'system',
-          content: 'Python 3.8.10 (default, Nov 22 2023, 10:22:35)',
-          timestamp: new Date(),
+      };
+
+      setTabs((prev) => [...prev, newTab]);
+      setActiveTabId(newId);
+    },
+    [tabs.length],
+  );
+
+  const closeTab = useCallback(
+    (tabId: string) => {
+      if (tabs.length <= 1) return;
+
+      const newTabs = tabs.filter((tab) => tab.id !== tabId);
+      setTabs(newTabs);
+
+      if (activeTabId === tabId) {
+        setActiveTabId(newTabs[0]?.id || "");
+      }
+    },
+    [tabs, activeTabId],
+  );
+
+  const executeCommand = useCallback(
+    async (command: string) => {
+      if (!command.trim() || !activeTab) return;
+
+      const commandId = Date.now().toString();
+
+      // Add command to history
+      const updatedTab = {
+        ...activeTab,
+        history: [...activeTab.history, command],
+        historyIndex: -1,
+        isRunning: true,
+      };
+
+      // Add command line to output
+      const commandLine: TerminalLine = {
+        id: commandId,
+        type: "command",
+        content: `${getPrompt(activeTab)}${command}`,
+        timestamp: new Date(),
+        directory: activeTab.currentDirectory,
+      };
+
+      updatedTab.lines = [...updatedTab.lines, commandLine];
+
+      // Update tabs
+      setTabs((prev) =>
+        prev.map((tab) => (tab.id === activeTabId ? updatedTab : tab)),
+      );
+
+      // Simulate command execution
+      setTimeout(
+        async () => {
+          const outputLines = await simulateCommandExecution(
+            command,
+            activeTab,
+          );
+
+          setTabs((prev) =>
+            prev.map((tab) => {
+              if (tab.id === activeTabId) {
+                return {
+                  ...tab,
+                  lines: [...tab.lines, ...outputLines],
+                  isRunning: false,
+                  currentDirectory: updateDirectory(
+                    command,
+                    tab.currentDirectory,
+                  ),
+                };
+              }
+              return tab;
+            }),
+          );
         },
-        {
-          id: newId + '_2',
-          type: 'system',
-          content: 'Type "help", "copyright", "credits" or "license" for more information.',
-          timestamp: new Date(),
-        }
-      ],
-      ssh: [
-        {
-          id: newId + '_1',
-          type: 'system',
-          content: '🔐 SSH connection ready',
-          timestamp: new Date(),
-        }
-      ]
-    };
-    
-    const newTab: TerminalTab = {
-      id: newId,
-      name: `${type}-${tabs.length + 1}`,
-      type,
-      lines: welcomeMessages[type] || welcomeMessages.bash,
-      history: [],
-      historyIndex: -1,
-      currentDirectory: type === 'ros' ? '/opt/ros/noetic' : '/home/robot',
-      isRunning: false,
-      environment: {
-        'HOME': '/home/robot',
-        'USER': 'robot',
-        'SHELL': type === 'python' ? '/usr/bin/python3' : '/bin/bash',
-        'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
-        ...(type === 'ros' && { 'ROS_DISTRO': 'noetic', 'ROS_MASTER_URI': 'http://localhost:11311' }),
-      },
-    };
+        Math.random() * 800 + 200,
+      ); // Random delay 200-1000ms
 
-    setTabs(prev => [...prev, newTab]);
-    setActiveTabId(newId);
-  }, [tabs.length]);
+      setCurrentCommand("");
+    },
+    [activeTab, activeTabId],
+  );
 
-  const closeTab = useCallback((tabId: string) => {
-    if (tabs.length <= 1) return;
-    
-    const newTabs = tabs.filter(tab => tab.id !== tabId);
-    setTabs(newTabs);
-    
-    if (activeTabId === tabId) {
-      setActiveTabId(newTabs[0]?.id || '');
-    }
-  }, [tabs, activeTabId]);
-
-  const executeCommand = useCallback(async (command: string) => {
-    if (!command.trim() || !activeTab) return;
-
-    const commandId = Date.now().toString();
-    
-    // Add command to history
-    const updatedTab = {
-      ...activeTab,
-      history: [...activeTab.history, command],
-      historyIndex: -1,
-      isRunning: true,
-    };
-
-    // Add command line to output
-    const commandLine: TerminalLine = {
-      id: commandId,
-      type: 'command',
-      content: `${getPrompt(activeTab)}${command}`,
-      timestamp: new Date(),
-      directory: activeTab.currentDirectory,
-    };
-
-    updatedTab.lines = [...updatedTab.lines, commandLine];
-    
-    // Update tabs
-    setTabs(prev => prev.map(tab => tab.id === activeTabId ? updatedTab : tab));
-
-    // Simulate command execution
-    setTimeout(async () => {
-      const outputLines = await simulateCommandExecution(command, activeTab);
-      
-      setTabs(prev => prev.map(tab => {
-        if (tab.id === activeTabId) {
-          return {
-            ...tab,
-            lines: [...tab.lines, ...outputLines],
-            isRunning: false,
-            currentDirectory: updateDirectory(command, tab.currentDirectory),
-          };
-        }
-        return tab;
-      }));
-    }, Math.random() * 800 + 200); // Random delay 200-1000ms
-
-    setCurrentCommand('');
-  }, [activeTab, activeTabId]);
-
-  const simulateCommandExecution = async (command: string, tab: TerminalTab): Promise<TerminalLine[]> => {
+  const simulateCommandExecution = async (
+    command: string,
+    tab: TerminalTab,
+  ): Promise<TerminalLine[]> => {
     const cmd = command.trim().toLowerCase();
     const timestamp = new Date();
-    
-    if (cmd === 'clear') {
+
+    if (cmd === "clear") {
       // Clear will be handled separately
       return [];
     }
-    
-    if (cmd === 'help') {
+
+    if (cmd === "help") {
       return [
         {
           id: `${timestamp.getTime()}_1`,
-          type: 'output',
-          content: 'Available commands:',
+          type: "output",
+          content: "Available commands:",
           timestamp,
         },
         {
           id: `${timestamp.getTime()}_2`,
-          type: 'output',
-          content: '  ls, cd, pwd, ps, top, htop, nano, vim',
+          type: "output",
+          content: "  ls, cd, pwd, ps, top, htop, nano, vim",
           timestamp,
         },
         {
           id: `${timestamp.getTime()}_3`,
-          type: 'output',
-          content: '  roscore, rosrun, roslaunch (ROS terminal)',
+          type: "output",
+          content: "  roscore, rosrun, roslaunch (ROS terminal)",
           timestamp,
         },
         {
           id: `${timestamp.getTime()}_4`,
-          type: 'output',
-          content: '  clear, history, exit',
+          type: "output",
+          content: "  clear, history, exit",
           timestamp,
         },
       ];
     }
 
-    if (cmd === 'history') {
+    if (cmd === "history") {
       return tab.history.map((histCmd, index) => ({
         id: `${timestamp.getTime()}_${index}`,
-        type: 'output',
+        type: "output",
         content: `${index + 1}: ${histCmd}`,
         timestamp,
       }));
     }
 
-    if (cmd === 'exit') {
+    if (cmd === "exit") {
       return [
         {
           id: `${timestamp.getTime()}`,
-          type: 'system',
-          content: 'Session terminated. Close tab or start new session.',
+          type: "system",
+          content: "Session terminated. Close tab or start new session.",
           timestamp,
-        }
+        },
       ];
     }
 
     // Type-specific commands
     switch (tab.type) {
-      case 'ros':
+      case "ros":
         return simulateRosCommand(cmd, timestamp);
-      case 'python':
+      case "python":
         return simulatePythonCommand(cmd, timestamp);
-      case 'ssh':
+      case "ssh":
         return simulateSSHCommand(cmd, timestamp);
       default:
         return simulateBashCommand(cmd, timestamp);
     }
   };
 
-  const simulateBashCommand = (command: string, timestamp: Date): TerminalLine[] => {
-    if (command.startsWith('ls')) {
+  const simulateBashCommand = (
+    command: string,
+    timestamp: Date,
+  ): TerminalLine[] => {
+    if (command.startsWith("ls")) {
       return [
         {
           id: `${timestamp.getTime()}_1`,
-          type: 'output',
-          content: 'catkin_ws/  Documents/  Downloads/  Pictures/  robot_config.yaml',
+          type: "output",
+          content:
+            "catkin_ws/  Documents/  Downloads/  Pictures/  robot_config.yaml",
           timestamp,
-        }
+        },
       ];
     }
 
-    if (command === 'pwd') {
+    if (command === "pwd") {
       return [
         {
           id: `${timestamp.getTime()}`,
-          type: 'output',
-          content: activeTab?.currentDirectory || '/home/robot',
+          type: "output",
+          content: activeTab?.currentDirectory || "/home/robot",
           timestamp,
-        }
+        },
       ];
     }
 
-    if (command.startsWith('ps')) {
+    if (command.startsWith("ps")) {
       return [
         {
           id: `${timestamp.getTime()}_1`,
-          type: 'output',
-          content: 'PID  TTY          TIME CMD',
+          type: "output",
+          content: "PID  TTY          TIME CMD",
           timestamp,
         },
         {
           id: `${timestamp.getTime()}_2`,
-          type: 'output',
-          content: '1234 pts/0    00:00:01 bash',
+          type: "output",
+          content: "1234 pts/0    00:00:01 bash",
           timestamp,
         },
         {
           id: `${timestamp.getTime()}_3`,
-          type: 'output',
-          content: '1235 pts/0    00:00:02 roscore',
+          type: "output",
+          content: "1235 pts/0    00:00:02 roscore",
           timestamp,
         },
       ];
     }
 
-    if (command.startsWith('cd ')) {
+    if (command.startsWith("cd ")) {
       const dir = command.substring(3).trim();
-      if (dir === '..') {
+      if (dir === "..") {
         return []; // Directory change handled in updateDirectory
       }
       return [
         {
           id: `${timestamp.getTime()}`,
-          type: 'output',
+          type: "output",
           content: `Changed directory to: ${dir}`,
           timestamp,
-        }
+        },
       ];
     }
 
@@ -384,61 +424,64 @@ export default function Terminal() {
     return [
       {
         id: `${timestamp.getTime()}`,
-        type: 'error',
+        type: "error",
         content: `bash: ${command}: command not found`,
         timestamp,
-      }
+      },
     ];
   };
 
-  const simulateRosCommand = (command: string, timestamp: Date): TerminalLine[] => {
-    if (command === 'roscore') {
+  const simulateRosCommand = (
+    command: string,
+    timestamp: Date,
+  ): TerminalLine[] => {
+    if (command === "roscore") {
       return [
         {
           id: `${timestamp.getTime()}_1`,
-          type: 'output',
-          content: 'Starting roscore...',
+          type: "output",
+          content: "Starting roscore...",
           timestamp,
         },
         {
           id: `${timestamp.getTime()}_2`,
-          type: 'output',
-          content: 'ROS Master started at http://localhost:11311',
+          type: "output",
+          content: "ROS Master started at http://localhost:11311",
           timestamp,
         },
         {
           id: `${timestamp.getTime()}_3`,
-          type: 'output',
-          content: 'Parameter server started',
+          type: "output",
+          content: "Parameter server started",
           timestamp,
         },
       ];
     }
 
-    if (command.startsWith('rostopic list')) {
+    if (command.startsWith("rostopic list")) {
       return [
         {
           id: `${timestamp.getTime()}_1`,
-          type: 'output',
-          content: '/camera/image_raw',
+          type: "output",
+          content: "/camera/image_raw",
           timestamp,
         },
         {
           id: `${timestamp.getTime()}_2`,
-          type: 'output',
-          content: '/cmd_vel',
+          type: "output",
+          content: "/cmd_vel",
           timestamp,
         },
         {
           id: `${timestamp.getTime()}_3`,
-          type: 'output',
-          content: '/odom',
+          type: "output",
+          content: "/odom",
           timestamp,
         },
         {
           id: `${timestamp.getTime()}_4`,
-          type: 'output',
-          content: '/scan',
+          type: "output",
+          content: "/scan",
           timestamp,
         },
       ];
@@ -447,91 +490,97 @@ export default function Terminal() {
     return simulateBashCommand(command, timestamp);
   };
 
-  const simulatePythonCommand = (command: string, timestamp: Date): TerminalLine[] => {
-    if (command.startsWith('import')) {
+  const simulatePythonCommand = (
+    command: string,
+    timestamp: Date,
+  ): TerminalLine[] => {
+    if (command.startsWith("import")) {
       return [
         {
           id: `${timestamp.getTime()}`,
-          type: 'output',
-          content: '>>> ' + command,
+          type: "output",
+          content: ">>> " + command,
           timestamp,
-        }
+        },
       ];
     }
 
-    if (command.startsWith('print')) {
+    if (command.startsWith("print")) {
       const match = command.match(/print\s*\(\s*["'](.*)["']\s*\)/);
-      const output = match?.[1] || 'Hello World';
+      const output = match?.[1] || "Hello World";
       return [
         {
           id: `${timestamp.getTime()}_1`,
-          type: 'output',
-          content: '>>> ' + command,
+          type: "output",
+          content: ">>> " + command,
           timestamp,
         },
         {
           id: `${timestamp.getTime()}_2`,
-          type: 'output',
+          type: "output",
           content: output,
           timestamp,
-        }
+        },
       ];
     }
 
     return [
       {
         id: `${timestamp.getTime()}_1`,
-        type: 'output',
-        content: '>>> ' + command,
+        type: "output",
+        content: ">>> " + command,
         timestamp,
       },
       {
         id: `${timestamp.getTime()}_2`,
-        type: 'output',
-        content: 'Command executed',
+        type: "output",
+        content: "Command executed",
         timestamp,
-      }
+      },
     ];
   };
 
-  const simulateSSHCommand = (command: string, timestamp: Date): TerminalLine[] => {
+  const simulateSSHCommand = (
+    command: string,
+    timestamp: Date,
+  ): TerminalLine[] => {
     return [
       {
         id: `${timestamp.getTime()}`,
-        type: 'output',
+        type: "output",
         content: `[SSH] ${command}`,
         timestamp,
-      }
+      },
     ];
   };
 
   const updateDirectory = (command: string, currentDir: string): string => {
-    if (command.startsWith('cd ')) {
+    if (command.startsWith("cd ")) {
       const dir = command.substring(3).trim();
-      if (dir === '..') {
-        const parts = currentDir.split('/');
+      if (dir === "..") {
+        const parts = currentDir.split("/");
         parts.pop();
-        return parts.length > 1 ? parts.join('/') : '/';
-      } else if (dir.startsWith('/')) {
+        return parts.length > 1 ? parts.join("/") : "/";
+      } else if (dir.startsWith("/")) {
         return dir;
       } else {
-        return `${currentDir}/${dir}`.replace('//', '/');
+        return `${currentDir}/${dir}`.replace("//", "/");
       }
     }
     return currentDir;
   };
 
   const getPrompt = (tab: TerminalTab): string => {
-    const user = tab.environment.USER || 'robot';
-    const hostname = 'robot-desktop';
-    const shortDir = tab.currentDirectory.replace('/home/robot', '~');
-    
+    const user = tab.environment.USER || "robot";
+    const hostname = "robot-desktop";
+    const shortDir = tab.currentDirectory.replace("/home/robot", "~");
+
     switch (tab.type) {
-      case 'python':
-        return '>>> ';
-      case 'ros':
+      case "python":
+        return ">>> ";
+      case "ros":
         return `[ROS] ${user}@${hostname}:${shortDir}$ `;
-      case 'ssh':
+      case "ssh":
         return `[SSH] ${user}@remote:${shortDir}$ `;
       default:
         return `${user}@${hostname}:${shortDir}$ `;
@@ -541,117 +590,124 @@ export default function Terminal() {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!activeTab) return;
 
-    if (e.key === 'Enter') {
-      if (currentCommand === 'clear') {
+    if (e.key === "Enter") {
+      if (currentCommand === "clear") {
         clearTerminal();
         return;
       }
       executeCommand(currentCommand);
-    } else if (e.key === 'ArrowUp') {
+    } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      navigateHistory('up');
-    } else if (e.key === 'ArrowDown') {
+      navigateHistory("up");
+    } else if (e.key === "ArrowDown") {
       e.preventDefault();
-      navigateHistory('down');
-    } else if (e.key === 'Tab') {
+      navigateHistory("down");
+    } else if (e.key === "Tab") {
       e.preventDefault();
       // Simple tab completion could be added here
-    } else if (e.ctrlKey && e.key === 'c') {
+    } else if (e.ctrlKey && e.key === "c") {
       e.preventDefault();
       interruptCommand();
-    } else if (e.ctrlKey && e.key === 'l') {
+    } else if (e.ctrlKey && e.key === "l") {
       e.preventDefault();
       clearTerminal();
     }
   };
 
-  const navigateHistory = (direction: 'up' | 'down') => {
+  const navigateHistory = (direction: "up" | "down") => {
     if (!activeTab) return;
 
     const history = activeTab.history;
     if (history.length === 0) return;
 
     let newIndex = activeTab.historyIndex;
-    
-    if (direction === 'up') {
-      newIndex = newIndex === -1 ? history.length - 1 : Math.max(0, newIndex - 1);
+
+    if (direction === "up") {
+      newIndex =
+        newIndex === -1 ? history.length - 1 : Math.max(0, newIndex - 1);
     } else {
       newIndex = newIndex === -1 ? -1 : newIndex + 1;
       if (newIndex >= history.length) newIndex = -1;
     }
 
-    setTabs(prev => prev.map(tab => 
-      tab.id === activeTabId ? { ...tab, historyIndex: newIndex } : tab
-    ));
+    setTabs((prev) =>
+      prev.map((tab) =>
+        tab.id === activeTabId ? { ...tab, historyIndex: newIndex } : tab,
+      ),
+    );
 
-    setCurrentCommand(newIndex === -1 ? '' : history[newIndex]);
+    setCurrentCommand(newIndex === -1 ? "" : history[newIndex]);
   };
 
   const clearTerminal = () => {
     if (!activeTab) return;
-    
-    setTabs(prev => prev.map(tab => {
-      if (tab.id === activeTabId) {
-        return {
-          ...tab,
-          lines: [
-            {
-              id: Date.now().toString(),
-              type: 'system',
-              content: 'Terminal cleared',
-              timestamp: new Date(),
-            }
-          ],
-        };
-      }
-      return tab;
-    }));
-    setCurrentCommand('');
+
+    setTabs((prev) =>
+      prev.map((tab) => {
+        if (tab.id === activeTabId) {
+          return {
+            ...tab,
+            lines: [
+              {
+                id: Date.now().toString(),
+                type: "system",
+                content: "Terminal cleared",
+                timestamp: new Date(),
+              },
+            ],
+          };
+        }
+        return tab;
+      }),
+    );
+    setCurrentCommand("");
   };
 
   const interruptCommand = () => {
     if (!activeTab) return;
-    
-    setTabs(prev => prev.map(tab => {
-      if (tab.id === activeTabId) {
-        return {
-          ...tab,
-          isRunning: false,
-          lines: [
-            ...tab.lines,
-            {
-              id: Date.now().toString(),
-              type: 'system',
-              content: '^C',
-              timestamp: new Date(),
-            }
-          ],
-        };
-      }
-      return tab;
-    }));
-    setCurrentCommand('');
+
+    setTabs((prev) =>
+      prev.map((tab) => {
+        if (tab.id === activeTabId) {
+          return {
+            ...tab,
+            isRunning: false,
+            lines: [
+              ...tab.lines,
+              {
+                id: Date.now().toString(),
+                type: "system",
+                content: "^C",
+                timestamp: new Date(),
+              },
+            ],
+          };
+        }
+        return tab;
+      }),
+    );
+    setCurrentCommand("");
   };
 
   const copyAllOutput = () => {
     if (!activeTab) return;
-    
-    const content = activeTab.lines.map(line => line.content).join('\n');
+
+    const content = activeTab.lines.map((line) => line.content).join("\n");
     navigator.clipboard.writeText(content);
   };
 
   const downloadSession = () => {
     if (!activeTab) return;
-    
-    const content = activeTab.lines.map(line => 
-      `[${line.timestamp.toLocaleTimeString()}] ${line.content}`
-    ).join('\n');
-    
-    const blob = new Blob([content], { type: 'text/plain' });
+
+    const content = activeTab.lines
+      .map((line) => `[${line.timestamp.toLocaleTimeString()}] ${line.content}`)
+      .join("\n");
+
+    const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `terminal-${activeTab.name}-${new Date().toISOString().split('T')[0]}.txt`;
+    a.download = `terminal-${activeTab.name}-${new Date().toISOString().split("T")[0]}.txt`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -667,13 +723,17 @@ export default function Terminal() {
             <TerminalIcon className="h-5 w-5" />
             <span className="font-medium">Terminal</span>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <Badge className={isConnected ? "bg-green-600" : "bg-red-600"}>
-              {isConnected ? <Wifi className="h-3 w-3 mr-1" /> : <WifiOff className="h-3 w-3 mr-1" />}
-              {isConnected ? 'Connected' : 'Disconnected'}
+              {isConnected ? (
+                <Wifi className="h-3 w-3 mr-1" />
+              ) : (
+                <WifiOff className="h-3 w-3 mr-1" />
+              )}
+              {isConnected ? "Connected" : "Disconnected"}
             </Badge>
-            
+
             <Badge className="bg-blue-600">
               <Clock className="h-3 w-3 mr-1" />
               {new Date().toLocaleTimeString()}
@@ -682,7 +742,10 @@ export default function Terminal() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Select value={fontSize.toString()} onValueChange={(value) => setFontSize(parseInt(value))}>
+          <Select
+            value={fontSize.toString()}
+            onValueChange={(value) => setFontSize(parseInt(value))}
+          >
             <SelectTrigger className="w-20 h-8 bg-gray-700 border-gray-600 text-green-400">
               <SelectValue />
             </SelectTrigger>
@@ -718,14 +781,14 @@ export default function Terminal() {
       <div className="flex items-center bg-gray-800 border-b border-gray-700">
         <div className="flex items-center flex-1 overflow-x-auto">
           {tabs.map((tab) => {
-            const typeConfig = terminalTypes.find(t => t.value === tab.type);
+            const typeConfig = terminalTypes.find((t) => t.value === tab.type);
             return (
               <div
                 key={tab.id}
                 className={`flex items-center gap-2 px-4 py-2 border-r border-gray-700 cursor-pointer min-w-0 ${
-                  tab.id === activeTabId 
-                    ? 'bg-gray-900 text-green-400 border-b-2 border-green-400' 
-                    : 'text-gray-400 hover:bg-gray-700'
+                  tab.id === activeTabId
+                    ? "bg-gray-900 text-green-400 border-b-2 border-green-400"
+                    : "text-gray-400 hover:bg-gray-700"
                 }`}
                 onClick={() => setActiveTabId(tab.id)}
               >
@@ -756,7 +819,7 @@ export default function Terminal() {
               <Plus className="h-4 w-4" />
             </SelectTrigger>
             <SelectContent>
-              {terminalTypes.map(type => (
+              {terminalTypes.map((type) => (
                 <SelectItem key={type.value} value={type.value}>
                   <span className="mr-2">{type.icon}</span>
                   {type.label}
@@ -776,12 +839,17 @@ export default function Terminal() {
         >
           {activeTab.lines.map((line) => (
             <div key={line.id} className="leading-relaxed">
-              <span className={
-                line.type === 'command' ? 'text-white' :
-                line.type === 'error' ? 'text-red-400' :
-                line.type === 'system' ? 'text-blue-400' :
-                'text-green-400'
-              }>
+              <span
+                className={
+                  line.type === "command"
+                    ? "text-white"
+                    : line.type === "error"
+                      ? "text-red-400"
+                      : line.type === "system"
+                        ? "text-blue-400"
+                        : "text-green-400"
+                }
+              >
                 {line.content}
               </span>
             </div>
@@ -801,7 +869,9 @@ export default function Terminal() {
               onKeyDown={handleKeyDown}
               className="flex-1 bg-transparent border-none outline-none text-green-400 font-mono"
               style={{ fontSize: `${fontSize}px` }}
-              placeholder={activeTab.isRunning ? "Command running..." : "Enter command..."}
+              placeholder={
+                activeTab.isRunning ? "Command running..." : "Enter command..."
+              }
               disabled={activeTab.isRunning}
               autoComplete="off"
               spellCheck={false}
@@ -813,7 +883,7 @@ export default function Terminal() {
               </div>
             )}
           </div>
-          
+
           {/* Status Bar */}
           <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
             <div className="flex items-center gap-4">

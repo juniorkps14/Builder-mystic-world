@@ -249,251 +249,252 @@ const TFTree = () => {
       </div>
 
       <div className="space-y-6">
-
-      {/* Controls */}
-      <div className="flex items-center justify-between">
-        <div className="flex gap-2">
-          <Button
-            variant={isAutoRefresh ? "default" : "outline"}
-            onClick={() => setIsAutoRefresh(!isAutoRefresh)}
-            className="gap-2"
-          >
-            <RefreshCw
-              className={`h-4 w-4 ${isAutoRefresh ? "animate-spin" : ""}`}
-            />
-            Auto Refresh
-          </Button>
-          <Button variant="outline" className="gap-2">
-            <Download className="h-4 w-4" />
-            Export TF Tree
-          </Button>
-          <Button variant="outline" className="gap-2">
-            <Settings className="h-4 w-4" />
-            Settings
-          </Button>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm">
-            <Activity className="h-4 w-4 text-primary" />
-            <span>{tfFrames.length} frames</span>
+        {/* Controls */}
+        <div className="flex items-center justify-between">
+          <div className="flex gap-2">
+            <Button
+              variant={isAutoRefresh ? "default" : "outline"}
+              onClick={() => setIsAutoRefresh(!isAutoRefresh)}
+              className="gap-2"
+            >
+              <RefreshCw
+                className={`h-4 w-4 ${isAutoRefresh ? "animate-spin" : ""}`}
+              />
+              Auto Refresh
+            </Button>
+            <Button variant="outline" className="gap-2">
+              <Download className="h-4 w-4" />
+              Export TF Tree
+            </Button>
+            <Button variant="outline" className="gap-2">
+              <Settings className="h-4 w-4" />
+              Settings
+            </Button>
           </div>
-          <div className="flex items-center gap-2 text-sm">
-            <CheckCircle className="h-4 w-4 text-ros-success" />
-            <span>
-              {tfFrames.filter((f) => f.status === "active").length} active
-            </span>
-          </div>
-        </div>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* TF Tree Structure */}
-        <Card className="lg:col-span-2 p-4">
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <GitBranch className="h-5 w-5" />
-            Transform Tree
-          </h3>
-
-          <ScrollArea className="h-[600px]">
-            <div className="space-y-1">
-              {getFramesByParent(null).map((rootFrame) =>
-                renderFrame(rootFrame),
-              )}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-sm">
+              <Activity className="h-4 w-4 text-primary" />
+              <span>{tfFrames.length} frames</span>
             </div>
-          </ScrollArea>
-        </Card>
+            <div className="flex items-center gap-2 text-sm">
+              <CheckCircle className="h-4 w-4 text-ros-success" />
+              <span>
+                {tfFrames.filter((f) => f.status === "active").length} active
+              </span>
+            </div>
+          </div>
+        </div>
 
-        {/* Frame Details */}
-        <div className="space-y-4">
-          <Card className="p-4">
-            <h3 className="text-lg font-semibold mb-4">Frame Details</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* TF Tree Structure */}
+          <Card className="lg:col-span-2 p-4">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <GitBranch className="h-5 w-5" />
+              Transform Tree
+            </h3>
 
-            {selectedFrameData ? (
-              <div className="space-y-4">
-                <div>
-                  <Label className="text-sm font-medium">Frame Name</Label>
-                  <div className="font-mono text-sm bg-muted p-2 rounded mt-1">
-                    {selectedFrameData.name}
+            <ScrollArea className="h-[600px]">
+              <div className="space-y-1">
+                {getFramesByParent(null).map((rootFrame) =>
+                  renderFrame(rootFrame),
+                )}
+              </div>
+            </ScrollArea>
+          </Card>
+
+          {/* Frame Details */}
+          <div className="space-y-4">
+            <Card className="p-4">
+              <h3 className="text-lg font-semibold mb-4">Frame Details</h3>
+
+              {selectedFrameData ? (
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-sm font-medium">Frame Name</Label>
+                    <div className="font-mono text-sm bg-muted p-2 rounded mt-1">
+                      {selectedFrameData.name}
+                    </div>
                   </div>
-                </div>
 
-                <div>
-                  <Label className="text-sm font-medium">Parent Frame</Label>
-                  <div className="font-mono text-sm bg-muted p-2 rounded mt-1">
-                    {selectedFrameData.parent || "None (root)"}
+                  <div>
+                    <Label className="text-sm font-medium">Parent Frame</Label>
+                    <div className="font-mono text-sm bg-muted p-2 rounded mt-1">
+                      {selectedFrameData.parent || "None (root)"}
+                    </div>
                   </div>
-                </div>
 
-                <div>
-                  <Label className="text-sm font-medium">Children</Label>
-                  <div className="space-y-1 mt-1">
-                    {selectedFrameData.children.length > 0 ? (
-                      selectedFrameData.children.map((child) => (
-                        <div
-                          key={child}
-                          className="font-mono text-sm bg-muted p-2 rounded"
-                        >
-                          {child}
+                  <div>
+                    <Label className="text-sm font-medium">Children</Label>
+                    <div className="space-y-1 mt-1">
+                      {selectedFrameData.children.length > 0 ? (
+                        selectedFrameData.children.map((child) => (
+                          <div
+                            key={child}
+                            className="font-mono text-sm bg-muted p-2 rounded"
+                          >
+                            {child}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-sm text-muted-foreground">
+                          No children
                         </div>
-                      ))
-                    ) : (
-                      <div className="text-sm text-muted-foreground">
-                        No children
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
+
+                  <Separator />
+
+                  <div>
+                    <Label className="text-sm font-medium">
+                      Translation (m)
+                    </Label>
+                    <div className="grid grid-cols-3 gap-2 mt-1">
+                      <div className="text-center">
+                        <div className="text-xs text-muted-foreground">X</div>
+                        <div className="font-mono text-sm bg-muted p-2 rounded">
+                          {selectedFrameData.translation[0].toFixed(3)}
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-muted-foreground">Y</div>
+                        <div className="font-mono text-sm bg-muted p-2 rounded">
+                          {selectedFrameData.translation[1].toFixed(3)}
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-muted-foreground">Z</div>
+                        <div className="font-mono text-sm bg-muted p-2 rounded">
+                          {selectedFrameData.translation[2].toFixed(3)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-sm font-medium">
+                      Rotation (quaternion)
+                    </Label>
+                    <div className="grid grid-cols-2 gap-2 mt-1">
+                      <div className="text-center">
+                        <div className="text-xs text-muted-foreground">X</div>
+                        <div className="font-mono text-sm bg-muted p-2 rounded">
+                          {selectedFrameData.rotation[0].toFixed(3)}
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-muted-foreground">Y</div>
+                        <div className="font-mono text-sm bg-muted p-2 rounded">
+                          {selectedFrameData.rotation[1].toFixed(3)}
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-muted-foreground">Z</div>
+                        <div className="font-mono text-sm bg-muted p-2 rounded">
+                          {selectedFrameData.rotation[2].toFixed(3)}
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-muted-foreground">W</div>
+                        <div className="font-mono text-sm bg-muted p-2 rounded">
+                          {selectedFrameData.rotation[3].toFixed(3)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  <div>
+                    <Label className="text-sm font-medium">Status</Label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Badge
+                        variant={
+                          selectedFrameData.status === "active"
+                            ? "default"
+                            : "destructive"
+                        }
+                        className="gap-1"
+                      >
+                        {selectedFrameData.status === "active" && (
+                          <CheckCircle className="h-3 w-3" />
+                        )}
+                        {selectedFrameData.status === "stale" && (
+                          <Clock className="h-3 w-3" />
+                        )}
+                        {selectedFrameData.status === "error" && (
+                          <AlertTriangle className="h-3 w-3" />
+                        )}
+                        {selectedFrameData.status.toUpperCase()}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-sm font-medium">Last Update</Label>
+                    <div className="font-mono text-sm bg-muted p-2 rounded mt-1">
+                      {selectedFrameData.lastUpdate.toLocaleTimeString()}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center text-muted-foreground py-8">
+                  Select a frame to view details
+                </div>
+              )}
+            </Card>
+
+            {/* TF Statistics */}
+            <Card className="p-4">
+              <h3 className="text-lg font-semibold mb-4">TF Statistics</h3>
+
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-sm">Total Frames:</span>
+                  <Badge variant="outline">{tfFrames.length}</Badge>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-sm">Active Frames:</span>
+                  <Badge variant="default">
+                    {tfFrames.filter((f) => f.status === "active").length}
+                  </Badge>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-sm">Stale Frames:</span>
+                  <Badge variant="secondary">
+                    {tfFrames.filter((f) => f.status === "stale").length}
+                  </Badge>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-sm">Error Frames:</span>
+                  <Badge variant="destructive">
+                    {tfFrames.filter((f) => f.status === "error").length}
+                  </Badge>
                 </div>
 
                 <Separator />
 
-                <div>
-                  <Label className="text-sm font-medium">Translation (m)</Label>
-                  <div className="grid grid-cols-3 gap-2 mt-1">
-                    <div className="text-center">
-                      <div className="text-xs text-muted-foreground">X</div>
-                      <div className="font-mono text-sm bg-muted p-2 rounded">
-                        {selectedFrameData.translation[0].toFixed(3)}
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-xs text-muted-foreground">Y</div>
-                      <div className="font-mono text-sm bg-muted p-2 rounded">
-                        {selectedFrameData.translation[1].toFixed(3)}
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-xs text-muted-foreground">Z</div>
-                      <div className="font-mono text-sm bg-muted p-2 rounded">
-                        {selectedFrameData.translation[2].toFixed(3)}
-                      </div>
-                    </div>
-                  </div>
+                <div className="flex justify-between">
+                  <span className="text-sm">Root Frames:</span>
+                  <Badge variant="outline">
+                    {tfFrames.filter((f) => f.parent === null).length}
+                  </Badge>
                 </div>
 
-                <div>
-                  <Label className="text-sm font-medium">
-                    Rotation (quaternion)
-                  </Label>
-                  <div className="grid grid-cols-2 gap-2 mt-1">
-                    <div className="text-center">
-                      <div className="text-xs text-muted-foreground">X</div>
-                      <div className="font-mono text-sm bg-muted p-2 rounded">
-                        {selectedFrameData.rotation[0].toFixed(3)}
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-xs text-muted-foreground">Y</div>
-                      <div className="font-mono text-sm bg-muted p-2 rounded">
-                        {selectedFrameData.rotation[1].toFixed(3)}
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-xs text-muted-foreground">Z</div>
-                      <div className="font-mono text-sm bg-muted p-2 rounded">
-                        {selectedFrameData.rotation[2].toFixed(3)}
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-xs text-muted-foreground">W</div>
-                      <div className="font-mono text-sm bg-muted p-2 rounded">
-                        {selectedFrameData.rotation[3].toFixed(3)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div>
-                  <Label className="text-sm font-medium">Status</Label>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Badge
-                      variant={
-                        selectedFrameData.status === "active"
-                          ? "default"
-                          : "destructive"
-                      }
-                      className="gap-1"
-                    >
-                      {selectedFrameData.status === "active" && (
-                        <CheckCircle className="h-3 w-3" />
-                      )}
-                      {selectedFrameData.status === "stale" && (
-                        <Clock className="h-3 w-3" />
-                      )}
-                      {selectedFrameData.status === "error" && (
-                        <AlertTriangle className="h-3 w-3" />
-                      )}
-                      {selectedFrameData.status.toUpperCase()}
-                    </Badge>
-                  </div>
-                </div>
-
-                <div>
-                  <Label className="text-sm font-medium">Last Update</Label>
-                  <div className="font-mono text-sm bg-muted p-2 rounded mt-1">
-                    {selectedFrameData.lastUpdate.toLocaleTimeString()}
-                  </div>
+                <div className="flex justify-between">
+                  <span className="text-sm">Leaf Frames:</span>
+                  <Badge variant="outline">
+                    {tfFrames.filter((f) => f.children.length === 0).length}
+                  </Badge>
                 </div>
               </div>
-            ) : (
-              <div className="text-center text-muted-foreground py-8">
-                Select a frame to view details
-              </div>
-            )}
-          </Card>
-
-          {/* TF Statistics */}
-          <Card className="p-4">
-            <h3 className="text-lg font-semibold mb-4">TF Statistics</h3>
-
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-sm">Total Frames:</span>
-                <Badge variant="outline">{tfFrames.length}</Badge>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="text-sm">Active Frames:</span>
-                <Badge variant="default">
-                  {tfFrames.filter((f) => f.status === "active").length}
-                </Badge>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="text-sm">Stale Frames:</span>
-                <Badge variant="secondary">
-                  {tfFrames.filter((f) => f.status === "stale").length}
-                </Badge>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="text-sm">Error Frames:</span>
-                <Badge variant="destructive">
-                  {tfFrames.filter((f) => f.status === "error").length}
-                </Badge>
-              </div>
-
-              <Separator />
-
-              <div className="flex justify-between">
-                <span className="text-sm">Root Frames:</span>
-                <Badge variant="outline">
-                  {tfFrames.filter((f) => f.parent === null).length}
-                </Badge>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="text-sm">Leaf Frames:</span>
-                <Badge variant="outline">
-                  {tfFrames.filter((f) => f.children.length === 0).length}
-                </Badge>
-              </div>
-            </div>
-          </Card>
+            </Card>
+          </div>
         </div>
-      </div>
       </div>
     </div>
   );

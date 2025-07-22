@@ -88,7 +88,10 @@ const FlatApp = () => {
                       <Routes>
                         {/* New Flat Vector Pages */}
                         <Route path="/" element={<FlatDashboard />} />
-                        <Route path="/control" element={<HolonomicRobotControl />} />
+                        <Route
+                          path="/control"
+                          element={<HolonomicRobotControl />}
+                        />
 
                         {/* Existing Pages (keeping for now, will update gradually) */}
                         <Route path="/sequences" element={<Sequences />} />

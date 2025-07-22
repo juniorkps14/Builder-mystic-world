@@ -659,7 +659,7 @@ def main():
         raise
 
 if __name__ == '__main__':
-    main()`
+    main()`,
     },
     launch_file_complete: {
       title: "Complete Launch File Configuration",
@@ -895,7 +895,7 @@ Complete Robot Launch Configuration
     /cmd_vel /odom /scan /camera/image_raw/compressed /tf /tf_static /robot_status /system_health" 
     if="false"/>
 
-</launch>`
+</launch>`,
     },
     package_xml: {
       title: "Complete Package.xml",
@@ -997,7 +997,7 @@ Complete Robot Launch Configuration
     <architecture_independent/>
   </export>
 
-</package>`
+</package>`,
     },
     systemd_service: {
       title: "Systemd Service Configuration",
@@ -1059,7 +1059,7 @@ StandardError=journal
 SyslogIdentifier=robot-control
 
 [Install]
-WantedBy=multi-user.target`
+WantedBy=multi-user.target`,
     },
     docker_compose: {
       title: "Docker Compose Configuration",
@@ -1240,7 +1240,7 @@ volumes:
   postgres_data:
   redis_data:
   prometheus_data:
-  grafana_data:`
+  grafana_data:`,
     },
     hardware_interface: {
       title: "Hardware Interface Driver",
@@ -1582,8 +1582,8 @@ if __name__ == '__main__':
         hardware = HardwareInterface()
         rospy.spin()
     except rospy.ROSInterruptException:
-        pass`
-    }
+        pass`,
+    },
   };
 
   const developmentSetup = [
@@ -1598,8 +1598,8 @@ if __name__ == '__main__':
         "Security: SSH keys, firewall, user permissions",
         "Auto-start services: systemd configuration",
         "Monitoring: Prometheus + Grafana dashboards",
-        "Backup system: Automated daily backups"
-      ]
+        "Backup system: Automated daily backups",
+      ],
     },
     {
       title: "Production Dependencies",
@@ -1612,8 +1612,8 @@ if __name__ == '__main__':
         "Web: nginx, SSL certificates, WebSocket support",
         "Docker: Multi-container deployment",
         "Monitoring: Prometheus, Grafana, system metrics",
-        "Development: VS Code, Git, testing frameworks"
-      ]
+        "Development: VS Code, Git, testing frameworks",
+      ],
     },
     {
       title: "Hardware Integration",
@@ -1626,51 +1626,147 @@ if __name__ == '__main__':
         "Communication: Ethernet + WiFi dual connectivity",
         "Safety: Hardware emergency stop, soft limits",
         "Expansion: GPIO, I2C, SPI interfaces available",
-        "Enclosure: Weather-resistant design"
-      ]
-    }
+        "Enclosure: Weather-resistant design",
+      ],
+    },
   ];
 
   const apiReference = [
     {
       category: "Core ROS Topics",
       endpoints: [
-        { name: "/cmd_vel", type: "geometry_msgs/Twist", description: "Robot movement control (holonomic)" },
-        { name: "/odom", type: "nav_msgs/Odometry", description: "Robot odometry with covariance" },
-        { name: "/robot_status", type: "std_msgs/String", description: "Complete robot state JSON" },
-        { name: "/emergency_stop", type: "std_msgs/Bool", description: "Emergency stop trigger" },
-        { name: "/system_health", type: "std_msgs/String", description: "System monitoring data" },
-        { name: "/battery_state", type: "sensor_msgs/BatteryState", description: "Battery monitoring" },
-        { name: "/camera/image_raw", type: "sensor_msgs/Image", description: "Camera feed with overlay" },
-        { name: "/scan", type: "sensor_msgs/LaserScan", description: "LiDAR obstacle detection" },
-        { name: "/imu", type: "sensor_msgs/Imu", description: "9-DOF inertial measurement" },
-        { name: "/joy", type: "sensor_msgs/Joy", description: "Joystick input handling" }
-      ]
+        {
+          name: "/cmd_vel",
+          type: "geometry_msgs/Twist",
+          description: "Robot movement control (holonomic)",
+        },
+        {
+          name: "/odom",
+          type: "nav_msgs/Odometry",
+          description: "Robot odometry with covariance",
+        },
+        {
+          name: "/robot_status",
+          type: "std_msgs/String",
+          description: "Complete robot state JSON",
+        },
+        {
+          name: "/emergency_stop",
+          type: "std_msgs/Bool",
+          description: "Emergency stop trigger",
+        },
+        {
+          name: "/system_health",
+          type: "std_msgs/String",
+          description: "System monitoring data",
+        },
+        {
+          name: "/battery_state",
+          type: "sensor_msgs/BatteryState",
+          description: "Battery monitoring",
+        },
+        {
+          name: "/camera/image_raw",
+          type: "sensor_msgs/Image",
+          description: "Camera feed with overlay",
+        },
+        {
+          name: "/scan",
+          type: "sensor_msgs/LaserScan",
+          description: "LiDAR obstacle detection",
+        },
+        {
+          name: "/imu",
+          type: "sensor_msgs/Imu",
+          description: "9-DOF inertial measurement",
+        },
+        {
+          name: "/joy",
+          type: "sensor_msgs/Joy",
+          description: "Joystick input handling",
+        },
+      ],
     },
     {
       category: "Navigation & SLAM",
       endpoints: [
-        { name: "/move_base/goal", type: "move_base_msgs/MoveBaseActionGoal", description: "Navigation goal setting" },
-        { name: "/move_base/status", type: "actionlib_msgs/GoalStatusArray", description: "Navigation status" },
-        { name: "/map", type: "nav_msgs/OccupancyGrid", description: "SLAM generated map" },
-        { name: "/amcl_pose", type: "geometry_msgs/PoseWithCovarianceStamped", description: "Localization result" },
-        { name: "/initialpose", type: "geometry_msgs/PoseWithCovarianceStamped", description: "Initial pose setting" },
-        { name: "/move_base/local_costmap/costmap", type: "nav_msgs/OccupancyGrid", description: "Local planning costmap" },
-        { name: "/move_base/global_costmap/costmap", type: "nav_msgs/OccupancyGrid", description: "Global planning costmap" }
-      ]
+        {
+          name: "/move_base/goal",
+          type: "move_base_msgs/MoveBaseActionGoal",
+          description: "Navigation goal setting",
+        },
+        {
+          name: "/move_base/status",
+          type: "actionlib_msgs/GoalStatusArray",
+          description: "Navigation status",
+        },
+        {
+          name: "/map",
+          type: "nav_msgs/OccupancyGrid",
+          description: "SLAM generated map",
+        },
+        {
+          name: "/amcl_pose",
+          type: "geometry_msgs/PoseWithCovarianceStamped",
+          description: "Localization result",
+        },
+        {
+          name: "/initialpose",
+          type: "geometry_msgs/PoseWithCovarianceStamped",
+          description: "Initial pose setting",
+        },
+        {
+          name: "/move_base/local_costmap/costmap",
+          type: "nav_msgs/OccupancyGrid",
+          description: "Local planning costmap",
+        },
+        {
+          name: "/move_base/global_costmap/costmap",
+          type: "nav_msgs/OccupancyGrid",
+          description: "Global planning costmap",
+        },
+      ],
     },
     {
       category: "WebSocket API",
       endpoints: [
-        { name: "cmd_vel", type: "JSON", description: "Web velocity control {linear_x, linear_y, angular_z}" },
-        { name: "navigate_to", type: "JSON", description: "Navigation command {x, y, theta}" },
-        { name: "emergency_stop", type: "JSON", description: "Emergency stop activation" },
-        { name: "camera_frame", type: "Base64", description: "Real-time camera stream" },
-        { name: "system_health", type: "JSON", description: "Real-time system metrics" },
-        { name: "robot_state", type: "JSON", description: "Complete robot status update" },
-        { name: "initial_state", type: "JSON", description: "Connection handshake data" }
-      ]
-    }
+        {
+          name: "cmd_vel",
+          type: "JSON",
+          description: "Web velocity control {linear_x, linear_y, angular_z}",
+        },
+        {
+          name: "navigate_to",
+          type: "JSON",
+          description: "Navigation command {x, y, theta}",
+        },
+        {
+          name: "emergency_stop",
+          type: "JSON",
+          description: "Emergency stop activation",
+        },
+        {
+          name: "camera_frame",
+          type: "Base64",
+          description: "Real-time camera stream",
+        },
+        {
+          name: "system_health",
+          type: "JSON",
+          description: "Real-time system metrics",
+        },
+        {
+          name: "robot_state",
+          type: "JSON",
+          description: "Complete robot status update",
+        },
+        {
+          name: "initial_state",
+          type: "JSON",
+          description: "Connection handshake data",
+        },
+      ],
+    },
   ];
 
   const bestPractices = [
@@ -1685,8 +1781,8 @@ if __name__ == '__main__':
         "State management: Clear state machine implementation",
         "Resource management: Proper cleanup and resource disposal",
         "Thread safety: Proper synchronization in multi-threaded code",
-        "Documentation: Comprehensive inline and external docs"
-      ]
+        "Documentation: Comprehensive inline and external docs",
+      ],
     },
     {
       title: "Production Deployment",
@@ -1699,8 +1795,8 @@ if __name__ == '__main__':
         "Security: SSL/TLS, authentication, access control",
         "Backup strategy: Automated incremental backups",
         "Update mechanism: Over-the-air update system",
-        "Performance optimization: Resource usage monitoring"
-      ]
+        "Performance optimization: Resource usage monitoring",
+      ],
     },
     {
       title: "Safety & Reliability",
@@ -1713,18 +1809,19 @@ if __name__ == '__main__':
         "Thermal protection: Temperature monitoring",
         "Network redundancy: Multiple communication paths",
         "Graceful degradation: Reduced functionality on errors",
-        "Testing: Unit, integration, and hardware-in-loop tests"
-      ]
-    }
+        "Testing: Unit, integration, and hardware-in-loop tests",
+      ],
+    },
   ];
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
   };
 
-  const filteredExamples = Object.entries(codeExamples).filter(([key, example]) =>
-    example.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    example.description.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredExamples = Object.entries(codeExamples).filter(
+    ([key, example]) =>
+      example.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      example.description.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
@@ -1739,7 +1836,7 @@ if __name__ == '__main__':
             คู่มือการพัฒนาระบบหุ่นยนต์แบบสมบูรณ์ 100% - Production Ready
           </p>
         </div>
-        
+
         <div className="flex items-center gap-3">
           <Badge className="bg-green-100 text-green-700">
             <Activity className="h-3 w-3 mr-1" />
@@ -1803,16 +1900,18 @@ if __name__ == '__main__':
             <Card className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold">Production Code</h3>
-                <Badge className="bg-green-100 text-green-700">{Object.keys(codeExamples).length}</Badge>
+                <Badge className="bg-green-100 text-green-700">
+                  {Object.keys(codeExamples).length}
+                </Badge>
               </div>
-              
+
               <Input
                 placeholder="ค้นหาโค้ด..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="mb-4"
               />
-              
+
               <ScrollArea className="h-96">
                 <div className="space-y-2">
                   {filteredExamples.map(([key, example]) => (
@@ -1820,13 +1919,15 @@ if __name__ == '__main__':
                       key={key}
                       onClick={() => setActiveExample(key)}
                       className={`w-full text-left p-3 rounded-lg transition-colors ${
-                        activeExample === key 
-                          ? 'bg-blue-100 border-blue-300 border' 
-                          : 'bg-gray-50 hover:bg-gray-100'
+                        activeExample === key
+                          ? "bg-blue-100 border-blue-300 border"
+                          : "bg-gray-50 hover:bg-gray-100"
                       }`}
                     >
                       <h4 className="font-medium text-sm">{example.title}</h4>
-                      <p className="text-xs text-gray-600 mt-1">{example.description}</p>
+                      <p className="text-xs text-gray-600 mt-1">
+                        {example.description}
+                      </p>
                     </button>
                   ))}
                 </div>
@@ -1837,14 +1938,20 @@ if __name__ == '__main__':
             <Card className="lg:col-span-2 p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold">{codeExamples[activeExample].title}</h3>
-                  <p className="text-sm text-gray-600">{codeExamples[activeExample].description}</p>
+                  <h3 className="text-lg font-semibold">
+                    {codeExamples[activeExample].title}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {codeExamples[activeExample].description}
+                  </p>
                 </div>
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => copyToClipboard(codeExamples[activeExample].code)}
+                    onClick={() =>
+                      copyToClipboard(codeExamples[activeExample].code)
+                    }
                     className="gap-2"
                   >
                     <Copy className="h-4 w-4" />
@@ -1856,7 +1963,7 @@ if __name__ == '__main__':
                   </Button>
                 </div>
               </div>
-              
+
               <ScrollArea className="h-[600px]">
                 <pre className="bg-gray-900 text-green-400 p-4 rounded-lg text-xs overflow-x-auto whitespace-pre-wrap">
                   <code>{codeExamples[activeExample].code}</code>
@@ -1870,7 +1977,9 @@ if __name__ == '__main__':
         <TabsContent value="architecture">
           <div className="space-y-6">
             <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Complete System Architecture</h3>
+              <h3 className="text-lg font-semibold mb-4">
+                Complete System Architecture
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="p-4 bg-blue-50 rounded-lg">
                   <Network className="h-8 w-8 text-blue-600 mb-2" />
@@ -1882,7 +1991,7 @@ if __name__ == '__main__':
                     <li>• Safety Monitor</li>
                   </ul>
                 </div>
-                
+
                 <div className="p-4 bg-green-50 rounded-lg">
                   <Cpu className="h-8 w-8 text-green-600 mb-2" />
                   <h4 className="font-medium">Hardware Layer</h4>
@@ -1893,7 +2002,7 @@ if __name__ == '__main__':
                     <li>• Power Management</li>
                   </ul>
                 </div>
-                
+
                 <div className="p-4 bg-purple-50 rounded-lg">
                   <Globe className="h-8 w-8 text-purple-600 mb-2" />
                   <h4 className="font-medium">Navigation Layer</h4>
@@ -1904,7 +2013,7 @@ if __name__ == '__main__':
                     <li>• Obstacle Avoidance</li>
                   </ul>
                 </div>
-                
+
                 <div className="p-4 bg-orange-50 rounded-lg">
                   <Monitor className="h-8 w-8 text-orange-600 mb-2" />
                   <h4 className="font-medium">Interface Layer</h4>
@@ -1919,31 +2028,51 @@ if __name__ == '__main__':
             </Card>
 
             <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Data Flow Architecture</h3>
+              <h3 className="text-lg font-semibold mb-4">
+                Data Flow Architecture
+              </h3>
               <div className="text-sm space-y-4">
                 <div className="flex items-center gap-4">
                   <span className="font-medium w-24">Sensors →</span>
-                  <span className="bg-gray-100 px-3 py-1 rounded">Hardware Interface</span>
+                  <span className="bg-gray-100 px-3 py-1 rounded">
+                    Hardware Interface
+                  </span>
                   <span>→</span>
-                  <span className="bg-blue-100 px-3 py-1 rounded">ROS Topics</span>
+                  <span className="bg-blue-100 px-3 py-1 rounded">
+                    ROS Topics
+                  </span>
                   <span>→</span>
-                  <span className="bg-green-100 px-3 py-1 rounded">Control System</span>
+                  <span className="bg-green-100 px-3 py-1 rounded">
+                    Control System
+                  </span>
                 </div>
                 <div className="flex items-center gap-4">
                   <span className="font-medium w-24">Commands →</span>
-                  <span className="bg-purple-100 px-3 py-1 rounded">Web Interface</span>
+                  <span className="bg-purple-100 px-3 py-1 rounded">
+                    Web Interface
+                  </span>
                   <span>→</span>
-                  <span className="bg-blue-100 px-3 py-1 rounded">WebSocket</span>
+                  <span className="bg-blue-100 px-3 py-1 rounded">
+                    WebSocket
+                  </span>
                   <span>→</span>
-                  <span className="bg-green-100 px-3 py-1 rounded">Robot Control</span>
+                  <span className="bg-green-100 px-3 py-1 rounded">
+                    Robot Control
+                  </span>
                 </div>
                 <div className="flex items-center gap-4">
                   <span className="font-medium w-24">Navigation →</span>
-                  <span className="bg-orange-100 px-3 py-1 rounded">Move Base</span>
+                  <span className="bg-orange-100 px-3 py-1 rounded">
+                    Move Base
+                  </span>
                   <span>→</span>
-                  <span className="bg-blue-100 px-3 py-1 rounded">Local Planner</span>
+                  <span className="bg-blue-100 px-3 py-1 rounded">
+                    Local Planner
+                  </span>
                   <span>→</span>
-                  <span className="bg-green-100 px-3 py-1 rounded">cmd_vel</span>
+                  <span className="bg-green-100 px-3 py-1 rounded">
+                    cmd_vel
+                  </span>
                 </div>
               </div>
             </Card>
@@ -1961,7 +2090,7 @@ if __name__ == '__main__':
                   </div>
                   <h3 className="text-lg font-semibold">{section.title}</h3>
                 </div>
-                
+
                 <div className="space-y-3">
                   {section.items.map((item, itemIndex) => (
                     <div key={itemIndex} className="flex items-start gap-3">
@@ -1976,10 +2105,12 @@ if __name__ == '__main__':
 
           {/* Installation Commands */}
           <Card className="p-6 mt-6">
-            <h3 className="text-lg font-semibold mb-4">Complete Installation Script</h3>
+            <h3 className="text-lg font-semibold mb-4">
+              Complete Installation Script
+            </h3>
             <ScrollArea className="h-64">
               <pre className="bg-gray-900 text-green-400 p-4 rounded text-sm">
-{`#!/bin/bash
+                {`#!/bin/bash
 # Complete Robot System Installation Script
 
 # Update system
@@ -2027,14 +2158,18 @@ echo "Installation complete! System ready for use."
         <TabsContent value="hardware">
           <div className="space-y-6">
             <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Hardware Specifications</h3>
+              <h3 className="text-lg font-semibold mb-4">
+                Hardware Specifications
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <h4 className="font-medium mb-3">Core Components</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span>Computing Unit:</span>
-                      <span className="font-medium">Jetson Xavier NX / RPi 4</span>
+                      <span className="font-medium">
+                        Jetson Xavier NX / RPi 4
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Drive System:</span>
@@ -2058,7 +2193,7 @@ echo "Installation complete! System ready for use."
                     </div>
                   </div>
                 </div>
-                
+
                 <div>
                   <h4 className="font-medium mb-3">Communication</h4>
                   <div className="space-y-2 text-sm">
@@ -2093,7 +2228,9 @@ echo "Installation complete! System ready for use."
                 <div className="text-center text-gray-600">
                   <HardDrive className="h-16 w-16 mx-auto mb-2" />
                   <p>Complete wiring diagrams and PCB layouts</p>
-                  <p className="text-sm">Available in the hardware documentation package</p>
+                  <p className="text-sm">
+                    Available in the hardware documentation package
+                  </p>
                 </div>
               </div>
             </Card>
@@ -2104,34 +2241,42 @@ echo "Installation complete! System ready for use."
         <TabsContent value="deployment">
           <div className="space-y-6">
             <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Production Deployment Options</h3>
+              <h3 className="text-lg font-semibold mb-4">
+                Production Deployment Options
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="p-4 border rounded-lg">
                   <Server className="h-8 w-8 text-blue-600 mb-2" />
                   <h4 className="font-medium">Single Robot</h4>
-                  <p className="text-sm text-gray-600 mt-2">Direct deployment on robot hardware</p>
+                  <p className="text-sm text-gray-600 mt-2">
+                    Direct deployment on robot hardware
+                  </p>
                   <ul className="text-xs mt-2 space-y-1">
                     <li>• Systemd auto-start</li>
                     <li>• Local monitoring</li>
                     <li>• Basic logging</li>
                   </ul>
                 </div>
-                
+
                 <div className="p-4 border rounded-lg">
                   <Network className="h-8 w-8 text-green-600 mb-2" />
                   <h4 className="font-medium">Multi-Robot Fleet</h4>
-                  <p className="text-sm text-gray-600 mt-2">Centralized management system</p>
+                  <p className="text-sm text-gray-600 mt-2">
+                    Centralized management system
+                  </p>
                   <ul className="text-xs mt-2 space-y-1">
                     <li>• Central ROS master</li>
                     <li>• Fleet coordination</li>
                     <li>• Distributed monitoring</li>
                   </ul>
                 </div>
-                
+
                 <div className="p-4 border rounded-lg">
                   <Globe className="h-8 w-8 text-purple-600 mb-2" />
                   <h4 className="font-medium">Cloud Integration</h4>
-                  <p className="text-sm text-gray-600 mt-2">Cloud-connected operation</p>
+                  <p className="text-sm text-gray-600 mt-2">
+                    Cloud-connected operation
+                  </p>
                   <ul className="text-xs mt-2 space-y-1">
                     <li>• Remote monitoring</li>
                     <li>• OTA updates</li>
@@ -2145,7 +2290,9 @@ echo "Installation complete! System ready for use."
               <h3 className="text-lg font-semibold mb-4">Docker Deployment</h3>
               <div className="bg-gray-900 text-green-400 p-4 rounded-lg text-sm">
                 <div className="mb-4">
-                  <p className="text-blue-400"># Deploy complete robot system with Docker</p>
+                  <p className="text-blue-400">
+                    # Deploy complete robot system with Docker
+                  </p>
                 </div>
                 <div className="space-y-1">
                   <p>docker-compose up -d</p>
@@ -2163,15 +2310,22 @@ echo "Installation complete! System ready for use."
           <div className="space-y-6">
             {apiReference.map((category, index) => (
               <Card key={index} className="p-6">
-                <h3 className="text-lg font-semibold mb-4">{category.category}</h3>
+                <h3 className="text-lg font-semibold mb-4">
+                  {category.category}
+                </h3>
                 <div className="space-y-3">
                   {category.endpoints.map((endpoint, endpointIndex) => (
-                    <div key={endpointIndex} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div
+                      key={endpointIndex}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    >
                       <div className="flex-1">
                         <code className="text-sm font-mono bg-blue-100 text-blue-800 px-2 py-1 rounded">
                           {endpoint.name}
                         </code>
-                        <p className="text-sm text-gray-600 mt-1">{endpoint.description}</p>
+                        <p className="text-sm text-gray-600 mt-1">
+                          {endpoint.description}
+                        </p>
                       </div>
                       <Badge variant="outline">{endpoint.type}</Badge>
                     </div>
@@ -2186,7 +2340,9 @@ echo "Installation complete! System ready for use."
         <TabsContent value="monitoring">
           <div className="space-y-6">
             <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">System Monitoring Dashboard</h3>
+              <h3 className="text-lg font-semibold mb-4">
+                System Monitoring Dashboard
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="p-4 bg-blue-50 rounded-lg">
                   <Activity className="h-6 w-6 text-blue-600 mb-2" />
@@ -2194,25 +2350,29 @@ echo "Installation complete! System ready for use."
                   <div className="text-2xl font-bold text-blue-600">87%</div>
                   <p className="text-xs text-gray-600">System efficiency</p>
                 </div>
-                
+
                 <div className="p-4 bg-green-50 rounded-lg">
                   <Cpu className="h-6 w-6 text-green-600 mb-2" />
                   <h4 className="font-medium">CPU Usage</h4>
                   <div className="text-2xl font-bold text-green-600">34%</div>
                   <p className="text-xs text-gray-600">8 cores active</p>
                 </div>
-                
+
                 <div className="p-4 bg-purple-50 rounded-lg">
                   <HardDrive className="h-6 w-6 text-purple-600 mb-2" />
                   <h4 className="font-medium">Memory</h4>
-                  <div className="text-2xl font-bold text-purple-600">2.1GB</div>
+                  <div className="text-2xl font-bold text-purple-600">
+                    2.1GB
+                  </div>
                   <p className="text-xs text-gray-600">of 8GB used</p>
                 </div>
-                
+
                 <div className="p-4 bg-orange-50 rounded-lg">
                   <Wifi className="h-6 w-6 text-orange-600 mb-2" />
                   <h4 className="font-medium">Network</h4>
-                  <div className="text-2xl font-bold text-orange-600">145ms</div>
+                  <div className="text-2xl font-bold text-orange-600">
+                    145ms
+                  </div>
                   <p className="text-xs text-gray-600">avg latency</p>
                 </div>
               </div>
@@ -2227,27 +2387,36 @@ echo "Installation complete! System ready for use."
                     <span>87%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-green-500 h-2 rounded-full" style={{width: '87%'}}></div>
+                    <div
+                      className="bg-green-500 h-2 rounded-full"
+                      style={{ width: "87%" }}
+                    ></div>
                   </div>
                 </div>
-                
+
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span>Navigation Accuracy</span>
                     <span>94%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-blue-500 h-2 rounded-full" style={{width: '94%'}}></div>
+                    <div
+                      className="bg-blue-500 h-2 rounded-full"
+                      style={{ width: "94%" }}
+                    ></div>
                   </div>
                 </div>
-                
+
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span>Sensor Health</span>
                     <span>98%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-green-500 h-2 rounded-full" style={{width: '98%'}}></div>
+                    <div
+                      className="bg-green-500 h-2 rounded-full"
+                      style={{ width: "98%" }}
+                    ></div>
                   </div>
                 </div>
               </div>
@@ -2259,42 +2428,87 @@ echo "Installation complete! System ready for use."
         <TabsContent value="troubleshooting">
           <div className="space-y-6">
             <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Common Issues & Solutions</h3>
-              
+              <h3 className="text-lg font-semibold mb-4">
+                Common Issues & Solutions
+              </h3>
+
               <div className="space-y-4">
                 <div className="p-4 border-l-4 border-red-500 bg-red-50">
-                  <h4 className="font-medium text-red-800">Robot not responding to commands</h4>
+                  <h4 className="font-medium text-red-800">
+                    Robot not responding to commands
+                  </h4>
                   <div className="text-sm text-red-700 mt-2 space-y-1">
-                    <p><strong>Check:</strong> Emergency stop status, hardware connections</p>
-                    <p><strong>Solution:</strong> Reset emergency stop, restart base controller</p>
-                    <p><strong>Command:</strong> <code>rosservice call /release_emergency</code></p>
+                    <p>
+                      <strong>Check:</strong> Emergency stop status, hardware
+                      connections
+                    </p>
+                    <p>
+                      <strong>Solution:</strong> Reset emergency stop, restart
+                      base controller
+                    </p>
+                    <p>
+                      <strong>Command:</strong>{" "}
+                      <code>rosservice call /release_emergency</code>
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="p-4 border-l-4 border-yellow-500 bg-yellow-50">
-                  <h4 className="font-medium text-yellow-800">Navigation not working</h4>
+                  <h4 className="font-medium text-yellow-800">
+                    Navigation not working
+                  </h4>
                   <div className="text-sm text-yellow-700 mt-2 space-y-1">
-                    <p><strong>Check:</strong> Map loaded, AMCL localized, obstacles clear</p>
-                    <p><strong>Solution:</strong> Reload map, set initial pose, clear costmaps</p>
-                    <p><strong>Command:</strong> <code>rosservice call /move_base/clear_costmaps</code></p>
+                    <p>
+                      <strong>Check:</strong> Map loaded, AMCL localized,
+                      obstacles clear
+                    </p>
+                    <p>
+                      <strong>Solution:</strong> Reload map, set initial pose,
+                      clear costmaps
+                    </p>
+                    <p>
+                      <strong>Command:</strong>{" "}
+                      <code>rosservice call /move_base/clear_costmaps</code>
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="p-4 border-l-4 border-blue-500 bg-blue-50">
-                  <h4 className="font-medium text-blue-800">Camera stream not available</h4>
+                  <h4 className="font-medium text-blue-800">
+                    Camera stream not available
+                  </h4>
                   <div className="text-sm text-blue-700 mt-2 space-y-1">
-                    <p><strong>Check:</strong> Camera device permissions, USB connection</p>
-                    <p><strong>Solution:</strong> Add user to video group, restart camera node</p>
-                    <p><strong>Command:</strong> <code>sudo usermod -a -G video $USER</code></p>
+                    <p>
+                      <strong>Check:</strong> Camera device permissions, USB
+                      connection
+                    </p>
+                    <p>
+                      <strong>Solution:</strong> Add user to video group,
+                      restart camera node
+                    </p>
+                    <p>
+                      <strong>Command:</strong>{" "}
+                      <code>sudo usermod -a -G video $USER</code>
+                    </p>
                   </div>
                 </div>
 
                 <div className="p-4 border-l-4 border-green-500 bg-green-50">
-                  <h4 className="font-medium text-green-800">System running successfully</h4>
+                  <h4 className="font-medium text-green-800">
+                    System running successfully
+                  </h4>
                   <div className="text-sm text-green-700 mt-2 space-y-1">
-                    <p><strong>Status:</strong> All systems operational</p>
-                    <p><strong>Monitor:</strong> Check logs regularly for any warnings</p>
-                    <p><strong>Command:</strong> <code>rostopic echo /system_health</code></p>
+                    <p>
+                      <strong>Status:</strong> All systems operational
+                    </p>
+                    <p>
+                      <strong>Monitor:</strong> Check logs regularly for any
+                      warnings
+                    </p>
+                    <p>
+                      <strong>Command:</strong>{" "}
+                      <code>rostopic echo /system_health</code>
+                    </p>
                   </div>
                 </div>
               </div>
@@ -2306,7 +2520,7 @@ echo "Installation complete! System ready for use."
                 <div>
                   <h4 className="font-medium mb-2">System Diagnostics</h4>
                   <pre className="bg-gray-900 text-green-400 p-3 rounded text-sm">
-{`# Check system status
+                    {`# Check system status
 systemctl status robot-control
 
 # View system logs
@@ -2321,11 +2535,11 @@ htop
 iotop`}
                   </pre>
                 </div>
-                
+
                 <div>
                   <h4 className="font-medium mb-2">Robot Diagnostics</h4>
                   <pre className="bg-gray-900 text-green-400 p-3 rounded text-sm">
-{`# Check robot status
+                    {`# Check robot status
 rostopic echo /robot_status
 
 # Test movement
@@ -2365,7 +2579,9 @@ rostopic echo /scan`}
           <p className="text-sm text-gray-700 mb-4">
             Real-time system monitoring and performance analytics
           </p>
-          <Button variant="outline" className="w-full">Open Dashboard</Button>
+          <Button variant="outline" className="w-full">
+            Open Dashboard
+          </Button>
         </Card>
 
         <Card className="p-6 bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
@@ -2376,7 +2592,9 @@ rostopic echo /scan`}
           <p className="text-sm text-gray-700 mb-4">
             Join our developer community for support and collaboration
           </p>
-          <Button variant="outline" className="w-full">Join Community</Button>
+          <Button variant="outline" className="w-full">
+            Join Community
+          </Button>
         </Card>
       </div>
 
@@ -2386,23 +2604,23 @@ rostopic echo /scan`}
           <CheckCircle className="h-6 w-6 text-green-600" />
           <h3 className="text-lg font-semibold">Production Ready System</h3>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
           <div>
             <h4 className="font-medium mb-2">Core Features</h4>
             <p>Complete robot control, navigation, safety systems</p>
           </div>
-          
+
           <div>
             <h4 className="font-medium mb-2">Deployment</h4>
             <p>Docker, systemd, cloud integration ready</p>
           </div>
-          
+
           <div>
             <h4 className="font-medium mb-2">Monitoring</h4>
             <p>Real-time metrics, logging, health checks</p>
           </div>
-          
+
           <div>
             <h4 className="font-medium mb-2">Support</h4>
             <p>Complete documentation, examples, troubleshooting</p>

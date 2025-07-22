@@ -83,8 +83,7 @@ const Sensors = () => {
 
         <div className="flex items-center gap-3">
           <Badge className="bg-blue-100 text-blue-700">
-            <Activity className="h-3 w-3 mr-1" />
-            8 Sensors
+            <Activity className="h-3 w-3 mr-1" />8 Sensors
           </Badge>
         </div>
       </div>
