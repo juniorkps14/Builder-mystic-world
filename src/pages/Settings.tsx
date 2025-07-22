@@ -32,6 +32,11 @@ import {
   Upload,
   AlertTriangle,
   CheckCircle,
+  Settings,
+  Terminal,
+  Code,
+  Activity,
+  Trash2,
 } from "lucide-react";
 
 export default function Settings() {
@@ -888,7 +893,7 @@ export default function Settings() {
                     Data is stored locally in your browser using localStorage
                   </div>
                   <div className="text-xs text-gray-500">
-                    • ข้อมูลจะคงอยู่ระหว่างเซสชัน และเมื่อปิด-เปิดเบราว์เซอร์<br/>
+                    • ข้อมูลจะคงอยู่ระหว่างเซสชัน และเมื���อปิด-เปิดเบราว์เซอร์<br/>
                     • ข้อมูลจะถูกลบเมื่อล้างข้อมูลเบราว์เซอร์<br/>
                     • ไม่มีการส่งข้อมูลไปยังเซิร์ฟเวอร์ ข้อมูลอยู่บนเครื่องของคุณเท่านั้น
                   </div>
