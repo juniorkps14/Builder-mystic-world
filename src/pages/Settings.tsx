@@ -850,8 +850,8 @@ export default function Settings() {
                 <h4 className="font-medium mb-4">What's Being Saved</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <Settings className="h-4 w-4 text-gray-600" />
+                    <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10">
+                      <Settings className="h-4 w-4 text-slate-400" />
                       <div>
                         <p className="font-medium text-sm">User Settings</p>
                         <p className="text-xs text-gray-500">
@@ -915,8 +915,8 @@ export default function Settings() {
               {/* Storage Information */}
               <div>
                 <h4 className="font-medium mb-4">Storage Information</h4>
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 mb-2">
+                <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+                  <div className="text-sm text-slate-300 mb-2">
                     Data is stored locally in your browser using localStorage
                   </div>
                   <div className="text-xs text-gray-500">
