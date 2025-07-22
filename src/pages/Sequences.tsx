@@ -724,37 +724,143 @@ export default function Sequences() {
             </Card>
           )}
 
-          {/* Execution Logs */}
-          <Card className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-light text-white">Execution Logs</h3>
-                <Button size="sm" className="bg-white/10 hover:bg-white/20 border border-white/20">
-                  <FileText className="h-4 w-4" />
-                </Button>
-              </div>
-
-              <ScrollArea className="h-[200px]">
-                <div className="space-y-2">
-                  {logs.map((log, index) => (
-                    <div key={index} className="flex gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors">
-                      <span className="text-xs font-mono text-slate-400 w-16">{log.time}</span>
-                      <span className={`text-xs font-medium w-12 ${
-                        log.level === "INFO" ? "text-blue-400" :
-                        log.level === "WARN" ? "text-yellow-400" :
-                        "text-red-400"
-                      }`}>
-                        {log.level}
-                      </span>
-                      <span className="text-xs text-slate-300 flex-1">{log.message}</span>
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </div>
-          </Card>
         </div>
       </div>
+
+      {/* Task Dialog */}
+      <Dialog open={isTaskDialogOpen} onOpenChange={setIsTaskDialogOpen}>
+        <DialogContent className="bg-slate-900 border border-white/20 text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-light">
+              {editingTask ? "Edit Task" : "Create New Task"}
+            </DialogTitle>
+            <DialogDescription className="text-slate-400">
+              {editingTask ? "Modify the task parameters below." : "Define a new task for your sequence."}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="task-name" className="text-slate-300">Task Name</Label>
+              <Input
+                id="task-name"
+                value={newTask.name}
+                onChange={(e) => setNewTask({ ...newTask, name: e.target.value })}
+                className="bg-white/5 border-white/20 text-white mt-1"
+                placeholder="Enter task name..."
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="task-type" className="text-slate-300">Type</Label>
+              <Select value={newTask.type} onValueChange={(value) => setNewTask({ ...newTask, type: value as Task["type"] })}>
+                <SelectTrigger className="bg-white/5 border-white/20 text-white mt-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-900 border-white/20">
+                  <SelectItem value="navigation">Navigation</SelectItem>
+                  <SelectItem value="manipulation">Manipulation</SelectItem>
+                  <SelectItem value="sensor">Sensor</SelectItem>
+                  <SelectItem value="ai">AI Processing</SelectItem>
+                  <SelectItem value="custom">Custom</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="task-priority" className="text-slate-300">Priority</Label>
+              <Select value={newTask.priority} onValueChange={(value) => setNewTask({ ...newTask, priority: value as Task["priority"] })}>
+                <SelectTrigger className="bg-white/5 border-white/20 text-white mt-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-900 border-white/20">
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="critical">Critical</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="task-description" className="text-slate-300">Description</Label>
+              <Textarea
+                id="task-description"
+                value={newTask.description}
+                onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+                className="bg-white/5 border-white/20 text-white mt-1"
+                placeholder="Describe the task..."
+                rows={3}
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setIsTaskDialogOpen(false)}
+              className="border-white/20 text-white hover:bg-white/10"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={editingTask ? handleUpdateTask : handleCreateTask}
+              className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
+            >
+              {editingTask ? "Update Task" : "Create Task"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Sequence Dialog */}
+      <Dialog open={isSequenceDialogOpen} onOpenChange={setIsSequenceDialogOpen}>
+        <DialogContent className="bg-slate-900 border border-white/20 text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-light">Create New Sequence</DialogTitle>
+            <DialogDescription className="text-slate-400">
+              Create a new task sequence for automated execution.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="sequence-name" className="text-slate-300">Sequence Name</Label>
+              <Input
+                id="sequence-name"
+                className="bg-white/5 border-white/20 text-white mt-1"
+                placeholder="Enter sequence name..."
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="sequence-description" className="text-slate-300">Description</Label>
+              <Textarea
+                id="sequence-description"
+                className="bg-white/5 border-white/20 text-white mt-1"
+                placeholder="Describe the sequence..."
+                rows={3}
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setIsSequenceDialogOpen(false)}
+              className="border-white/20 text-white hover:bg-white/10"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => setIsSequenceDialogOpen(false)}
+              className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
+            >
+              Create Sequence
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
