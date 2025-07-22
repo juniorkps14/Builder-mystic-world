@@ -568,6 +568,7 @@ const HolonomicDrive = () => {
           </Card>
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 };

@@ -499,6 +499,7 @@ const RoboticArm = () => {
           </Card>
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 };

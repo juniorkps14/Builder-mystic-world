@@ -494,6 +494,7 @@ const TFTree = () => {
           </Card>
         </div>
       </div>
+      </div>
     </div>
   );
 };
