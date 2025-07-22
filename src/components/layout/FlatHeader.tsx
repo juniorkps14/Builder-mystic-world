@@ -8,7 +8,6 @@ import { useROSIntegration } from "@/services/ROSIntegrationService";
 import {
   Sun,
   Moon,
-  Globe,
   Wifi,
   WifiOff,
   Activity,
@@ -19,8 +18,9 @@ import {
   Settings,
   Bell,
   Search,
+  Zap,
+  Battery,
 } from "lucide-react";
-import "../../styles/flat-vector-theme.css";
 
 interface FlatHeaderProps {
   onMenuClick?: () => void;
@@ -36,110 +36,129 @@ export const FlatHeader: React.FC<FlatHeaderProps> = ({ onMenuClick }) => {
     memory: 68,
     disk: 73,
     temp: 42,
+    battery: 87,
   };
 
   return (
-    <header className="flat-header">
-      {/* Left Section */}
-      <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onMenuClick}
-          className="flat-button-outline lg:hidden"
-        >
-          <Menu className="flat-icon" />
-        </Button>
+    <header className="bg-white/5 backdrop-blur-xl border-b border-white/20 px-6 py-4 shadow-lg">
+      <div className="flex items-center justify-between">
+        {/* Left Section */}
+        <div className="flex items-center gap-4">
+          {/* Mobile Menu Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onMenuClick}
+            className="lg:hidden p-2 hover:bg-white/10 text-white border border-white/20 rounded-lg"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
 
+          {/* System Metrics */}
+          <div className="hidden md:flex items-center gap-4">
+            <div className="flex items-center gap-2 px-3 py-2 bg-white/10 rounded-lg border border-white/10">
+              <Cpu className="h-4 w-4 text-blue-400" />
+              <span className="text-sm font-mono text-white">{systemData.cpu}%</span>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-2 bg-white/10 rounded-lg border border-white/10">
+              <HardDrive className="h-4 w-4 text-purple-400" />
+              <span className="text-sm font-mono text-white">{systemData.memory}%</span>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-2 bg-white/10 rounded-lg border border-white/10">
+              <Battery className="h-4 w-4 text-green-400" />
+              <span className="text-sm font-mono text-white">{systemData.battery}%</span>
+            </div>
+          </div>
+
+          {/* ROS Connection Status */}
+          <div
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg border ${
+              isConnected
+                ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
+                : "bg-red-500/20 text-red-300 border-red-500/30"
+            }`}
+          >
+            {isConnected ? (
+              <Wifi className="w-4 h-4" />
+            ) : (
+              <WifiOff className="w-4 h-4" />
+            )}
+            <span className="text-sm font-medium">
+              {isConnected ? "Connected" : "Disconnected"}
+            </span>
+          </div>
+        </div>
+
+        {/* Center Section - Time */}
+        <div className="hidden lg:block">
+          <div className="text-center">
+            <p className="text-lg font-light text-white">
+              {new Date().toLocaleTimeString('en-US', { 
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit'
+              })}
+            </p>
+            <p className="text-xs text-slate-400">
+              {new Date().toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric'
+              })}
+            </p>
+          </div>
+        </div>
+
+        {/* Right Section */}
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-            <Activity className="w-6 h-6 text-white" />
-          </div>
-          <div className="hidden sm:block">
-            <h1 className="text-xl font-bold text-gray-900">Dino Core</h1>
-            <p className="text-sm text-gray-500">Robot Control System</p>
-          </div>
-        </div>
-      </div>
+          {/* Search Button */}
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="hidden sm:flex bg-white/10 hover:bg-white/20 border border-white/20 text-white"
+          >
+            <Search className="h-4 w-4" />
+          </Button>
 
-      {/* Center Section - System Status */}
-      <div className="hidden md:flex items-center gap-4">
-        <div className="flex items-center gap-3 bg-gray-50 rounded-full px-4 py-2">
-          <div className="flex items-center gap-2">
-            <Cpu className="w-4 h-4 text-blue-500" />
-            <span className="text-sm font-medium">CPU</span>
-            <span className="text-sm text-gray-600">{systemData.cpu}%</span>
-          </div>
-          <div className="w-1 h-4 bg-gray-300 rounded-full"></div>
-          <div className="flex items-center gap-2">
-            <HardDrive className="w-4 h-4 text-green-500" />
-            <span className="text-sm font-medium">RAM</span>
-            <span className="text-sm text-gray-600">{systemData.memory}%</span>
-          </div>
-        </div>
+          {/* Notifications */}
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="relative bg-white/10 hover:bg-white/20 border border-white/20 text-white"
+          >
+            <Bell className="h-4 w-4" />
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-full"></div>
+          </Button>
 
-        {/* ROS Connection Status */}
-        <div
-          className={`flex items-center gap-2 px-3 py-2 rounded-full ${
-            isConnected
-              ? "bg-green-100 text-green-700"
-              : "bg-red-100 text-red-700"
-          }`}
-        >
-          {isConnected ? (
-            <Wifi className="w-4 h-4" />
-          ) : (
-            <WifiOff className="w-4 h-4" />
-          )}
-          <span className="text-sm font-medium">
-            {isConnected ? "Connected" : "Disconnected"}
-          </span>
-        </div>
-      </div>
+          {/* Theme Toggle */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            className="bg-white/10 hover:bg-white/20 border border-white/20 text-white"
+          >
+            {theme === "light" ? (
+              <Moon className="h-4 w-4" />
+            ) : (
+              <Sun className="h-4 w-4" />
+            )}
+          </Button>
 
-      {/* Right Section */}
-      <div className="flex items-center gap-3">
-        {/* Search Button */}
-        <Button variant="ghost" size="sm" className="hidden sm:flex">
-          <Search className="flat-icon" />
-        </Button>
+          {/* Persistence Status */}
+          <PersistenceStatus />
 
-        {/* Notifications */}
-        <Button variant="ghost" size="sm" className="relative">
-          <Bell className="flat-icon" />
-          <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
-        </Button>
+          {/* Tesla Theme Toggle */}
+          <TeslaThemeToggle />
 
-        {/* Theme Toggle */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-          className="flat-button-outline"
-        >
-          {theme === "light" ? (
-            <Moon className="flat-icon" />
-          ) : (
-            <Sun className="flat-icon" />
-          )}
-        </Button>
-
-
-
-        {/* Persistence Status */}
-        <PersistenceStatus />
-
-        {/* Tesla Theme Toggle */}
-        <TeslaThemeToggle />
-
-        {/* System Info */}
-        <div className="flex items-center gap-3 border-l pl-3 ml-3">
-          <div className="hidden sm:block text-right">
-            <p className="text-sm font-medium text-gray-900">System Ready</p>
-            <p className="text-xs text-gray-500">All Systems Operational</p>
-          </div>
-          <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-teal-500 rounded-full flex items-center justify-center">
-            <Settings className="w-4 h-4 text-white" />
+          {/* User Profile */}
+          <div className="flex items-center gap-3 border-l border-white/20 pl-3 ml-3">
+            <div className="hidden sm:block text-right">
+              <p className="text-sm font-medium text-white">Robot Admin</p>
+              <p className="text-xs text-slate-400">System Ready</p>
+            </div>
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
+              <User className="w-5 h-5 text-white" />
+            </div>
           </div>
         </div>
       </div>
