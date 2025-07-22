@@ -393,7 +393,7 @@ def get_sequence_status(execution_id):
     response = requests.get(url)
     return response.json()
 
-# ตัวอย่างการใช้งาน
+# ���ัวอย่างการใช้งาน
 result = execute_sequence("patrol_routine", {"speed": 0.5, "loops": 3})
 exec_id = result['execution_id']
 
@@ -497,7 +497,7 @@ asyncio.run(robot_data_stream())`,
         success: true,
       };
 
-      setApiCalls((prev) => [newCall, ...prev.slice(0, 9)]);
+      addApiCall(newCall);
     } catch (error) {
       setTestResponse(JSON.stringify({ error: "API call failed" }, null, 2));
     } finally {
@@ -937,7 +937,7 @@ if __name__ == "__main__":
                   การติดตั้งและใช้งา��:
                 </h4>
                 <pre className="text-sm text-blue-800">
-                  {`# ติดตั้ง dependencies
+                  {`# ติดตั้��� dependencies
 pip install requests websockets pillow
 
 # ใช้งาน SDK
