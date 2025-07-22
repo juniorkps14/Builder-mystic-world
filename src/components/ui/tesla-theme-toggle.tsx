@@ -48,10 +48,10 @@ export function TeslaThemeToggle() {
   useEffect(() => {
     // Apply theme to document
     const root = document.documentElement;
-    
+
     // Remove existing theme classes
     root.classList.remove("tesla-ui", "flat-ui", "light");
-    
+
     // Apply selected theme
     switch (themePrefs.mode) {
       case "tesla":
@@ -191,7 +191,7 @@ export function TeslaThemeToggle() {
           {themePrefs.mode === "tesla" && (
             <div className="space-y-4 border-t border-white/10 pt-4">
               <Label className="text-sm text-slate-400">Visual Effects</Label>
-              
+
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -267,7 +267,7 @@ export function TeslaThemeToggle() {
               <Accessibility className="h-4 w-4" />
               Accessibility
             </Label>
-            
+
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
