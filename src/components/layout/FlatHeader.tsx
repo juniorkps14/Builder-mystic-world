@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PersistenceStatus } from "@/components/ui/persistence-status";
 import { TeslaThemeToggle } from "@/components/ui/tesla-theme-toggle";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useROSIntegration } from "@/services/ROSIntegrationService";
 import {
@@ -28,7 +27,6 @@ interface FlatHeaderProps {
 }
 
 export const FlatHeader: React.FC<FlatHeaderProps> = ({ onMenuClick }) => {
-  const { language, setLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
   const { isConnected } = useROSIntegration();
 
@@ -126,18 +124,7 @@ export const FlatHeader: React.FC<FlatHeaderProps> = ({ onMenuClick }) => {
           )}
         </Button>
 
-        {/* Language Toggle */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setLanguage(language === "th" ? "en" : "th")}
-          className="flat-button-outline"
-        >
-          <Globe className="flat-icon" />
-          <span className="hidden sm:inline ml-2">
-            {language === "th" ? "EN" : "TH"}
-          </span>
-        </Button>
+
 
         {/* Persistence Status */}
         <PersistenceStatus />
