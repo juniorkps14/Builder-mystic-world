@@ -99,7 +99,7 @@ export default function Settings() {
   );
 
   const handleSettingChange = (key: string, value: any) => {
-    updateSetting(key, value);
+    handleSettingChange(key, value);
     setIsDirty(true);
   };
 
@@ -371,7 +371,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.showGrid}
                     onCheckedChange={(checked) =>
-                      updateSetting("showGrid", checked)
+                      handleSettingChange("showGrid", checked)
                     }
                   />
                 </div>
@@ -386,7 +386,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.showTooltips}
                     onCheckedChange={(checked) =>
-                      updateSetting("showTooltips", checked)
+                      handleSettingChange("showTooltips", checked)
                     }
                   />
                 </div>
@@ -401,7 +401,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.showBadges}
                     onCheckedChange={(checked) =>
-                      updateSetting("showBadges", checked)
+                      handleSettingChange("showBadges", checked)
                     }
                   />
                 </div>
@@ -416,7 +416,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.compactMode}
                     onCheckedChange={(checked) =>
-                      updateSetting("compactMode", checked)
+                      handleSettingChange("compactMode", checked)
                     }
                   />
                 </div>
@@ -431,7 +431,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.highContrast}
                     onCheckedChange={(checked) =>
-                      updateSetting("highContrast", checked)
+                      handleSettingChange("highContrast", checked)
                     }
                   />
                 </div>
@@ -458,7 +458,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.enableNotifications}
                     onCheckedChange={(checked) =>
-                      updateSetting("enableNotifications", checked)
+                      handleSettingChange("enableNotifications", checked)
                     }
                   />
                 </div>
@@ -473,7 +473,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.soundEnabled}
                     onCheckedChange={(checked) =>
-                      updateSetting("soundEnabled", checked)
+                      handleSettingChange("soundEnabled", checked)
                     }
                   />
                 </div>
@@ -488,7 +488,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.systemAlerts}
                     onCheckedChange={(checked) =>
-                      updateSetting("systemAlerts", checked)
+                      handleSettingChange("systemAlerts", checked)
                     }
                   />
                 </div>
@@ -505,7 +505,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.taskNotifications}
                     onCheckedChange={(checked) =>
-                      updateSetting("taskNotifications", checked)
+                      handleSettingChange("taskNotifications", checked)
                     }
                   />
                 </div>
@@ -520,7 +520,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.errorAlerts}
                     onCheckedChange={(checked) =>
-                      updateSetting("errorAlerts", checked)
+                      handleSettingChange("errorAlerts", checked)
                     }
                   />
                 </div>
@@ -547,7 +547,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.confirmDangerousActions}
                     onCheckedChange={(checked) =>
-                      updateSetting("confirmDangerousActions", checked)
+                      handleSettingChange("confirmDangerousActions", checked)
                     }
                   />
                 </div>
@@ -562,7 +562,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.autoSaveSequences}
                     onCheckedChange={(checked) =>
-                      updateSetting("autoSaveSequences", checked)
+                      handleSettingChange("autoSaveSequences", checked)
                     }
                   />
                 </div>
@@ -577,7 +577,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.emergencyStopEnabled}
                     onCheckedChange={(checked) =>
-                      updateSetting("emergencyStopEnabled", checked)
+                      handleSettingChange("emergencyStopEnabled", checked)
                     }
                   />
                 </div>
@@ -589,7 +589,7 @@ export default function Settings() {
                   <Slider
                     value={[settings.defaultMovementSpeed]}
                     onValueChange={([value]) =>
-                      updateSetting("defaultMovementSpeed", value)
+                      handleSettingChange("defaultMovementSpeed", value)
                     }
                     min={1}
                     max={100}
@@ -606,7 +606,7 @@ export default function Settings() {
                   <Slider
                     value={[settings.joystickSensitivity]}
                     onValueChange={([value]) =>
-                      updateSetting("joystickSensitivity", value)
+                      handleSettingChange("joystickSensitivity", value)
                     }
                     min={10}
                     max={100}
@@ -640,7 +640,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.collectAnalytics}
                     onCheckedChange={(checked) =>
-                      updateSetting("collectAnalytics", checked)
+                      handleSettingChange("collectAnalytics", checked)
                     }
                   />
                 </div>
@@ -655,7 +655,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.shareErrorReports}
                     onCheckedChange={(checked) =>
-                      updateSetting("shareErrorReports", checked)
+                      handleSettingChange("shareErrorReports", checked)
                     }
                   />
                 </div>
@@ -670,7 +670,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.autoBackup}
                     onCheckedChange={(checked) =>
-                      updateSetting("autoBackup", checked)
+                      handleSettingChange("autoBackup", checked)
                     }
                   />
                 </div>
@@ -682,7 +682,7 @@ export default function Settings() {
                   <Select
                     value={settings.backupFrequency}
                     onValueChange={(value) =>
-                      updateSetting("backupFrequency", value)
+                      handleSettingChange("backupFrequency", value)
                     }
                   >
                     <SelectTrigger>
@@ -703,7 +703,7 @@ export default function Settings() {
                     type="number"
                     value={settings.dataRetention}
                     onChange={(e) =>
-                      updateSetting("dataRetention", parseInt(e.target.value))
+                      handleSettingChange("dataRetention", parseInt(e.target.value))
                     }
                     min={1}
                     max={365}
@@ -726,7 +726,7 @@ export default function Settings() {
                     type="number"
                     value={settings.maxConcurrentTasks}
                     onChange={(e) =>
-                      updateSetting(
+                      handleSettingChange(
                         "maxConcurrentTasks",
                         parseInt(e.target.value),
                       )
@@ -742,7 +742,7 @@ export default function Settings() {
                     type="number"
                     value={settings.cacheSize}
                     onChange={(e) =>
-                      updateSetting("cacheSize", parseInt(e.target.value))
+                      handleSettingChange("cacheSize", parseInt(e.target.value))
                     }
                     min={50}
                     max={1000}
@@ -759,7 +759,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.enableGpuAcceleration}
                     onCheckedChange={(checked) =>
-                      updateSetting("enableGpuAcceleration", checked)
+                      handleSettingChange("enableGpuAcceleration", checked)
                     }
                   />
                 </div>
@@ -776,7 +776,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.autoOptimize}
                     onCheckedChange={(checked) =>
-                      updateSetting("autoOptimize", checked)
+                      handleSettingChange("autoOptimize", checked)
                     }
                   />
                 </div>
@@ -791,7 +791,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.backgroundProcessing}
                     onCheckedChange={(checked) =>
-                      updateSetting("backgroundProcessing", checked)
+                      handleSettingChange("backgroundProcessing", checked)
                     }
                   />
                 </div>
@@ -826,7 +826,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.developerMode}
                     onCheckedChange={(checked) =>
-                      updateSetting("developerMode", checked)
+                      handleSettingChange("developerMode", checked)
                     }
                   />
                 </div>
@@ -841,7 +841,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.debugMode}
                     onCheckedChange={(checked) =>
-                      updateSetting("debugMode", checked)
+                      handleSettingChange("debugMode", checked)
                     }
                   />
                 </div>
@@ -856,7 +856,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.experimentalFeatures}
                     onCheckedChange={(checked) =>
-                      updateSetting("experimentalFeatures", checked)
+                      handleSettingChange("experimentalFeatures", checked)
                     }
                   />
                 </div>
@@ -873,7 +873,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.betaUpdates}
                     onCheckedChange={(checked) =>
-                      updateSetting("betaUpdates", checked)
+                      handleSettingChange("betaUpdates", checked)
                     }
                   />
                 </div>
@@ -888,7 +888,7 @@ export default function Settings() {
                   <Switch
                     checked={settings.verboseLogging}
                     onCheckedChange={(checked) =>
-                      updateSetting("verboseLogging", checked)
+                      handleSettingChange("verboseLogging", checked)
                     }
                   />
                 </div>
