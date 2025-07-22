@@ -40,12 +40,24 @@ const Cameras = () => {
   ];
 
   return (
-    <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">Camera Feeds</h1>
-        <p className="text-muted-foreground">
-          Live camera streams and image processing
-        </p>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-4xl font-extralight bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text text-transparent">
+            Camera Feeds
+          </h1>
+          <p className="text-muted-foreground font-light mt-2">
+            Live camera streams and image processing
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Badge className="bg-green-100 text-green-700">
+            <Camera className="h-3 w-3 mr-1" />
+            Live
+          </Badge>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
