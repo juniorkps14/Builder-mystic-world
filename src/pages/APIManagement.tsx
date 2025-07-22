@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { usePersistentState, usePersistentArray } from "@/hooks/use-persistence";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -90,7 +91,7 @@ def send_velocity_command(linear_x, linear_y, angular_z):
         "linear": {"x": linear_x, "y": linear_y, "z": 0.0},
         "angular": {"x": 0.0, "y": 0.0, "z": angular_z}
     }
-    
+
     response = requests.post(url, json=payload)
     return response.json()
 
@@ -140,7 +141,7 @@ print(f"Position: x={status['position']['x']}, y={status['position']['y']}")`,
 def emergency_stop(activate=True):
     url = "http://localhost:8080/api/robot/emergency_stop"
     payload = {"activate": activate}
-    
+
     response = requests.post(url, json=payload)
     return response.json()
 
@@ -170,7 +171,7 @@ def navigate_to_position(x, y, theta=0.0):
         "target": {"x": x, "y": y, "theta": theta},
         "frame_id": "map"
     }
-    
+
     response = requests.post(url, json=payload)
     return response.json()
 
@@ -205,12 +206,12 @@ def get_current_map():
 def save_map_image(map_data, filename="map.png"):
     # แปลง base64 เป็นรูปภาพ
     map_bytes = base64.b64decode(map_data['map_data'])
-    
+
     # สร้างรูปภาพ
     img_array = np.frombuffer(map_bytes, dtype=np.uint8)
     img_array = img_array.reshape(map_data['height'], map_data['width'])
-    
-    # บันทึกเป็นไฟล์รูปภาพ
+
+    # บันทึกเป็นไฟ��์รูปภาพ
     img = Image.fromarray(img_array)
     img.save(filename)
 
@@ -246,11 +247,11 @@ def get_camera_image():
 def save_camera_image(image_data, filename="camera.jpg"):
     # แปลง base64 เป็นรูปภาพ
     image_bytes = base64.b64decode(image_data['image'])
-    
+
     # สร้างและบันทึกรูปภาพ
     img = Image.open(io.BytesIO(image_bytes))
     img.save(filename)
-    
+
     return img
 
 # ตัวอย่างการใช้งาน
@@ -281,12 +282,12 @@ def get_all_sensors():
 def monitor_sensors():
     while True:
         sensors = get_all_sensors()
-        
+
         # แสดงข้อมูลเซ็นเซอร์
         print(f"Battery: {sensors['battery']['percentage']}%")
         print(f"IMU Acceleration: {sensors['imu']['acceleration']}")
         print(f"LiDAR min distance: {min(sensors['lidar']['ranges']):.2f}m")
-        
+
         time.sleep(1)
 
 # ตัวอย่างการใช้งาน
@@ -317,14 +318,14 @@ def get_system_health():
 
 def check_system_status():
     health = get_system_health()
-    
+
     # ตรวจสอบสถานะระบบ
     if health['cpu_usage'] > 80:
         print("Warning: High CPU usage!")
-    
+
     if health['memory_usage'] > 90:
         print("Warning: High memory usage!")
-    
+
     print(f"System uptime: {health['uptime']/3600:.1f} hours")
     print(f"Active ROS nodes: {health['ros_nodes']}")
 
@@ -357,7 +358,7 @@ def execute_sequence(sequence_name, parameters=None):
         "sequence_name": sequence_name,
         "parameters": parameters or {}
     }
-    
+
     response = requests.post(url, json=payload)
     return response.json()
 
@@ -389,7 +390,7 @@ import json
 
 async def robot_data_stream():
     uri = "ws://localhost:9090"
-    
+
     async with websockets.connect(uri) as websocket:
         # สมัครรับข้อมูล
         subscribe_msg = {
@@ -397,17 +398,17 @@ async def robot_data_stream():
             "topics": ["robot_status", "camera_frame", "sensor_data"]
         }
         await websocket.send(json.dumps(subscribe_msg))
-        
+
         # รับข้อมูลแบบ real-time
         async for message in websocket:
             data = json.loads(message)
-            
+
             if data['type'] == 'robot_status':
                 print(f"Robot: {data['state']} at position {data['position']}")
-            
+
             elif data['type'] == 'camera_frame':
                 print(f"New camera frame received: {data['width']}x{data['height']}")
-            
+
             elif data['type'] == 'sensor_data':
                 print(f"Sensors updated: {data.keys()}")
 
@@ -503,7 +504,7 @@ class RobotAPI:
         self.base_url = base_url.rstrip('/')
         self.ws_url = ws_url
         self.session = requests.Session()
-    
+
     # Robot Control Methods
     def send_velocity(self, linear_x: float, linear_y: float = 0.0, angular_z: float = 0.0) -> Dict:
         """ส่งคำสั่งความเร็วไปยังหุ่นยนต์"""
@@ -513,18 +514,18 @@ class RobotAPI:
         }
         response = self.session.post(f"{self.base_url}/api/robot/cmd_vel", json=payload)
         return response.json()
-    
+
     def get_robot_status(self) -> Dict:
         """ดึงสถานะปัจจุบันของหุ่นยนต์"""
         response = self.session.get(f"{self.base_url}/api/robot/status")
         return response.json()
-    
+
     def emergency_stop(self, activate: bool = True) -> Dict:
         """เปิด/ปิด emergency stop"""
         payload = {"activate": activate}
         response = self.session.post(f"{self.base_url}/api/robot/emergency_stop", json=payload)
         return response.json()
-    
+
     # Navigation Methods
     def navigate_to(self, x: float, y: float, theta: float = 0.0) -> Dict:
         """สั่งให้หุ่นยนต์เดินทางไปยังตำแหน่งที่กำหนด"""
@@ -534,33 +535,33 @@ class RobotAPI:
         }
         response = self.session.post(f"{self.base_url}/api/navigation/goto", json=payload)
         return response.json()
-    
+
     def get_map(self) -> Dict:
         """ดึงแผนที่ปัจจุบัน"""
         response = self.session.get(f"{self.base_url}/api/navigation/map")
         return response.json()
-    
+
     # Sensor Methods
     def get_camera_image(self) -> Image.Image:
         """ดึงภาพจากกล้องและคืนค่าเป็น PIL Image"""
         response = self.session.get(f"{self.base_url}/api/sensors/camera/image")
         data = response.json()
-        
+
         image_bytes = base64.b64decode(data['image'])
         img = Image.open(io.BytesIO(image_bytes))
         return img
-    
+
     def get_all_sensors(self) -> Dict:
         """ดึงข้อมูลเซ็นเซอร์ทั้งหมด"""
         response = self.session.get(f"{self.base_url}/api/sensors/all")
         return response.json()
-    
+
     # System Methods
     def get_system_health(self) -> Dict:
         """ตรวจสอบสุขภาพระบบ"""
         response = self.session.get(f"{self.base_url}/api/system/health")
         return response.json()
-    
+
     # Sequence Methods
     def execute_sequence(self, sequence_name: str, parameters: Optional[Dict] = None) -> Dict:
         """เรียกใช้ sequence ที่กำหนด"""
@@ -570,12 +571,12 @@ class RobotAPI:
         }
         response = self.session.post(f"{self.base_url}/api/sequences/execute", json=payload)
         return response.json()
-    
+
     def get_sequence_status(self, execution_id: str) -> Dict:
         """ตรวจสอบสถานะการทำงานของ sequence"""
         response = self.session.get(f"{self.base_url}/api/sequences/status/{execution_id}")
         return response.json()
-    
+
     # WebSocket Methods
     async def subscribe_realtime_data(self, topics: List[str], callback):
         """สมัครรับข้อมูลแบบ real-time ผ่าน WebSocket"""
@@ -586,7 +587,7 @@ class RobotAPI:
                 "topics": topics
             }
             await websocket.send(json.dumps(subscribe_msg))
-            
+
             # รับข้อมูลและเรียก callback
             async for message in websocket:
                 data = json.loads(message)
@@ -594,20 +595,20 @@ class RobotAPI:
 
 # ตัวอย่างการใช้งาน
 if __name__ == "__main__":
-    # สร้าง instance ของ API
+    # สร้าง instance ขอ��� API
     robot = RobotAPI()
-    
+
     # ตรวจสอบสถานะหุ่นยนต์
     status = robot.get_robot_status()
     print(f"Robot state: {status['state']}")
-    
+
     # เคลื่อนที่หุ่นยนต์
     robot.send_velocity(0.5, 0.0, 0.0)  # เดินหน้า
-    
+
     # ถ่ายรูป
     image = robot.get_camera_image()
     image.save("robot_photo.jpg")
-    
+
     # สั่���ให้ไปยังตำแหน่งที่กำหนด
     result = robot.navigate_to(5.0, 3.0, 1.57)
     print(f"Navigation goal: {result['goal_id']}")
