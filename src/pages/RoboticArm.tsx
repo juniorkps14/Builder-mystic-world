@@ -21,6 +21,7 @@ import {
   Settings,
   Target,
   Grip,
+  Activity,
 } from "lucide-react";
 
 const RoboticArm = () => {
