@@ -734,14 +734,14 @@ export default function SystemConfiguration() {
                   />
                 </div>
 
-                <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="bg-white/5 border border-white/10 p-4 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-medium">Last Backup</span>
                     <Badge variant="outline">
                       {lastBackup.toLocaleDateString()}
                     </Badge>
                   </div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-300">
                     {lastBackup.toLocaleString()}
                   </p>
                 </div>

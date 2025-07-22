@@ -183,7 +183,7 @@ export default function RoboticArm() {
               </p>
             </div>
             <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${
-              armStatus.power ? "bg-emerald-500/20" : "bg-gray-500/20"
+              armStatus.power ? "bg-emerald-500/20" : "bg-white/5 border border-white/100/20"
             }`}>
               <Power className={`h-6 w-6 ${armStatus.power ? "text-emerald-400" : "text-gray-400"}`} />
             </div>

@@ -218,13 +218,13 @@ export default function FlatRobotControl() {
           </div>
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-sm text-gray-600">X:</span>
+              <span className="text-sm text-slate-300">X:</span>
               <span className="text-sm font-medium">
                 {position.x.toFixed(2)}m
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Y:</span>
+              <span className="text-sm text-slate-300">Y:</span>
               <span className="text-sm font-medium">
                 {position.y.toFixed(2)}m
               </span>
@@ -247,7 +247,7 @@ export default function FlatRobotControl() {
             <div className="text-2xl font-bold text-gray-900">
               {position.rotation}°
             </div>
-            <div className="w-16 h-16 mx-auto mt-2 border-2 border-gray-300 rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto mt-2 border-2 border-white/20 rounded-full flex items-center justify-center">
               <div
                 className="w-1 h-6 bg-blue-500 rounded-full"
                 style={{
@@ -372,10 +372,10 @@ export default function FlatRobotControl() {
           {/* Position Info */}
           <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg">
             <div className="text-sm font-medium text-gray-900">Position</div>
-            <div className="text-xs text-gray-600">
+            <div className="text-xs text-slate-300">
               X: {position.x.toFixed(2)}m, Y: {position.y.toFixed(2)}m
             </div>
-            <div className="text-xs text-gray-600">
+            <div className="text-xs text-slate-300">
               Angle: {position.rotation}°
             </div>
           </div>
@@ -388,7 +388,7 @@ export default function FlatRobotControl() {
                 {robotStatus}
               </span>
             </div>
-            <div className="text-xs text-gray-600">Speed: {speed[0]}%</div>
+            <div className="text-xs text-slate-300">Speed: {speed[0]}%</div>
           </div>
         </div>
       </Card>

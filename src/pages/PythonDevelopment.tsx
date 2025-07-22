@@ -1937,11 +1937,11 @@ if __name__ == '__main__':
                       className={`w-full text-left p-3 rounded-lg transition-colors ${
                         activeExample === key
                           ? "bg-blue-100 border-blue-300 border"
-                          : "bg-gray-50 hover:bg-gray-100"
+                          : "bg-white/5 border border-white/10 hover:bg-gray-100"
                       }`}
                     >
                       <h4 className="font-medium text-sm">{example.title}</h4>
-                      <p className="text-xs text-gray-600 mt-1">
+                      <p className="text-xs text-slate-300 mt-1">
                         {example.description}
                       </p>
                     </button>
@@ -1957,7 +1957,7 @@ if __name__ == '__main__':
                   <h3 className="text-lg font-semibold">
                     {codeExamples[activeExample].title}
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-300">
                     {codeExamples[activeExample].description}
                   </p>
                 </div>
@@ -2000,7 +2000,7 @@ if __name__ == '__main__':
                 <div className="p-4 bg-blue-50 rounded-lg">
                   <Network className="h-8 w-8 text-blue-600 mb-2" />
                   <h4 className="font-medium">Control Layer</h4>
-                  <ul className="text-sm text-gray-600 mt-2 space-y-1">
+                  <ul className="text-sm text-slate-300 mt-2 space-y-1">
                     <li>• Robot Control System</li>
                     <li>• Emergency Stop Manager</li>
                     <li>• State Machine</li>
@@ -2011,7 +2011,7 @@ if __name__ == '__main__':
                 <div className="p-4 bg-green-50 rounded-lg">
                   <Cpu className="h-8 w-8 text-green-600 mb-2" />
                   <h4 className="font-medium">Hardware Layer</h4>
-                  <ul className="text-sm text-gray-600 mt-2 space-y-1">
+                  <ul className="text-sm text-slate-300 mt-2 space-y-1">
                     <li>• Base Controller</li>
                     <li>• Sensor Interface</li>
                     <li>• Motor Drivers</li>
@@ -2022,7 +2022,7 @@ if __name__ == '__main__':
                 <div className="p-4 bg-purple-50 rounded-lg">
                   <Globe className="h-8 w-8 text-purple-600 mb-2" />
                   <h4 className="font-medium">Navigation Layer</h4>
-                  <ul className="text-sm text-gray-600 mt-2 space-y-1">
+                  <ul className="text-sm text-slate-300 mt-2 space-y-1">
                     <li>• SLAM & Mapping</li>
                     <li>• Path Planning</li>
                     <li>• Localization</li>
@@ -2033,7 +2033,7 @@ if __name__ == '__main__':
                 <div className="p-4 bg-orange-50 rounded-lg">
                   <Monitor className="h-8 w-8 text-orange-600 mb-2" />
                   <h4 className="font-medium">Interface Layer</h4>
-                  <ul className="text-sm text-gray-600 mt-2 space-y-1">
+                  <ul className="text-sm text-slate-300 mt-2 space-y-1">
                     <li>• Web Interface</li>
                     <li>• WebSocket Bridge</li>
                     <li>• REST API</li>
@@ -2241,7 +2241,7 @@ echo "Installation complete! System ready for use."
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">Wiring Diagram</h3>
               <div className="bg-gray-100 p-4 rounded-lg">
-                <div className="text-center text-gray-600">
+                <div className="text-center text-slate-300">
                   <HardDrive className="h-16 w-16 mx-auto mb-2" />
                   <p>Complete wiring diagrams and PCB layouts</p>
                   <p className="text-sm">
@@ -2264,7 +2264,7 @@ echo "Installation complete! System ready for use."
                 <div className="p-4 border rounded-lg">
                   <Server className="h-8 w-8 text-blue-600 mb-2" />
                   <h4 className="font-medium">Single Robot</h4>
-                  <p className="text-sm text-gray-600 mt-2">
+                  <p className="text-sm text-slate-300 mt-2">
                     Direct deployment on robot hardware
                   </p>
                   <ul className="text-xs mt-2 space-y-1">
@@ -2277,7 +2277,7 @@ echo "Installation complete! System ready for use."
                 <div className="p-4 border rounded-lg">
                   <Network className="h-8 w-8 text-green-600 mb-2" />
                   <h4 className="font-medium">Multi-Robot Fleet</h4>
-                  <p className="text-sm text-gray-600 mt-2">
+                  <p className="text-sm text-slate-300 mt-2">
                     Centralized management system
                   </p>
                   <ul className="text-xs mt-2 space-y-1">
@@ -2290,7 +2290,7 @@ echo "Installation complete! System ready for use."
                 <div className="p-4 border rounded-lg">
                   <Globe className="h-8 w-8 text-purple-600 mb-2" />
                   <h4 className="font-medium">Cloud Integration</h4>
-                  <p className="text-sm text-gray-600 mt-2">
+                  <p className="text-sm text-slate-300 mt-2">
                     Cloud-connected operation
                   </p>
                   <ul className="text-xs mt-2 space-y-1">
@@ -2333,13 +2333,13 @@ echo "Installation complete! System ready for use."
                   {category.endpoints.map((endpoint, endpointIndex) => (
                     <div
                       key={endpointIndex}
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      className="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-lg"
                     >
                       <div className="flex-1">
                         <code className="text-sm font-mono bg-blue-100 text-blue-800 px-2 py-1 rounded">
                           {endpoint.name}
                         </code>
-                        <p className="text-sm text-gray-600 mt-1">
+                        <p className="text-sm text-slate-300 mt-1">
                           {endpoint.description}
                         </p>
                       </div>
@@ -2364,14 +2364,14 @@ echo "Installation complete! System ready for use."
                   <Activity className="h-6 w-6 text-blue-600 mb-2" />
                   <h4 className="font-medium">Performance</h4>
                   <div className="text-2xl font-bold text-blue-600">87%</div>
-                  <p className="text-xs text-gray-600">System efficiency</p>
+                  <p className="text-xs text-slate-300">System efficiency</p>
                 </div>
 
                 <div className="p-4 bg-green-50 rounded-lg">
                   <Cpu className="h-6 w-6 text-green-600 mb-2" />
                   <h4 className="font-medium">CPU Usage</h4>
                   <div className="text-2xl font-bold text-green-600">34%</div>
-                  <p className="text-xs text-gray-600">8 cores active</p>
+                  <p className="text-xs text-slate-300">8 cores active</p>
                 </div>
 
                 <div className="p-4 bg-purple-50 rounded-lg">
@@ -2380,7 +2380,7 @@ echo "Installation complete! System ready for use."
                   <div className="text-2xl font-bold text-purple-600">
                     2.1GB
                   </div>
-                  <p className="text-xs text-gray-600">of 8GB used</p>
+                  <p className="text-xs text-slate-300">of 8GB used</p>
                 </div>
 
                 <div className="p-4 bg-orange-50 rounded-lg">
@@ -2389,7 +2389,7 @@ echo "Installation complete! System ready for use."
                   <div className="text-2xl font-bold text-orange-600">
                     145ms
                   </div>
-                  <p className="text-xs text-gray-600">avg latency</p>
+                  <p className="text-xs text-slate-300">avg latency</p>
                 </div>
               </div>
             </Card>

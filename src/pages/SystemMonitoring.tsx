@@ -265,7 +265,7 @@ export default function SystemMonitoring() {
         return "text-emerald-400 bg-emerald-500/20 border-emerald-500/30";
       case "inactive":
       case "down":
-        return "text-gray-400 bg-gray-500/20 border-gray-500/30";
+        return "text-gray-400 bg-white/5 border border-white/100/20 border-gray-500/30";
       case "error":
         return "text-red-400 bg-red-500/20 border-red-500/30";
       default:
@@ -301,7 +301,7 @@ export default function SystemMonitoring() {
                 className={`px-4 py-2 ${
                   autoRefresh
                     ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-                    : "bg-gray-500/20 text-gray-300 border border-gray-500/30"
+                    : "bg-white/5 border border-white/100/20 text-gray-300 border border-gray-500/30"
                 }`}
               >
                 {autoRefresh ? (

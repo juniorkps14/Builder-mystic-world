@@ -209,7 +209,7 @@ export default function Sequences() {
       case "paused":
         return "bg-yellow-500/10 text-yellow-700 border-yellow-200";
       default:
-        return "bg-gray-500/10 text-slate-300 border-gray-200";
+        return "bg-white/5 border border-white/100/10 text-slate-300 border-gray-200";
     }
   };
 
@@ -237,7 +237,7 @@ export default function Sequences() {
       case "ai":
         return <div className="w-3 h-3 rounded-full bg-pink-500" />;
       default:
-        return <div className="w-3 h-3 rounded-full bg-gray-500" />;
+        return <div className="w-3 h-3 rounded-full bg-white/5 border border-white/100" />;
     }
   };
 

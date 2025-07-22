@@ -149,7 +149,7 @@ export default function Navigation() {
       case "active":
         return "bg-blue-500/20 text-blue-300 border-blue-500/30";
       default:
-        return "bg-gray-500/20 text-gray-300 border-gray-500/30";
+        return "bg-white/5 border border-white/100/20 text-gray-300 border-gray-500/30";
     }
   };
 

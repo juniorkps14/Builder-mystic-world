@@ -780,7 +780,7 @@ if __name__ == "__main__":
                         <code className="text-sm bg-white/10 px-2 py-1 rounded text-slate-300">
                           {endpoint.endpoint}
                         </code>
-                        <p className="text-sm text-gray-600 mt-2">
+                        <p className="text-sm text-slate-300 mt-2">
                           {endpoint.description}
                         </p>
                       </div>
@@ -934,7 +934,7 @@ if __name__ == "__main__":
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="text-lg font-semibold">Python SDK</h3>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-300">
                     ดาวน์โหลด SDK สำหรับการเชื่อมต่อกับ API ทั้งหมด
                   </p>
                 </div>
@@ -1036,7 +1036,7 @@ print(status)`}
                     </div>
 
                     <div className="flex items-center gap-4">
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-slate-300">
                         {call.duration}ms
                       </span>
 

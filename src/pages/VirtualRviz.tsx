@@ -1104,14 +1104,14 @@ const VirtualRviz: React.FC = () => {
             <div className="flex items-center gap-2">
               <Box className="h-5 w-5 text-blue-600" />
               <span className="text-sm font-medium text-white">RViz</span>
-              <span className="text-xs text-gray-600">- Dino Core</span>
+              <span className="text-xs text-slate-300">- Dino Core</span>
             </div>
           </div>
 
           {/* Center - Global Frame Settings */}
-          <div className="flex items-center gap-4 bg-white rounded px-3 py-1 border border-gray-300">
+          <div className="flex items-center gap-4 bg-white rounded px-3 py-1 border border-white/20">
             <div className="flex items-center gap-2">
-              <Label className="text-xs text-gray-600">Fixed Frame:</Label>
+              <Label className="text-xs text-slate-300">Fixed Frame:</Label>
               <Input
                 value={fixedFrame}
                 onChange={(e) => setFixedFrame(e.target.value)}
@@ -1120,7 +1120,7 @@ const VirtualRviz: React.FC = () => {
               />
             </div>
             <div className="flex items-center gap-2">
-              <Label className="text-xs text-gray-600">Target Frame:</Label>
+              <Label className="text-xs text-slate-300">Target Frame:</Label>
               <Input
                 value={targetFrame}
                 onChange={(e) => setTargetFrame(e.target.value)}
@@ -1133,8 +1133,8 @@ const VirtualRviz: React.FC = () => {
           {/* Right side - Controls */}
           <div className="flex items-center gap-2">
             {/* FPS Control */}
-            <div className="flex items-center gap-2 bg-white rounded px-2 py-1 border border-gray-300">
-              <Label className="text-xs text-gray-600">FPS:</Label>
+            <div className="flex items-center gap-2 bg-white rounded px-2 py-1 border border-white/20">
+              <Label className="text-xs text-slate-300">FPS:</Label>
               <Input
                 type="number"
                 value={fps}
@@ -1422,9 +1422,9 @@ const VirtualRviz: React.FC = () => {
                     }}
                   >
                     {category.expanded ? (
-                      <ChevronDown className="h-3 w-3 text-gray-600" />
+                      <ChevronDown className="h-3 w-3 text-slate-300" />
                     ) : (
-                      <ChevronRight className="h-3 w-3 text-gray-600" />
+                      <ChevronRight className="h-3 w-3 text-slate-300" />
                     )}
                     {category.expanded ? (
                       <FolderOpen className="h-3 w-3 text-blue-600" />
@@ -1446,8 +1446,8 @@ const VirtualRviz: React.FC = () => {
                           key={display.id}
                           className={`flex items-center gap-1 p-1 cursor-pointer text-sm ${
                             selectedDisplay?.id === display.id
-                              ? "bg-blue-200 border-l-2 border-blue-500"
-                              : "hover:bg-gray-50"
+                              ? "bg-blue-500/20 border-l-2 border-blue-500"
+                              : "hover:bg-white/5 border border-white/10"
                           }`}
                           onClick={() => setSelectedDisplay(display)}
                         >
@@ -1676,7 +1676,7 @@ const VirtualRviz: React.FC = () => {
           <div className="w-80 border-l border-gray-400 bg-white/5 border border-white/10 flex flex-col">
             <div className="border-b border-gray-400 bg-gray-200 p-2">
               <h3 className="font-bold text-sm text-white">Properties</h3>
-              <p className="text-xs text-gray-600">{selectedDisplay.name}</p>
+              <p className="text-xs text-slate-300">{selectedDisplay.name}</p>
             </div>
 
             <ScrollArea className="flex-1 p-3">
