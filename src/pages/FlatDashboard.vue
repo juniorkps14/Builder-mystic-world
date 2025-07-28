@@ -1,14 +1,14 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+  <div class="min-h-screen tesla-ui p-6">
     <!-- Header Section -->
     <div class="mb-8">
-      <n-card class="tesla-glass-card">
+      <div class="tesla-card p-6">
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="text-4xl font-light tracking-tight bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent mb-2">
+            <h1 class="text-4xl font-light tracking-tight bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent mb-2 tesla-title">
               Robotics Control Center
             </h1>
-            <p class="text-slate-400 text-lg font-light">
+            <p class="text-slate-400 text-lg font-light tesla-subtitle">
               Comprehensive autonomous system management and monitoring
             </p>
           </div>
@@ -17,12 +17,12 @@
               <div class="text-2xl font-light text-white">{{ currentTime }}</div>
               <div class="text-sm text-slate-400">{{ currentDate }}</div>
             </div>
-            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-xl">
+            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-xl tesla-interactive">
               <Zap class="h-8 w-8 text-white" />
             </div>
           </div>
         </div>
-      </n-card>
+      </div>
     </div>
 
     <!-- System Status Cards -->
@@ -419,7 +419,7 @@ const getStatusTagType = (status: string) => {
 const formatTime = (date: Date) => {
   const now = new Date()
   const diff = now.getTime() - date.getTime()
-  
+
   if (diff < 60000) {
     return 'Just now'
   } else if (diff < 3600000) {
@@ -432,11 +432,11 @@ const formatTime = (date: Date) => {
 const updateTime = () => {
   const now = new Date()
   currentTime.value = now.toLocaleTimeString()
-  currentDate.value = now.toLocaleDateString('en-US', { 
-    weekday: 'long', 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
+  currentDate.value = now.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
   })
 }
 
