@@ -11,7 +11,6 @@
 </template>
 
 <script setup lang="ts">
-import { darkTheme } from 'naive-ui'
 import FlatSidebar from '@/components/layout/FlatSidebar.vue'
 import FlatHeader from '@/components/layout/FlatHeader.vue'
 </script>
