@@ -118,20 +118,16 @@
                     </span>
                   </div>
                 </div>
-                <n-button
+                <button
                   @click.stop="handleRunSequence(sequence.id)"
-                  type="primary"
-                  size="small"
-                  class="tesla-button-primary"
+                  class="tesla-btn-primary flex items-center gap-2 text-sm px-3 py-2"
                 >
-                  <template #icon>
-                    <Play class="h-4 w-4" />
-                  </template>
-                </n-button>
+                  <Play class="h-4 w-4" />
+                </button>
               </div>
             </div>
           </div>
-        </n-card>
+        </div>
       </div>
 
       <!-- Execution Logs -->
