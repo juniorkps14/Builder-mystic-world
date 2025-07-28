@@ -103,24 +103,12 @@ const systemMetrics = ref({
   network: 23
 })
 
-// User menu options
-const userMenuOptions = ref([
-  {
-    label: 'Settings',
-    key: 'settings'
-  },
-  {
-    label: 'Theme',
-    key: 'theme'
-  },
-  {
-    type: 'divider'
-  },
-  {
-    label: 'Logout',
-    key: 'logout'
-  }
-])
+// System metrics (simulated)
+const systemMetrics = ref({
+  cpu: 45,
+  memory: 62,
+  network: 23
+})
 
 const currentPageTitle = computed(() => {
   const titles: Record<string, string> = {
