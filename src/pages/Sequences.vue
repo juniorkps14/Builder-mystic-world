@@ -132,7 +132,7 @@
 
       <!-- Execution Logs -->
       <div class="lg:col-span-1">
-        <n-card class="tesla-glass-card h-full">
+        <div class="tesla-card h-full p-6">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-light text-white">Execution Logs</h3>
             <n-button size="small" class="tesla-button-secondary">
