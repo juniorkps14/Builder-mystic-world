@@ -115,21 +115,18 @@ const systemMetrics = ref({
 const userMenuOptions = ref([
   {
     label: 'Settings',
-    key: 'settings',
-    icon: () => h(Settings)
+    key: 'settings'
   },
   {
     label: 'Theme',
-    key: 'theme',
-    icon: () => h(Moon)
+    key: 'theme'
   },
   {
     type: 'divider'
   },
   {
     label: 'Logout',
-    key: 'logout',
-    icon: () => h(LogOut)
+    key: 'logout'
   }
 ])
 
