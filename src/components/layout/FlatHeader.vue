@@ -97,12 +97,6 @@ const currentTime = ref('')
 let timeInterval: number
 
 // System metrics (simulated)
-const systemMetrics = ref({
-  cpu: 45,
-  memory: 62,
-  network: 23
-})
-
 // System metrics (simulated)
 const systemMetrics = ref({
   cpu: 45,
