@@ -1,14 +1,14 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 text-white">
+  <div class="min-h-screen tesla-ui p-6">
     <!-- Tesla-inspired Header with Glass Effect -->
     <div class="mb-8">
-      <div class="tesla-glass p-6 rounded-3xl shadow-2xl">
+      <div class="tesla-card p-6">
         <div class="flex items-center justify-between">
           <div class="space-y-2">
-            <h1 class="text-4xl font-light tracking-tight bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent">
+            <h1 class="text-4xl font-light tracking-tight tesla-title">
               Robot Sequences
             </h1>
-            <p class="text-slate-400 font-light">
+            <p class="text-slate-400 font-light tesla-subtitle">
               Advanced task orchestration and autonomous execution control
             </p>
           </div>
@@ -60,7 +60,7 @@
             <div class="h-10 w-10 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-xl flex items-center justify-center mx-auto mb-2">
               <CheckCircle2 class="h-5 w-5 text-emerald-400" />
             </div>
-            <p class="text-slate-400 text-xs font-medium">Success Rate</p>
+            <p class="text-xs text-slate-400 font-medium">Success Rate</p>
             <p class="text-xl font-light text-white mt-1">96.2%</p>
           </div>
 
@@ -80,7 +80,7 @@
         <div class="tesla-card p-6">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-light text-white">Available Sequences</h3>
-            <button
+            <button 
               @click="showSequenceDialog = true"
               class="tesla-btn flex items-center gap-2 text-sm"
             >
@@ -94,10 +94,10 @@
               :key="sequence.id"
               @click="selectSequence(sequence.id)"
               :class="[
-                'p-4 rounded-lg border transition-all duration-200 cursor-pointer',
+                'p-4 rounded-lg border transition-all duration-200 cursor-pointer tesla-interactive',
                 selectedSequenceId === sequence.id
-                  ? 'bg-blue-500/10 border-blue-400'
-                  : 'bg-white/5 border-white/10 hover:bg-white/10'
+                  ? 'tesla-glass-intense border-blue-400'
+                  : 'tesla-glass border-white/10 hover:border-white/30'
               ]"
             >
               <div class="flex items-center justify-between">
@@ -105,9 +105,12 @@
                   <div class="flex items-center gap-3">
                     <FolderOpen class="h-4 w-4 text-blue-400" />
                     <h4 class="font-medium text-white">{{ sequence.name }}</h4>
-                    <n-tag :type="getStatusTagType(sequence.status)" size="small">
+                    <span :class="[
+                      'tesla-badge text-xs px-2 py-1 rounded-full',
+                      getStatusBadgeClass(sequence.status)
+                    ]">
                       {{ sequence.status }}
-                    </n-tag>
+                    </span>
                   </div>
                   <p class="text-sm text-slate-400 mt-1">{{ sequence.description }}</p>
                   <div class="flex items-center gap-4 mt-2 text-xs text-slate-400">
@@ -135,14 +138,12 @@
         <div class="tesla-card h-full p-6">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-light text-white">Execution Logs</h3>
-            <n-button size="small" class="tesla-button-secondary">
-              <template #icon>
-                <FileText class="h-4 w-4" />
-              </template>
-            </n-button>
+            <button class="tesla-btn text-sm">
+              <FileText class="h-4 w-4" />
+            </button>
           </div>
 
-          <n-scrollbar style="max-height: 400px">
+          <div class="tesla-scrollbar overflow-y-auto max-h-96">
             <div class="space-y-2">
               <div
                 v-for="(log, index) in logs"
@@ -152,30 +153,33 @@
                 <span class="text-xs font-mono text-slate-400 w-16 flex-shrink-0">{{ log.time }}</span>
                 <span :class="[
                   'text-xs font-medium w-12 flex-shrink-0',
-                  log.level === 'INFO' ? 'text-blue-400' :
-                  log.level === 'WARN' ? 'text-yellow-400' :
-                  'text-red-400'
+                  getLogLevelClass(log.level)
                 ]">
                   {{ log.level }}
                 </span>
                 <span class="text-xs text-slate-300 flex-1">{{ log.message }}</span>
               </div>
             </div>
-          </n-scrollbar>
+          </div>
 
           <!-- Current execution status -->
-          <div v-if="executionStatus.isRunning" class="mt-4 p-3 bg-blue-500/10 border border-blue-400/30 rounded-lg">
+          <div v-if="executionStatus.isRunning" class="mt-4 p-3 tesla-status-processing rounded-lg">
             <div class="flex items-center gap-2 mb-2">
               <Activity class="h-4 w-4 text-blue-400" />
               <span class="text-sm font-medium text-blue-400">Executing Sequence</span>
             </div>
-            <n-progress :percentage="executionStatus.totalProgress" class="mb-2" />
+            <div class="tesla-progress mb-2">
+              <div 
+                class="tesla-progress-bar"
+                :style="{ width: executionStatus.totalProgress + '%' }"
+              ></div>
+            </div>
             <div class="flex justify-between text-xs text-slate-400">
               <span>{{ executionStatus.tasksCompleted }}/{{ executionStatus.totalTasks }} tasks</span>
               <span>{{ executionStatus.estimatedTimeRemaining }}s remaining</span>
             </div>
           </div>
-        </n-card>
+        </div>
       </div>
     </div>
 
@@ -183,40 +187,32 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Task List -->
       <div class="lg:col-span-2">
-        <n-card class="tesla-glass-card">
+        <div class="tesla-card p-6">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-light text-white">Task Management</h2>
             <div class="flex items-center gap-3">
-              <n-input
-                v-model:value="searchQuery"
-                placeholder="Search tasks..."
-                class="tesla-input"
-                style="width: 200px"
-              >
-                <template #prefix>
-                  <Search class="h-4 w-4 text-slate-400" />
-                </template>
-              </n-input>
-              <n-button size="small" class="tesla-button-secondary">
-                <template #icon>
-                  <Filter class="h-4 w-4" />
-                </template>
-              </n-button>
-              <n-button
+              <div class="relative">
+                <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <input 
+                  v-model="searchQuery"
+                  placeholder="Search tasks..."
+                  class="tesla-input pl-10 w-48"
+                />
+              </div>
+              <button class="tesla-btn text-sm">
+                <Filter class="h-4 w-4" />
+              </button>
+              <button 
                 @click="openTaskDialog()"
-                type="primary"
-                size="small"
-                class="tesla-button-primary"
+                class="tesla-btn-primary flex items-center gap-2 text-sm"
               >
-                <template #icon>
-                  <Plus class="h-4 w-4" />
-                </template>
+                <Plus class="h-4 w-4" />
                 Add Task
-              </n-button>
+              </button>
             </div>
           </div>
 
-          <n-scrollbar style="max-height: 500px">
+          <div class="tesla-scrollbar overflow-y-auto max-h-96">
             <div class="divide-y divide-white/10">
               <div
                 v-for="(task, index) in filteredTasks"
@@ -225,7 +221,7 @@
                 :class="[
                   'p-4 cursor-pointer transition-all duration-200 hover:bg-white/5',
                   selectedTaskId === task.id
-                    ? 'bg-blue-500/10 border-l-4 border-blue-400'
+                    ? 'tesla-glass-intense border-l-4 border-blue-400'
                     : ''
                 ]"
               >
@@ -251,14 +247,22 @@
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-2">
                       <h3 class="font-medium text-white truncate">{{ task.name }}</h3>
-                      <n-tag :type="getStatusTagType(task.status)" size="small">
+                      <span :class="[
+                        'tesla-badge text-xs px-2 py-1 rounded-full',
+                        getStatusBadgeClass(task.status)
+                      ]">
                         {{ task.status }}
-                      </n-tag>
+                      </span>
                     </div>
                     <p class="text-sm text-slate-400 truncate mt-1">{{ task.description }}</p>
-
+                    
                     <div v-if="task.status === 'running' && task.progress" class="mt-2">
-                      <n-progress :percentage="task.progress" size="small" />
+                      <div class="tesla-progress">
+                        <div 
+                          class="tesla-progress-bar"
+                          :style="{ width: task.progress + '%' }"
+                        ></div>
+                      </div>
                     </div>
 
                     <!-- Sub-tasks -->
@@ -279,84 +283,67 @@
 
                   <!-- Action Buttons -->
                   <div class="flex items-center gap-2">
-                    <n-button
+                    <button
                       v-if="task.status === 'running'"
-                      size="small"
-                      type="warning"
+                      class="tesla-btn text-xs px-2 py-1"
                       @click.stop="pauseTask(task.id)"
                     >
-                      <template #icon>
-                        <PauseCircle class="h-4 w-4" />
-                      </template>
-                    </n-button>
-                    <n-button
+                      <PauseCircle class="h-4 w-4" />
+                    </button>
+                    <button
                       v-else-if="task.status === 'paused'"
-                      size="small"
-                      type="info"
+                      class="tesla-btn text-xs px-2 py-1"
                       @click.stop="resumeTask(task.id)"
                     >
-                      <template #icon>
-                        <PlayCircle class="h-4 w-4" />
-                      </template>
-                    </n-button>
-                    <n-button
+                      <PlayCircle class="h-4 w-4" />
+                    </button>
+                    <button
                       v-else
-                      size="small"
-                      type="success"
+                      class="tesla-btn-success text-xs px-2 py-1"
                       @click.stop="executeTask(task.id)"
                     >
-                      <template #icon>
-                        <Play class="h-4 w-4" />
-                      </template>
-                    </n-button>
-                    <n-button
-                      size="small"
-                      type="info"
+                      <Play class="h-4 w-4" />
+                    </button>
+                    <button
+                      class="tesla-btn text-xs px-2 py-1"
                       @click.stop="openTaskDialog(task)"
                     >
-                      <template #icon>
-                        <Edit class="h-4 w-4" />
-                      </template>
-                    </n-button>
-                    <n-button
-                      size="small"
-                      type="error"
+                      <Edit class="h-4 w-4" />
+                    </button>
+                    <button
+                      class="tesla-btn-danger text-xs px-2 py-1"
                       @click.stop="deleteTask(task.id)"
                     >
-                      <template #icon>
-                        <Trash2 class="h-4 w-4" />
-                      </template>
-                    </n-button>
+                      <Trash2 class="h-4 w-4" />
+                    </button>
                     <ChevronRight class="h-4 w-4 text-slate-400" />
                   </div>
                 </div>
               </div>
             </div>
-          </n-scrollbar>
-        </n-card>
+          </div>
+        </div>
       </div>
 
       <!-- Task Details & Sub-tasks -->
       <div class="space-y-6">
         <!-- Selected Task Details -->
-        <n-card v-if="selectedTask" class="tesla-glass-card">
+        <div v-if="selectedTask" class="tesla-card p-6">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-light text-white">Task Details</h3>
-            <n-button size="small" @click="openTaskDialog(selectedTask)" class="tesla-button-secondary">
-              <template #icon>
-                <Edit class="h-4 w-4" />
-              </template>
-            </n-button>
+            <button class="tesla-btn text-sm" @click="openTaskDialog(selectedTask)">
+              <Edit class="h-4 w-4" />
+            </button>
           </div>
 
           <div class="space-y-4">
             <div>
-              <p class="text-sm font-medium text-slate-400">Name</p>
+              <p class="text-sm font-medium text-slate-400 tesla-label">Name</p>
               <p class="text-white">{{ selectedTask.name }}</p>
             </div>
 
             <div>
-              <p class="text-sm font-medium text-slate-400">Type</p>
+              <p class="text-sm font-medium text-slate-400 tesla-label">Type</p>
               <div class="flex items-center gap-2 mt-1">
                 <div :class="['w-3 h-3 rounded-full', getTaskTypeColor(selectedTask.type)]" />
                 <span class="text-white capitalize">{{ selectedTask.type }}</span>
@@ -364,21 +351,29 @@
             </div>
 
             <div>
-              <p class="text-sm font-medium text-slate-400">Status</p>
-              <n-tag :type="getStatusTagType(selectedTask.status)" class="mt-1">
+              <p class="text-sm font-medium text-slate-400 tesla-label">Status</p>
+              <span :class="[
+                'tesla-badge text-xs px-2 py-1 rounded-full mt-1 inline-block',
+                getStatusBadgeClass(selectedTask.status)
+              ]">
                 {{ selectedTask.status }}
-              </n-tag>
+              </span>
             </div>
 
             <div>
-              <p class="text-sm font-medium text-slate-400">Description</p>
+              <p class="text-sm font-medium text-slate-400 tesla-label">Description</p>
               <p class="text-sm text-slate-300 mt-1">{{ selectedTask.description }}</p>
             </div>
 
             <div v-if="selectedTask.progress">
-              <p class="text-sm font-medium text-slate-400">Progress</p>
+              <p class="text-sm font-medium text-slate-400 tesla-label">Progress</p>
               <div class="mt-2">
-                <n-progress :percentage="selectedTask.progress" />
+                <div class="tesla-progress">
+                  <div 
+                    class="tesla-progress-bar"
+                    :style="{ width: selectedTask.progress + '%' }"
+                  ></div>
+                </div>
                 <p class="text-xs text-slate-400 mt-1">{{ selectedTask.progress }}% complete</p>
               </div>
             </div>
@@ -386,38 +381,35 @@
             <!-- Sub-tasks Management -->
             <div v-if="selectedTask.subtasks">
               <div class="flex items-center justify-between">
-                <p class="text-sm font-medium text-slate-400">Sub-tasks</p>
-                <n-button size="tiny" @click="addSubtask(selectedTask.id)" class="tesla-button-secondary">
-                  <template #icon>
-                    <Plus class="h-3 w-3" />
-                  </template>
+                <p class="text-sm font-medium text-slate-400 tesla-label">Sub-tasks</p>
+                <button class="tesla-btn text-xs" @click="addSubtask(selectedTask.id)">
+                  <Plus class="h-3 w-3 mr-1" />
                   Add
-                </n-button>
+                </button>
               </div>
               <div class="space-y-2 mt-2">
                 <div
                   v-for="(subtask, index) in selectedTask.subtasks"
                   :key="subtask.id"
-                  class="flex items-center justify-between p-2 bg-white/5 rounded-lg"
+                  class="flex items-center justify-between p-2 tesla-glass rounded-lg"
                 >
                   <div class="flex items-center gap-2">
                     <span class="text-xs font-mono text-slate-400">{{ index + 1 }}</span>
                     <span class="text-sm text-white">{{ subtask.name }}</span>
-                    <n-tag :type="getStatusTagType(subtask.status)" size="small">
+                    <span :class="[
+                      'tesla-badge text-xs px-2 py-1 rounded-full',
+                      getStatusBadgeClass(subtask.status)
+                    ]">
                       {{ subtask.status }}
-                    </n-tag>
+                    </span>
                   </div>
                   <div class="flex items-center gap-1">
-                    <n-button size="tiny" @click="executeSubtask(selectedTask.id, subtask.id)">
-                      <template #icon>
-                        <Play class="h-3 w-3" />
-                      </template>
-                    </n-button>
-                    <n-button size="tiny" @click="deleteSubtask(selectedTask.id, subtask.id)" type="error">
-                      <template #icon>
-                        <Trash2 class="h-3 w-3" />
-                      </template>
-                    </n-button>
+                    <button class="tesla-btn text-xs p-1" @click="executeSubtask(selectedTask.id, subtask.id)">
+                      <Play class="h-3 w-3" />
+                    </button>
+                    <button class="tesla-btn-danger text-xs p-1" @click="deleteSubtask(selectedTask.id, subtask.id)">
+                      <Trash2 class="h-3 w-3" />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -425,121 +417,149 @@
 
             <div class="pt-4 border-t border-white/10">
               <div class="flex gap-2">
-                <n-button type="primary" class="flex-1 tesla-button-primary" @click="executeTask(selectedTask.id)">
-                  <template #icon>
-                    <Play class="h-4 w-4" />
-                  </template>
+                <button class="tesla-btn-primary flex-1 flex items-center justify-center gap-2" @click="executeTask(selectedTask.id)">
+                  <Play class="h-4 w-4" />
                   Execute
-                </n-button>
-                <n-button @click="openTaskDialog(selectedTask)" class="tesla-button-secondary">
-                  <template #icon>
-                    <Settings class="h-4 w-4" />
-                  </template>
-                </n-button>
+                </button>
+                <button class="tesla-btn" @click="openTaskDialog(selectedTask)">
+                  <Settings class="h-4 w-4" />
+                </button>
               </div>
             </div>
           </div>
-        </n-card>
+        </div>
       </div>
     </div>
 
     <!-- Task Dialog -->
-    <n-modal v-model:show="showTaskDialog" :mask-closable="false">
-      <n-card
-        style="width: 600px"
-        :title="editingTask ? 'Edit Task' : 'Create New Task'"
-        :bordered="false"
-        size="huge"
-        role="dialog"
-        aria-modal="true"
-        class="tesla-glass-card"
-      >
-        <n-form :model="taskForm" :rules="taskFormRules" ref="taskFormRef">
-          <n-form-item label="Task Name" path="name">
-            <n-input v-model:value="taskForm.name" placeholder="Enter task name..." class="tesla-input" />
-          </n-form-item>
-
-          <n-form-item label="Type" path="type">
-            <n-select v-model:value="taskForm.type" :options="taskTypeOptions" class="tesla-select" />
-          </n-form-item>
-
-          <n-form-item label="Priority" path="priority">
-            <n-select v-model:value="taskForm.priority" :options="priorityOptions" class="tesla-select" />
-          </n-form-item>
-
-          <n-form-item label="Description" path="description">
-            <n-input
-              v-model:value="taskForm.description"
-              type="textarea"
-              :rows="3"
-              placeholder="Describe the task..."
-              class="tesla-input"
+    <div v-if="showTaskDialog" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div class="tesla-card m-6 max-w-md w-full p-6">
+        <h3 class="text-xl font-light text-white mb-4">
+          {{ editingTask ? 'Edit Task' : 'Create New Task' }}
+        </h3>
+        <p class="text-slate-400 text-sm mb-6">
+          {{ editingTask ? 'Modify the task parameters below.' : 'Define a new task for your sequence.' }}
+        </p>
+        
+        <div class="space-y-4">
+          <div>
+            <label class="tesla-label block mb-2">Task Name</label>
+            <input
+              v-model="taskForm.name"
+              class="tesla-input w-full"
+              placeholder="Enter task name..."
             />
-          </n-form-item>
-
-          <n-form-item label="Duration (seconds)" path="duration">
-            <n-input-number v-model:value="taskForm.duration" :min="1" class="tesla-input" />
-          </n-form-item>
-        </n-form>
-
-        <template #footer>
-          <div class="flex justify-end gap-2">
-            <n-button @click="showTaskDialog = false" class="tesla-button-secondary">
-              Cancel
-            </n-button>
-            <n-button type="primary" @click="saveTask" class="tesla-button-primary">
-              {{ editingTask ? 'Update Task' : 'Create Task' }}
-            </n-button>
           </div>
-        </template>
-      </n-card>
-    </n-modal>
+          
+          <div>
+            <label class="tesla-label block mb-2">Type</label>
+            <select v-model="taskForm.type" class="tesla-input w-full">
+              <option value="navigation">Navigation</option>
+              <option value="manipulation">Manipulation</option>
+              <option value="sensor">Sensor</option>
+              <option value="ai">AI Processing</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="tesla-label block mb-2">Priority</label>
+            <select v-model="taskForm.priority" class="tesla-input w-full">
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="critical">Critical</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="tesla-label block mb-2">Description</label>
+            <textarea
+              v-model="taskForm.description"
+              class="tesla-input w-full"
+              placeholder="Describe the task..."
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div>
+            <label class="tesla-label block mb-2">Duration (seconds)</label>
+            <input
+              v-model.number="taskForm.duration"
+              type="number"
+              min="1"
+              class="tesla-input w-full"
+            />
+          </div>
+        </div>
+        
+        <div class="flex justify-end gap-2 mt-6">
+          <button 
+            @click="showTaskDialog = false"
+            class="tesla-btn"
+          >
+            Cancel
+          </button>
+          <button 
+            @click="saveTask"
+            class="tesla-btn-primary"
+          >
+            {{ editingTask ? 'Update Task' : 'Create Task' }}
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- Sequence Dialog -->
-    <n-modal v-model:show="showSequenceDialog" :mask-closable="false">
-      <n-card
-        style="width: 600px"
-        title="Create New Sequence"
-        :bordered="false"
-        size="huge"
-        role="dialog"
-        aria-modal="true"
-        class="tesla-glass-card"
-      >
-        <n-form :model="sequenceForm" ref="sequenceFormRef">
-          <n-form-item label="Sequence Name" path="name">
-            <n-input v-model:value="sequenceForm.name" placeholder="Enter sequence name..." class="tesla-input" />
-          </n-form-item>
-
-          <n-form-item label="Description" path="description">
-            <n-input
-              v-model:value="sequenceForm.description"
-              type="textarea"
-              :rows="3"
-              placeholder="Describe the sequence..."
-              class="tesla-input"
+    <div v-if="showSequenceDialog" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div class="tesla-card m-6 max-w-md w-full p-6">
+        <h3 class="text-xl font-light text-white mb-4">Create New Sequence</h3>
+        <p class="text-slate-400 text-sm mb-6">
+          Create a new task sequence for automated execution.
+        </p>
+        
+        <div class="space-y-4">
+          <div>
+            <label class="tesla-label block mb-2">Sequence Name</label>
+            <input
+              v-model="sequenceForm.name"
+              class="tesla-input w-full"
+              placeholder="Enter sequence name..."
             />
-          </n-form-item>
-        </n-form>
-
-        <template #footer>
-          <div class="flex justify-end gap-2">
-            <n-button @click="showSequenceDialog = false" class="tesla-button-secondary">
-              Cancel
-            </n-button>
-            <n-button type="primary" @click="createSequence" class="tesla-button-primary">
-              Create Sequence
-            </n-button>
           </div>
-        </template>
-      </n-card>
-    </n-modal>
+          
+          <div>
+            <label class="tesla-label block mb-2">Description</label>
+            <textarea
+              v-model="sequenceForm.description"
+              class="tesla-input w-full"
+              placeholder="Describe the sequence..."
+              rows="3"
+            ></textarea>
+          </div>
+        </div>
+        
+        <div class="flex justify-end gap-2 mt-6">
+          <button 
+            @click="showSequenceDialog = false"
+            class="tesla-btn"
+          >
+            Cancel
+          </button>
+          <button 
+            @click="createSequence"
+            class="tesla-btn-primary"
+          >
+            Create Sequence
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useMessage } from 'naive-ui'
 import { usePersistedReactive } from '@/stores/persistence'
 import {
   Play,
@@ -604,8 +624,6 @@ interface Sequence {
   tasks: string[] // Task IDs in this sequence
 }
 
-const message = useMessage()
-
 // Persistent state
 const { state: preferences, updateField } = usePersistedReactive('sequences-preferences', {
   selectedTaskId: null as string | null,
@@ -620,8 +638,6 @@ const searchQuery = ref('')
 const showTaskDialog = ref(false)
 const showSequenceDialog = ref(false)
 const editingTask = ref<Task | null>(null)
-const taskFormRef = ref()
-const sequenceFormRef = ref()
 
 const taskForm = ref({
   name: '',
@@ -752,29 +768,6 @@ const logs = ref([
   { time: '14:30:58', level: 'INFO', message: 'Sequence "Security Patrol Route" initiated' }
 ])
 
-// Form options
-const taskTypeOptions = [
-  { label: 'Navigation', value: 'navigation' },
-  { label: 'Manipulation', value: 'manipulation' },
-  { label: 'Sensor', value: 'sensor' },
-  { label: 'AI Processing', value: 'ai' },
-  { label: 'Custom', value: 'custom' }
-]
-
-const priorityOptions = [
-  { label: 'Low', value: 'low' },
-  { label: 'Medium', value: 'medium' },
-  { label: 'High', value: 'high' },
-  { label: 'Critical', value: 'critical' }
-]
-
-const taskFormRules = {
-  name: { required: true, message: 'Task name is required' },
-  type: { required: true, message: 'Task type is required' },
-  priority: { required: true, message: 'Priority is required' },
-  duration: { required: true, type: 'number', message: 'Duration must be a number' }
-}
-
 // Computed
 const selectedSequenceId = computed(() => preferences.selectedSequenceId)
 const selectedTaskId = computed(() => preferences.selectedTaskId)
@@ -792,7 +785,7 @@ const filteredTasks = computed(() => {
   // Filter by search query
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(task =>
+    filtered = filtered.filter(task => 
       task.name.toLowerCase().includes(query) ||
       task.description.toLowerCase().includes(query)
     )
@@ -809,13 +802,22 @@ const getActiveTasks = (sequenceId?: string) => {
   return tasks.value.filter(t => sequence.tasks.includes(t.id) && t.status === 'running')
 }
 
-const getStatusTagType = (status: string) => {
+const getStatusBadgeClass = (status: string) => {
   switch (status) {
-    case 'completed': return 'success'
-    case 'running': return 'info'
-    case 'failed': return 'error'
-    case 'paused': return 'warning'
-    default: return 'default'
+    case 'completed': return 'tesla-badge-success'
+    case 'running': return 'tesla-badge-info'
+    case 'failed': return 'tesla-badge-error'
+    case 'paused': return 'tesla-badge-warning'
+    default: return 'tesla-badge'
+  }
+}
+
+const getLogLevelClass = (level: string) => {
+  switch (level) {
+    case 'INFO': return 'text-blue-400'
+    case 'WARN': return 'text-yellow-400'
+    case 'ERROR': return 'text-red-400'
+    default: return 'text-slate-400'
   }
 }
 
@@ -853,7 +855,7 @@ const handleRunSequence = (sequenceId: string) => {
   updateField('selectedSequenceId', sequenceId)
   executionStatus.value.isRunning = true
   executionStatus.value.currentSequence = sequenceId
-
+  
   const sequence = sequences.value.find(s => s.id === sequenceId)
   if (sequence) {
     sequence.status = 'running'
@@ -879,44 +881,41 @@ const openTaskDialog = (task?: Task) => {
   showTaskDialog.value = true
 }
 
-const saveTask = async () => {
-  try {
-    await taskFormRef.value?.validate()
-
-    if (editingTask.value) {
-      // Update existing task
-      const index = tasks.value.findIndex(t => t.id === editingTask.value!.id)
-      if (index !== -1) {
-        tasks.value[index] = { ...editingTask.value, ...taskForm.value }
-        addLog('INFO', `Updated task: ${taskForm.value.name}`)
-      }
-    } else {
-      // Create new task
-      const newTask: Task = {
-        id: `task_${Date.now()}`,
-        status: 'idle',
-        successRate: 0,
-        ...taskForm.value
-      }
-      tasks.value.push(newTask)
-
-      // Add to selected sequence if any
-      if (selectedSequence.value) {
-        selectedSequence.value.tasks.push(newTask.id)
-        selectedSequence.value.taskCount++
-      }
-
-      addLog('INFO', `Created new task: ${taskForm.value.name}`)
+const saveTask = () => {
+  if (!taskForm.value.name) return
+  
+  if (editingTask.value) {
+    // Update existing task
+    const index = tasks.value.findIndex(t => t.id === editingTask.value!.id)
+    if (index !== -1) {
+      tasks.value[index] = { ...editingTask.value, ...taskForm.value }
+      addLog('INFO', `Updated task: ${taskForm.value.name}`)
     }
-
-    showTaskDialog.value = false
-    message.success(editingTask.value ? 'Task updated successfully' : 'Task created successfully')
-  } catch (error) {
-    message.error('Please fill in all required fields')
+  } else {
+    // Create new task
+    const newTask: Task = {
+      id: `task_${Date.now()}`,
+      status: 'idle',
+      successRate: 0,
+      ...taskForm.value
+    }
+    tasks.value.push(newTask)
+    
+    // Add to selected sequence if any
+    if (selectedSequence.value) {
+      selectedSequence.value.tasks.push(newTask.id)
+      selectedSequence.value.taskCount++
+    }
+    
+    addLog('INFO', `Created new task: ${taskForm.value.name}`)
   }
+  
+  showTaskDialog.value = false
 }
 
 const createSequence = () => {
+  if (!sequenceForm.value.name) return
+  
   const newSequence: Sequence = {
     id: `seq_${Date.now()}`,
     name: sequenceForm.value.name,
@@ -929,13 +928,12 @@ const createSequence = () => {
     tags: [],
     tasks: []
   }
-
+  
   sequences.value.push(newSequence)
   showSequenceDialog.value = false
-
+  
   addLog('INFO', `Created new sequence: ${sequenceForm.value.name}`)
-  message.success('Sequence created successfully')
-
+  
   // Reset form
   sequenceForm.value = { name: '', description: '' }
 }
@@ -946,7 +944,6 @@ const executeTask = (taskId: string) => {
     task.status = 'running'
     task.progress = 0
     addLog('INFO', `Started executing task: ${task.name}`)
-    message.info(`Executing task: ${task.name}`)
   }
 }
 
@@ -970,7 +967,7 @@ const deleteTask = (taskId: string) => {
   const task = tasks.value.find(t => t.id === taskId)
   if (task) {
     tasks.value = tasks.value.filter(t => t.id !== taskId)
-
+    
     // Remove from sequences
     sequences.value.forEach(seq => {
       const index = seq.tasks.indexOf(taskId)
@@ -979,13 +976,12 @@ const deleteTask = (taskId: string) => {
         seq.taskCount--
       }
     })
-
+    
     if (selectedTaskId.value === taskId) {
       updateField('selectedTaskId', null)
     }
-
+    
     addLog('INFO', `Deleted task: ${task.name}`)
-    message.success('Task deleted successfully')
   }
 }
 
@@ -993,7 +989,7 @@ const addSubtask = (taskId: string) => {
   const task = tasks.value.find(t => t.id === taskId)
   if (task) {
     if (!task.subtasks) task.subtasks = []
-
+    
     const newSubtask: Subtask = {
       id: `st_${Date.now()}`,
       name: `Subtask ${task.subtasks.length + 1}`,
@@ -1001,7 +997,7 @@ const addSubtask = (taskId: string) => {
       duration: 30,
       parameters: {}
     }
-
+    
     task.subtasks.push(newSubtask)
     addLog('INFO', `Added subtask to: ${task.name}`)
   }
@@ -1041,36 +1037,3 @@ onMounted(() => {
   }
 })
 </script>
-
-<style scoped>
-.tesla-glass-card {
-  background: rgba(255, 255, 255, 0.05) !important;
-  backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 20px !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
-}
-
-.tesla-button-primary {
-  background: linear-gradient(45deg, #3b82f6, #06b6d4) !important;
-  border: none !important;
-  color: white !important;
-}
-
-.tesla-button-secondary {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  color: white !important;
-  backdrop-filter: blur(10px) !important;
-}
-
-.tesla-input {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  color: white !important;
-}
-
-.tesla-select {
-  background: rgba(255, 255, 255, 0.05) !important;
-}
-</style>
