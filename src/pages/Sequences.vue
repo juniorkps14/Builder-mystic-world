@@ -47,25 +47,25 @@
           </div>
 
           <!-- Execution Status Card -->
-          <n-card class="tesla-glass-card text-center hover:scale-105 transition-transform duration-300">
+          <div class="tesla-card text-center hover:scale-105 transition-transform duration-300 p-4">
             <div class="h-10 w-10 bg-gradient-to-br from-emerald-500/20 to-green-500/20 rounded-xl flex items-center justify-center mx-auto mb-2">
               <Activity class="h-5 w-5 text-emerald-400" />
             </div>
             <p class="text-slate-400 text-xs font-medium">Progress</p>
             <p class="text-xl font-light text-white mt-1">{{ executionStatus.totalProgress }}%</p>
-          </n-card>
+          </div>
 
           <!-- Success Rate Card -->
-          <n-card class="tesla-glass-card text-center hover:scale-105 transition-transform duration-300">
+          <div class="tesla-card text-center hover:scale-105 transition-transform duration-300 p-4">
             <div class="h-10 w-10 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-xl flex items-center justify-center mx-auto mb-2">
               <CheckCircle2 class="h-5 w-5 text-emerald-400" />
             </div>
             <p class="text-slate-400 text-xs font-medium">Success Rate</p>
             <p class="text-xl font-light text-white mt-1">96.2%</p>
-          </n-card>
+          </div>
 
           <!-- Active Tasks Card -->
-          <n-card class="tesla-glass-card text-center hover:scale-105 transition-transform duration-300">
+          <div class="tesla-card text-center hover:scale-105 transition-transform duration-300 p-4">
             <div class="h-10 w-10 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-xl flex items-center justify-center mx-auto mb-2">
               <Timer class="h-5 w-5 text-purple-400" />
             </div>
@@ -73,7 +73,7 @@
             <p class="text-xl font-light text-white mt-1">
               {{ getActiveTasks(selectedSequence?.id).length }}
             </p>
-          </n-card>
+          </div>
         </div>
 
         <!-- Sequence Selection -->
