@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 text-white">
     <!-- Tesla-inspired Header with Glass Effect -->
     <div class="mb-8">
-      <n-card class="tesla-glass-card">
+      <div class="tesla-glass p-6 rounded-3xl shadow-2xl">
         <div class="flex items-center justify-between">
           <div class="space-y-2">
             <h1 class="text-4xl font-light tracking-tight bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent">
@@ -13,27 +13,21 @@
             </p>
           </div>
           <div class="flex items-center gap-3">
-            <n-button class="tesla-button-secondary">
-              <template #icon>
-                <Upload class="h-4 w-4" />
-              </template>
+            <button class="tesla-btn flex items-center gap-2">
+              <Upload class="h-4 w-4" />
               Import
-            </n-button>
-            <n-button class="tesla-button-secondary">
-              <template #icon>
-                <Download class="h-4 w-4" />
-              </template>
+            </button>
+            <button class="tesla-btn flex items-center gap-2">
+              <Download class="h-4 w-4" />
               Export
-            </n-button>
-            <n-button type="primary" class="tesla-button-primary">
-              <template #icon>
-                <Save class="h-4 w-4" />
-              </template>
+            </button>
+            <button class="tesla-btn-primary flex items-center gap-2">
+              <Save class="h-4 w-4" />
               Save All
-            </n-button>
+            </button>
           </div>
         </div>
-      </n-card>
+      </div>
     </div>
 
     <!-- Status Cards and Controls Grid -->
@@ -86,7 +80,7 @@
         <n-card class="tesla-glass-card">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-light text-white">Available Sequences</h3>
-            <n-button 
+            <n-button
               @click="showSequenceDialog = true"
               class="tesla-button-secondary"
               size="small"
@@ -215,7 +209,7 @@
                   <Filter class="h-4 w-4" />
                 </template>
               </n-button>
-              <n-button 
+              <n-button
                 @click="openTaskDialog()"
                 type="primary"
                 size="small"
@@ -269,7 +263,7 @@
                       </n-tag>
                     </div>
                     <p class="text-sm text-slate-400 truncate mt-1">{{ task.description }}</p>
-                    
+
                     <div v-if="task.status === 'running' && task.progress" class="mt-2">
                       <n-progress :percentage="task.progress" size="small" />
                     </div>
@@ -471,15 +465,15 @@
           <n-form-item label="Task Name" path="name">
             <n-input v-model:value="taskForm.name" placeholder="Enter task name..." class="tesla-input" />
           </n-form-item>
-          
+
           <n-form-item label="Type" path="type">
             <n-select v-model:value="taskForm.type" :options="taskTypeOptions" class="tesla-select" />
           </n-form-item>
-          
+
           <n-form-item label="Priority" path="priority">
             <n-select v-model:value="taskForm.priority" :options="priorityOptions" class="tesla-select" />
           </n-form-item>
-          
+
           <n-form-item label="Description" path="description">
             <n-input
               v-model:value="taskForm.description"
@@ -494,7 +488,7 @@
             <n-input-number v-model:value="taskForm.duration" :min="1" class="tesla-input" />
           </n-form-item>
         </n-form>
-        
+
         <template #footer>
           <div class="flex justify-end gap-2">
             <n-button @click="showTaskDialog = false" class="tesla-button-secondary">
@@ -523,7 +517,7 @@
           <n-form-item label="Sequence Name" path="name">
             <n-input v-model:value="sequenceForm.name" placeholder="Enter sequence name..." class="tesla-input" />
           </n-form-item>
-          
+
           <n-form-item label="Description" path="description">
             <n-input
               v-model:value="sequenceForm.description"
@@ -534,7 +528,7 @@
             />
           </n-form-item>
         </n-form>
-        
+
         <template #footer>
           <div class="flex justify-end gap-2">
             <n-button @click="showSequenceDialog = false" class="tesla-button-secondary">
@@ -805,7 +799,7 @@ const filteredTasks = computed(() => {
   // Filter by search query
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(task => 
+    filtered = filtered.filter(task =>
       task.name.toLowerCase().includes(query) ||
       task.description.toLowerCase().includes(query)
     )
@@ -866,7 +860,7 @@ const handleRunSequence = (sequenceId: string) => {
   updateField('selectedSequenceId', sequenceId)
   executionStatus.value.isRunning = true
   executionStatus.value.currentSequence = sequenceId
-  
+
   const sequence = sequences.value.find(s => s.id === sequenceId)
   if (sequence) {
     sequence.status = 'running'
@@ -895,7 +889,7 @@ const openTaskDialog = (task?: Task) => {
 const saveTask = async () => {
   try {
     await taskFormRef.value?.validate()
-    
+
     if (editingTask.value) {
       // Update existing task
       const index = tasks.value.findIndex(t => t.id === editingTask.value!.id)
@@ -912,16 +906,16 @@ const saveTask = async () => {
         ...taskForm.value
       }
       tasks.value.push(newTask)
-      
+
       // Add to selected sequence if any
       if (selectedSequence.value) {
         selectedSequence.value.tasks.push(newTask.id)
         selectedSequence.value.taskCount++
       }
-      
+
       addLog('INFO', `Created new task: ${taskForm.value.name}`)
     }
-    
+
     showTaskDialog.value = false
     message.success(editingTask.value ? 'Task updated successfully' : 'Task created successfully')
   } catch (error) {
@@ -942,13 +936,13 @@ const createSequence = () => {
     tags: [],
     tasks: []
   }
-  
+
   sequences.value.push(newSequence)
   showSequenceDialog.value = false
-  
+
   addLog('INFO', `Created new sequence: ${sequenceForm.value.name}`)
   message.success('Sequence created successfully')
-  
+
   // Reset form
   sequenceForm.value = { name: '', description: '' }
 }
@@ -983,7 +977,7 @@ const deleteTask = (taskId: string) => {
   const task = tasks.value.find(t => t.id === taskId)
   if (task) {
     tasks.value = tasks.value.filter(t => t.id !== taskId)
-    
+
     // Remove from sequences
     sequences.value.forEach(seq => {
       const index = seq.tasks.indexOf(taskId)
@@ -992,11 +986,11 @@ const deleteTask = (taskId: string) => {
         seq.taskCount--
       }
     })
-    
+
     if (selectedTaskId.value === taskId) {
       updateField('selectedTaskId', null)
     }
-    
+
     addLog('INFO', `Deleted task: ${task.name}`)
     message.success('Task deleted successfully')
   }
@@ -1006,7 +1000,7 @@ const addSubtask = (taskId: string) => {
   const task = tasks.value.find(t => t.id === taskId)
   if (task) {
     if (!task.subtasks) task.subtasks = []
-    
+
     const newSubtask: Subtask = {
       id: `st_${Date.now()}`,
       name: `Subtask ${task.subtasks.length + 1}`,
@@ -1014,7 +1008,7 @@ const addSubtask = (taskId: string) => {
       duration: 30,
       parameters: {}
     }
-    
+
     task.subtasks.push(newSubtask)
     addLog('INFO', `Added subtask to: ${task.name}`)
   }
