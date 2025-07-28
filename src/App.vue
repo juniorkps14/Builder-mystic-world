@@ -1,23 +1,13 @@
 <template>
-  <n-config-provider :theme="darkTheme">
-    <n-dialog-provider>
-      <n-message-provider>
-        <n-notification-provider>
-          <n-loading-bar-provider>
-            <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-              <FlatSidebar />
-              <div class="pl-20">
-                <FlatHeader />
-                <main class="pt-16">
-                  <router-view />
-                </main>
-              </div>
-            </div>
-          </n-loading-bar-provider>
-        </n-notification-provider>
-      </n-message-provider>
-    </n-dialog-provider>
-  </n-config-provider>
+  <div class="tesla-ui min-h-screen">
+    <FlatSidebar />
+    <div class="pl-20">
+      <FlatHeader />
+      <main class="pt-16">
+        <router-view />
+      </main>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
