@@ -22,53 +22,39 @@ import FlatHeader from '@/components/layout/FlatHeader.vue'
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #1e293b 100%);
   color: white;
 }
 
-/* Custom scrollbar */
+/* Tesla Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 6px;
 }
 
 ::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 3px;
+  transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
 }
 
-/* Naive UI Dark Theme Overrides */
-.n-card {
-  background: rgba(255, 255, 255, 0.05) !important;
-  backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 20px !important;
+/* Focus styles for accessibility */
+*:focus {
+  outline: 2px solid var(--tesla-blue);
+  outline-offset: 2px;
 }
 
-.n-button--primary-type {
-  background: linear-gradient(45deg, #3b82f6, #06b6d4) !important;
-  border: none !important;
-}
-
-.n-input {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  color: white !important;
-}
-
-.n-select {
-  background: rgba(255, 255, 255, 0.05) !important;
-}
-
-.n-progress .n-progress-graph .n-progress-graph-line-fill {
-  background: linear-gradient(45deg, #3b82f6, #06b6d4) !important;
+/* Custom input styling */
+input, textarea, select {
+  font-family: inherit;
 }
 </style>
