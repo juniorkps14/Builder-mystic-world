@@ -36,7 +36,7 @@
       <div class="lg:col-span-2">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <!-- Active Sequences Card -->
-          <n-card class="tesla-glass-card text-center hover:scale-105 transition-transform duration-300">
+          <div class="tesla-card text-center hover:scale-105 transition-transform duration-300 p-4">
             <div class="h-10 w-10 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl flex items-center justify-center mx-auto mb-2">
               <PlayCircle class="h-5 w-5 text-blue-400" />
             </div>
@@ -44,7 +44,7 @@
             <p class="text-xl font-light text-white mt-1">
               {{ sequences.filter(s => s.status === 'running').length }}
             </p>
-          </n-card>
+          </div>
 
           <!-- Execution Status Card -->
           <n-card class="tesla-glass-card text-center hover:scale-105 transition-transform duration-300">
