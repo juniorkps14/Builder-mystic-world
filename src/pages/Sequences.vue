@@ -77,19 +77,16 @@
         </div>
 
         <!-- Sequence Selection -->
-        <n-card class="tesla-glass-card">
+        <div class="tesla-card p-6">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-light text-white">Available Sequences</h3>
-            <n-button
+            <button
               @click="showSequenceDialog = true"
-              class="tesla-button-secondary"
-              size="small"
+              class="tesla-btn flex items-center gap-2 text-sm"
             >
-              <template #icon>
-                <Plus class="h-4 w-4" />
-              </template>
+              <Plus class="h-4 w-4" />
               New Sequence
-            </n-button>
+            </button>
           </div>
           <div class="grid grid-cols-1 gap-3">
             <div
