@@ -89,11 +89,7 @@ import {
   HardDrive,
   Wifi,
   User,
-  ChevronDown,
-  Settings,
-  LogOut,
-  Moon,
-  Sun
+  ChevronDown
 } from 'lucide-vue-next'
 
 const route = useRoute()
