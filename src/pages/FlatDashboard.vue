@@ -1,473 +1,179 @@
 <template>
-  <div class="min-h-screen tesla-ui p-6">
-    <!-- Header Section -->
-    <div class="mb-8">
-      <div class="tesla-card p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <h1 class="text-4xl font-light tracking-tight bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent mb-2 tesla-title">
-              Robotics Control Center
-            </h1>
-            <p class="text-slate-400 text-lg font-light tesla-subtitle">
-              Comprehensive autonomous system management and monitoring
-            </p>
-          </div>
-          <div class="flex items-center gap-4">
-            <div class="text-right">
-              <div class="text-2xl font-light text-white">{{ currentTime }}</div>
-              <div class="text-sm text-slate-400">{{ currentDate }}</div>
-            </div>
-            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-xl tesla-interactive">
-              <Zap class="h-8 w-8 text-white" />
-            </div>
-          </div>
-        </div>
+  <div class="dashboard-page">
+    <section class="dashboard-intro">
+      <div>
+        <p class="eyebrow">Autonomous operations / 01</p>
+        <h2>Robotics<br /><em>Control Center</em></h2>
+        <p class="intro-copy">A clear view of your robot fleet, active missions and system health.</p>
       </div>
-    </div>
-
-    <!-- System Status Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <!-- Robot Status -->
-      <n-card class="tesla-glass-card hover:scale-105 transition-all duration-300">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-slate-400 text-sm font-medium">Robot Status</p>
-            <p class="text-2xl font-light text-white mt-1">Online</p>
-            <div class="flex items-center gap-2 mt-2">
-              <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-              <span class="text-xs text-emerald-400">Connected</span>
-            </div>
-          </div>
-          <div class="h-12 w-12 bg-gradient-to-br from-emerald-500/20 to-green-500/20 rounded-xl flex items-center justify-center">
-            <Bot class="h-6 w-6 text-emerald-400" />
-          </div>
-        </div>
-      </n-card>
-
-      <!-- Active Tasks -->
-      <n-card class="tesla-glass-card hover:scale-105 transition-all duration-300">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-slate-400 text-sm font-medium">Active Tasks</p>
-            <p class="text-2xl font-light text-white mt-1">{{ systemStats.activeTasks }}</p>
-            <p class="text-xs text-blue-400 mt-2">{{ systemStats.completedTasks }} completed today</p>
-          </div>
-          <div class="h-12 w-12 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl flex items-center justify-center">
-            <Play class="h-6 w-6 text-blue-400" />
-          </div>
-        </div>
-      </n-card>
-
-      <!-- System Health -->
-      <n-card class="tesla-glass-card hover:scale-105 transition-all duration-300">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-slate-400 text-sm font-medium">System Health</p>
-            <p class="text-2xl font-light text-white mt-1">{{ systemStats.health }}%</p>
-            <div class="mt-2">
-              <n-progress :percentage="systemStats.health" size="small" color="#10b981" />
-            </div>
-          </div>
-          <div class="h-12 w-12 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-xl flex items-center justify-center">
-            <Activity class="h-6 w-6 text-purple-400" />
-          </div>
-        </div>
-      </n-card>
-
-      <!-- Uptime -->
-      <n-card class="tesla-glass-card hover:scale-105 transition-all duration-300">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-slate-400 text-sm font-medium">Uptime</p>
-            <p class="text-2xl font-light text-white mt-1">{{ systemStats.uptime }}</p>
-            <p class="text-xs text-slate-400 mt-2">Since last restart</p>
-          </div>
-          <div class="h-12 w-12 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-xl flex items-center justify-center">
-            <Clock class="h-6 w-6 text-yellow-400" />
-          </div>
-        </div>
-      </n-card>
-    </div>
-
-    <!-- Main Dashboard Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-      <!-- Quick Actions -->
-      <div class="lg:col-span-1">
-        <n-card class="tesla-glass-card">
-          <template #header>
-            <h3 class="text-xl font-light text-white">Quick Actions</h3>
-          </template>
-          <div class="space-y-3">
-            <router-link to="/sequences" class="block">
-              <div class="flex items-center p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300 cursor-pointer">
-                <div class="h-10 w-10 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-lg flex items-center justify-center mr-4">
-                  <Play class="h-5 w-5 text-blue-400" />
-                </div>
-                <div>
-                  <h4 class="font-medium text-white">Start Sequence</h4>
-                  <p class="text-sm text-slate-400">Execute automated tasks</p>
-                </div>
-                <ChevronRight class="h-5 w-5 text-slate-400 ml-auto" />
-              </div>
-            </router-link>
-
-            <router-link to="/robot-control" class="block">
-              <div class="flex items-center p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300 cursor-pointer">
-                <div class="h-10 w-10 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-lg flex items-center justify-center mr-4">
-                  <Gamepad2 class="h-5 w-5 text-purple-400" />
-                </div>
-                <div>
-                  <h4 class="font-medium text-white">Manual Control</h4>
-                  <p class="text-sm text-slate-400">Direct robot operation</p>
-                </div>
-                <ChevronRight class="h-5 w-5 text-slate-400 ml-auto" />
-              </div>
-            </router-link>
-
-            <router-link to="/cameras" class="block">
-              <div class="flex items-center p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300 cursor-pointer">
-                <div class="h-10 w-10 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-lg flex items-center justify-center mr-4">
-                  <Camera class="h-5 w-5 text-green-400" />
-                </div>
-                <div>
-                  <h4 class="font-medium text-white">Camera Feeds</h4>
-                  <p class="text-sm text-slate-400">Monitor visual systems</p>
-                </div>
-                <ChevronRight class="h-5 w-5 text-slate-400 ml-auto" />
-              </div>
-            </router-link>
-
-            <router-link to="/system-monitoring" class="block">
-              <div class="flex items-center p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300 cursor-pointer">
-                <div class="h-10 w-10 bg-gradient-to-br from-orange-500/20 to-red-500/20 rounded-lg flex items-center justify-center mr-4">
-                  <BarChart3 class="h-5 w-5 text-orange-400" />
-                </div>
-                <div>
-                  <h4 class="font-medium text-white">System Monitor</h4>
-                  <p class="text-sm text-slate-400">View system metrics</p>
-                </div>
-                <ChevronRight class="h-5 w-5 text-slate-400 ml-auto" />
-              </div>
-            </router-link>
-          </div>
-        </n-card>
+      <div class="intro-aside">
+        <div class="date-label">{{ currentDate }}</div>
+        <div class="intro-clock">{{ currentTime }}</div>
+        <div class="status-line"><span></span> All systems operational</div>
       </div>
+    </section>
 
-      <!-- System Metrics -->
-      <div class="lg:col-span-2">
-        <n-card class="tesla-glass-card">
-          <template #header>
-            <h3 class="text-xl font-light text-white">System Performance</h3>
-          </template>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- CPU Usage -->
-            <div class="text-center">
-              <div class="relative w-24 h-24 mx-auto mb-4">
-                <svg class="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    stroke="rgba(255,255,255,0.1)"
-                    stroke-width="8"
-                    fill="none"
-                  />
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    stroke="url(#cpuGradient)"
-                    stroke-width="8"
-                    stroke-linecap="round"
-                    fill="none"
-                    :stroke-dasharray="`${metrics.cpu * 2.51} 251`"
-                    class="transition-all duration-500"
-                  />
-                  <defs>
-                    <linearGradient id="cpuGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" style="stop-color:#3b82f6" />
-                      <stop offset="100%" style="stop-color:#06b6d4" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-                <div class="absolute inset-0 flex items-center justify-center">
-                  <span class="text-xl font-light text-white">{{ metrics.cpu }}%</span>
-                </div>
-              </div>
-              <h4 class="font-medium text-white">CPU Usage</h4>
-              <p class="text-sm text-slate-400">Processing Load</p>
-            </div>
+    <section class="stat-grid" aria-label="System summary">
+      <article v-for="stat in stats" :key="stat.label" class="stat-card">
+        <div class="stat-top"><span class="stat-label">{{ stat.label }}</span><component :is="stat.icon" :size="17" /></div>
+        <div class="stat-value">{{ stat.value }}</div>
+        <div class="stat-foot"><span :class="stat.tone">{{ stat.change }}</span><span>{{ stat.note }}</span></div>
+      </article>
+    </section>
 
-            <!-- Memory Usage -->
-            <div class="text-center">
-              <div class="relative w-24 h-24 mx-auto mb-4">
-                <svg class="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    stroke="rgba(255,255,255,0.1)"
-                    stroke-width="8"
-                    fill="none"
-                  />
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    stroke="url(#memoryGradient)"
-                    stroke-width="8"
-                    stroke-linecap="round"
-                    fill="none"
-                    :stroke-dasharray="`${metrics.memory * 2.51} 251`"
-                    class="transition-all duration-500"
-                  />
-                  <defs>
-                    <linearGradient id="memoryGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" style="stop-color:#8b5cf6" />
-                      <stop offset="100%" style="stop-color:#d946ef" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-                <div class="absolute inset-0 flex items-center justify-center">
-                  <span class="text-xl font-light text-white">{{ metrics.memory }}%</span>
-                </div>
-              </div>
-              <h4 class="font-medium text-white">Memory</h4>
-              <p class="text-sm text-slate-400">RAM Usage</p>
-            </div>
-
-            <!-- Network -->
-            <div class="text-center">
-              <div class="relative w-24 h-24 mx-auto mb-4">
-                <svg class="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    stroke="rgba(255,255,255,0.1)"
-                    stroke-width="8"
-                    fill="none"
-                  />
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    stroke="url(#networkGradient)"
-                    stroke-width="8"
-                    stroke-linecap="round"
-                    fill="none"
-                    :stroke-dasharray="`${(100 - metrics.latency) * 2.51} 251`"
-                    class="transition-all duration-500"
-                  />
-                  <defs>
-                    <linearGradient id="networkGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" style="stop-color:#10b981" />
-                      <stop offset="100%" style="stop-color:#06b6d4" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-                <div class="absolute inset-0 flex items-center justify-center">
-                  <span class="text-xl font-light text-white">{{ metrics.latency }}ms</span>
-                </div>
-              </div>
-              <h4 class="font-medium text-white">Network</h4>
-              <p class="text-sm text-slate-400">Latency</p>
-            </div>
-          </div>
-        </n-card>
-      </div>
-    </div>
-
-    <!-- Recent Activity -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <!-- Recent Tasks -->
-      <n-card class="tesla-glass-card">
-        <template #header>
-          <h3 class="text-xl font-light text-white">Recent Tasks</h3>
-        </template>
-        <div class="space-y-3">
-          <div
-            v-for="task in recentTasks"
-            :key="task.id"
-            class="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
-          >
-            <div class="flex items-center gap-3">
-              <div :class="[
-                'w-2 h-2 rounded-full',
-                task.status === 'completed' ? 'bg-emerald-400' :
-                task.status === 'running' ? 'bg-blue-400' :
-                task.status === 'failed' ? 'bg-red-400' : 'bg-yellow-400'
-              ]" />
-              <div>
-                <h4 class="font-medium text-white text-sm">{{ task.name }}</h4>
-                <p class="text-xs text-slate-400">{{ task.type }}</p>
-              </div>
-            </div>
-            <div class="text-right">
-              <n-tag :type="getStatusTagType(task.status)" size="small">
-                {{ task.status }}
-              </n-tag>
-              <p class="text-xs text-slate-400 mt-1">{{ formatTime(task.timestamp) }}</p>
-            </div>
+    <section class="content-grid">
+      <article class="panel mission-panel">
+        <div class="panel-heading">
+          <div><p class="eyebrow">Live operations</p><h3>Active missions</h3></div>
+          <router-link to="/sequences" class="text-link">View all <ArrowUpRight :size="15" /></router-link>
+        </div>
+        <div class="mission-list">
+          <div v-for="mission in missions" :key="mission.name" class="mission-row">
+            <div class="mission-icon" :class="mission.tone"><component :is="mission.icon" :size="17" /></div>
+            <div class="mission-info"><strong>{{ mission.name }}</strong><span>{{ mission.detail }}</span></div>
+            <div class="mission-progress"><div class="progress-track"><span :style="{ width: `${mission.progress}%` }"></span></div><small>{{ mission.progress }}%</small></div>
+            <span class="mission-state" :class="mission.tone">{{ mission.state }}</span>
           </div>
         </div>
-      </n-card>
+      </article>
 
-      <!-- System Logs -->
-      <n-card class="tesla-glass-card">
-        <template #header>
-          <h3 class="text-xl font-light text-white">System Logs</h3>
-        </template>
-        <n-scrollbar style="max-height: 300px">
-          <div class="space-y-2">
-            <div
-              v-for="(log, index) in systemLogs"
-              :key="index"
-              class="flex gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"
-            >
-              <span class="text-xs font-mono text-slate-400 w-16 flex-shrink-0">{{ log.time }}</span>
-              <span :class="[
-                'text-xs font-medium w-12 flex-shrink-0',
-                log.level === 'INFO' ? 'text-blue-400' :
-                log.level === 'WARN' ? 'text-yellow-400' :
-                log.level === 'ERROR' ? 'text-red-400' : 'text-green-400'
-              ]">
-                {{ log.level }}
-              </span>
-              <span class="text-xs text-slate-300 flex-1">{{ log.message }}</span>
-            </div>
-          </div>
-        </n-scrollbar>
-      </n-card>
-    </div>
+      <article class="panel system-panel">
+        <div class="panel-heading"><div><p class="eyebrow">Node telemetry</p><h3>System health</h3></div><span class="health-score">{{ health }}%</span></div>
+        <div class="health-bar"><span :style="{ width: `${health}%` }"></span></div>
+        <div class="health-list">
+          <div v-for="metric in metrics" :key="metric.name" class="health-row"><span>{{ metric.name }}</span><strong>{{ metric.value }}<small>{{ metric.unit }}</small></strong></div>
+        </div>
+        <router-link to="/system-monitoring" class="panel-button">Open monitoring <ArrowUpRight :size="15" /></router-link>
+      </article>
+    </section>
+
+    <section class="bottom-grid">
+      <article class="quick-panel">
+        <div class="panel-heading"><div><p class="eyebrow">Shortcuts</p><h3>Quick actions</h3></div></div>
+        <div class="quick-grid">
+          <router-link v-for="action in actions" :key="action.label" :to="action.path" class="quick-action"><span><component :is="action.icon" :size="18" /></span><strong>{{ action.label }}</strong><ArrowUpRight :size="15" /></router-link>
+        </div>
+      </article>
+      <article class="activity-panel">
+        <div class="panel-heading"><div><p class="eyebrow">Latest events</p><h3>Activity log</h3></div><span class="live-label"><i></i>Live</span></div>
+        <div class="activity-list"><div v-for="event in events" :key="event.time" class="activity-row"><span class="activity-time">{{ event.time }}</span><span class="activity-dot" :class="event.tone"></span><span>{{ event.text }}</span></div></div>
+      </article>
+    </section>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import {
-  Zap,
-  Bot,
-  Play,
-  Activity,
-  Clock,
-  Gamepad2,
-  Camera,
-  BarChart3,
-  ChevronRight
-} from 'lucide-vue-next'
+import { onMounted, onUnmounted, ref } from 'vue'
+import { Activity, ArrowUpRight, Bot, Camera, CircleCheck, Gamepad2, Gauge, Play, Radio, Route } from 'lucide-vue-next'
 
 const currentTime = ref('')
 const currentDate = ref('')
-let timeInterval: number
+const health = ref(94)
+let timeInterval: ReturnType<typeof setInterval> | undefined
 
-const systemStats = ref({
-  activeTasks: 3,
-  completedTasks: 12,
-  health: 94,
-  uptime: '5d 14h'
-})
+const stats = [
+  { label: 'Robot status', value: 'Online', change: 'Connected', note: 'ROS bridge active', tone: 'positive', icon: Bot },
+  { label: 'Active tasks', value: '03', change: '+2 today', note: '12 completed', tone: 'neutral', icon: Play },
+  { label: 'System health', value: '94%', change: 'Excellent', note: 'All nodes stable', tone: 'positive', icon: Gauge },
+  { label: 'Fleet uptime', value: '5d 14h', change: '99.8%', note: 'Since last restart', tone: 'neutral', icon: Activity }
+]
 
-const metrics = ref({
-  cpu: 45,
-  memory: 62,
-  latency: 23
-})
+const missions = [
+  { name: 'Security patrol', detail: 'North perimeter / Navigation', progress: 72, state: 'Running', tone: 'lime', icon: Route },
+  { name: 'Object detection', detail: 'Camera cluster A / Vision', progress: 48, state: 'Processing', tone: 'blue', icon: Camera },
+  { name: 'Sensor calibration', detail: 'Lidar + IMU / Diagnostics', progress: 100, state: 'Complete', tone: 'muted', icon: CircleCheck }
+]
 
-const recentTasks = ref([
-  {
-    id: '1',
-    name: 'Security Patrol',
-    type: 'navigation',
-    status: 'completed',
-    timestamp: new Date(Date.now() - 300000)
-  },
-  {
-    id: '2',
-    name: 'Object Detection',
-    type: 'ai',
-    status: 'running',
-    timestamp: new Date(Date.now() - 60000)
-  },
-  {
-    id: '3',
-    name: 'Sensor Calibration',
-    type: 'sensor',
-    status: 'completed',
-    timestamp: new Date(Date.now() - 1800000)
-  }
-])
+const metrics = [
+  { name: 'CPU utilization', value: 45, unit: '%' },
+  { name: 'Memory allocated', value: 62, unit: '%' },
+  { name: 'Network latency', value: 23, unit: ' ms' }
+]
 
-const systemLogs = ref([
-  { time: '14:32:15', level: 'INFO', message: 'System initialization completed successfully' },
-  { time: '14:31:42', level: 'INFO', message: 'ROS node connections established' },
-  { time: '14:31:15', level: 'WARN', message: 'High CPU usage detected, optimizing processes' },
-  { time: '14:30:58', level: 'SUCCESS', message: 'All sensors operational and calibrated' },
-  { time: '14:30:12', level: 'INFO', message: 'Network connection stable, latency 23ms' }
-])
+const actions = [
+  { label: 'Start sequence', path: '/sequences', icon: Play },
+  { label: 'Manual control', path: '/robot-control', icon: Gamepad2 },
+  { label: 'Camera feeds', path: '/cameras', icon: Camera },
+  { label: 'View sensors', path: '/sensors', icon: Radio }
+]
 
-const getStatusTagType = (status: string) => {
-  switch (status) {
-    case 'completed': return 'success'
-    case 'running': return 'info'
-    case 'failed': return 'error'
-    case 'paused': return 'warning'
-    default: return 'default'
-  }
-}
+const events = [
+  { time: '14:32', text: 'All sensors operational and calibrated', tone: 'positive' },
+  { time: '14:31', text: 'ROS node connections established', tone: 'blue' },
+  { time: '14:30', text: 'Security patrol sequence started', tone: 'lime' },
+  { time: '14:28', text: 'Network connection stable at 23ms', tone: 'muted' }
+]
 
-const formatTime = (date: Date) => {
+const updateClock = () => {
   const now = new Date()
-  const diff = now.getTime() - date.getTime()
-
-  if (diff < 60000) {
-    return 'Just now'
-  } else if (diff < 3600000) {
-    return `${Math.floor(diff / 60000)}m ago`
-  } else {
-    return `${Math.floor(diff / 3600000)}h ago`
-  }
-}
-
-const updateTime = () => {
-  const now = new Date()
-  currentTime.value = now.toLocaleTimeString()
-  currentDate.value = now.toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-}
-
-const updateMetrics = () => {
-  // Simulate real-time metrics updates
-  metrics.value.cpu = Math.floor(Math.random() * 30) + 40
-  metrics.value.memory = Math.floor(Math.random() * 20) + 55
-  metrics.value.latency = Math.floor(Math.random() * 20) + 15
+  currentTime.value = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+  currentDate.value = now.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })
 }
 
 onMounted(() => {
-  updateTime()
-  timeInterval = setInterval(() => {
-    updateTime()
-    updateMetrics()
-  }, 1000)
+  updateClock()
+  timeInterval = setInterval(updateClock, 1000)
 })
 
-onUnmounted(() => {
-  if (timeInterval) {
-    clearInterval(timeInterval)
-  }
-})
+onUnmounted(() => { if (timeInterval) clearInterval(timeInterval) })
 </script>
 
 <style scoped>
-.tesla-glass-card {
-  background: rgba(255, 255, 255, 0.05) !important;
-  backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 20px !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
-}
+.dashboard-page { max-width: 1400px; margin: 0 auto; }
+.dashboard-intro { display: flex; justify-content: space-between; padding-bottom: 42px; border-bottom: 1px solid var(--line); }
+.dashboard-intro h2 { margin: 13px 0 16px; font-size: clamp(38px, 5vw, 64px); line-height: .98; letter-spacing: -.07em; font-weight: 600; }
+.dashboard-intro h2 em { color: var(--ink-muted); font-style: normal; font-weight: 400; }
+.intro-copy { max-width: 330px; margin: 0; color: var(--ink-soft); font-size: 14px; line-height: 1.6; }
+.intro-aside { min-width: 190px; padding-top: 19px; text-align: right; }
+.date-label { color: var(--ink-muted); font: 11px 'DM Mono', monospace; text-transform: uppercase; }
+.intro-clock { margin: 10px 0 25px; font: 28px 'DM Mono', monospace; letter-spacing: -.08em; }
+.status-line, .live-label { display: flex; align-items: center; justify-content: flex-end; gap: 7px; color: var(--ink-soft); font-size: 11px; }
+.status-line span, .live-label i { width: 6px; height: 6px; background: #64b93d; border-radius: 50%; }
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: 34px 0; background: var(--line); border: 1px solid var(--line); }
+.stat-card { min-height: 144px; padding: 20px 22px; background: var(--surface); }
+.stat-top, .stat-foot, .panel-heading, .mission-row, .quick-action, .activity-row { display: flex; align-items: center; }
+.stat-top { justify-content: space-between; color: var(--ink-muted); }
+.stat-label { color: var(--ink-soft); font-size: 12px; }
+.stat-value { margin: 22px 0 10px; font-size: 25px; font-weight: 600; letter-spacing: -.04em; }
+.stat-foot { gap: 8px; color: var(--ink-muted); font-size: 11px; }
+.positive, .lime { color: #668d00; } .neutral { color: var(--ink-soft); } .blue { color: #5f82a4; } .muted { color: var(--ink-muted); }
+.content-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(300px, .8fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.panel, .quick-panel, .activity-panel { min-width: 0; padding: 26px; background: var(--surface); }
+.panel-heading { justify-content: space-between; margin-bottom: 27px; }
+.panel-heading h3 { margin: 7px 0 0; font-size: 18px; letter-spacing: -.035em; }
+.text-link, .panel-button { display: inline-flex; align-items: center; gap: 5px; color: var(--ink); font-size: 11px; text-decoration: none; }
+.text-link:hover, .panel-button:hover { text-decoration: underline; }
+.mission-list { display: grid; gap: 17px; }
+.mission-row { gap: 12px; min-width: 0; padding-bottom: 17px; border-bottom: 1px solid var(--line); }
+.mission-row:last-child { padding-bottom: 0; border-bottom: 0; }
+.mission-icon { display: grid; width: 35px; height: 35px; flex: 0 0 35px; place-items: center; color: var(--ink); background: var(--surface-soft); }
+.mission-info { display: grid; min-width: 150px; gap: 5px; }
+.mission-info strong { font-size: 12px; font-weight: 600; }
+.mission-info span { color: var(--ink-muted); font-size: 10px; }
+.mission-progress { display: flex; flex: 1; align-items: center; gap: 9px; margin-left: auto; }
+.progress-track { height: 3px; flex: 1; max-width: 135px; background: var(--surface-muted); }
+.progress-track span, .health-bar span { display: block; height: 100%; background: var(--ink); }
+.mission-progress small { color: var(--ink-muted); font: 10px 'DM Mono', monospace; }
+.mission-state { min-width: 61px; font-size: 10px; text-align: right; }
+.health-score { font: 24px 'DM Mono', monospace; letter-spacing: -.08em; }
+.health-bar { height: 5px; margin: 4px 0 28px; background: var(--surface-muted); }
+.health-bar span { background: var(--accent); }
+.health-list { display: grid; gap: 15px; }
+.health-row { display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid var(--line); color: var(--ink-soft); font-size: 12px; }
+.health-row strong { color: var(--ink); font: 13px 'DM Mono', monospace; } .health-row small { color: var(--ink-muted); font-size: 10px; }
+.panel-button { margin-top: 23px; padding-top: 17px; border-top: 1px solid var(--line); }
+.bottom-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 1px; margin-top: 34px; background: var(--line); border: 1px solid var(--line); }
+.quick-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.quick-action { justify-content: space-between; gap: 10px; min-height: 65px; padding: 13px; color: var(--ink); border: 1px solid var(--line); text-decoration: none; }
+.quick-action:hover { background: var(--accent); border-color: var(--accent); }
+.quick-action span { display: grid; width: 31px; height: 31px; place-items: center; background: var(--surface-soft); }
+.quick-action strong { flex: 1; font-size: 11px; font-weight: 600; }
+.live-label { justify-content: flex-start; gap: 6px; color: var(--ink-muted); }
+.activity-list { display: grid; gap: 16px; }
+.activity-row { gap: 11px; color: var(--ink-soft); font-size: 11px; }
+.activity-time { width: 38px; color: var(--ink-muted); font: 10px 'DM Mono', monospace; }
+.activity-dot { width: 5px; height: 5px; flex: 0 0 5px; background: var(--ink-muted); border-radius: 50%; }
+.activity-dot.positive, .activity-dot.lime { background: #8dac32; } .activity-dot.blue { background: #7b9bb8; }
+@media (max-width: 980px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } .content-grid, .bottom-grid { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .dashboard-intro { display: block; } .intro-aside { padding-top: 30px; text-align: left; } .status-line { justify-content: flex-start; } .stat-grid { grid-template-columns: 1fr; } .mission-row { flex-wrap: wrap; } .mission-progress { flex-basis: calc(100% - 47px); margin-left: 47px; } .mission-state { margin-left: auto; } .quick-grid { grid-template-columns: 1fr; } }
 </style>

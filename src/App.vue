@@ -1,9 +1,9 @@
 <template>
-  <div class="tesla-ui min-h-screen">
+  <div class="app-shell" :class="{ dark: isDark }">
     <FlatSidebar />
-    <div class="pl-20">
-      <FlatHeader />
-      <main class="pt-16">
+    <div class="app-frame">
+      <FlatHeader :is-dark="isDark" @toggle-theme="toggleTheme" />
+      <main class="app-main">
         <router-view />
       </main>
     </div>
@@ -11,50 +11,76 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref, watch } from 'vue'
 import FlatSidebar from '@/components/layout/FlatSidebar.vue'
 import FlatHeader from '@/components/layout/FlatHeader.vue'
+
+const isDark = ref(false)
+
+const applyTheme = (dark: boolean) => {
+  document.documentElement.style.colorScheme = dark ? 'dark' : 'light'
+  localStorage.setItem('robot-theme', dark ? 'dark' : 'light')
+}
+
+const toggleTheme = () => {
+  isDark.value = !isDark.value
+}
+
+watch(isDark, applyTheme)
+
+onMounted(() => {
+  isDark.value = localStorage.getItem('robot-theme') === 'dark'
+})
 </script>
 
 <style>
-/* Tesla UI Global Styles */
 @import './styles/tesla-ui-theme.css';
 
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #1e293b 100%);
-  color: white;
+* {
+  box-sizing: border-box;
 }
 
-/* Tesla Scrollbar Styling */
+html,
+body,
+#app {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  background: #f7f7f5;
+  color: #191919;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 3px;
+  background: var(--surface);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 3px;
-  transition: background 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-/* Focus styles for accessibility */
-*:focus {
-  outline: 2px solid var(--tesla-blue);
-  outline-offset: 2px;
-}
-
-/* Custom input styling */
-input, textarea, select {
-  font-family: inherit;
+  background: var(--line-strong);
+  border-radius: 10px;
 }
 </style>
