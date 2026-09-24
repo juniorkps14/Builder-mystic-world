@@ -10,8 +10,8 @@
   --ink-muted: #979791;
   --line: #deded9;
   --line-strong: #bcbcb5;
-  --accent: #c9ff3d;
-  --accent-ink: #182000;
+  --accent: #C6D9BB;
+  --accent-ink: #1d281b;
   --sidebar-width: 232px;
   --header-height: 86px;
   --radius: 4px;
@@ -34,8 +34,8 @@
   --ink-muted: #7f7f78;
   --line: #3b3b37;
   --line-strong: #62625b;
-  --accent: #d5ff5b;
-  --accent-ink: #171b05;
+  --accent: #C6D9BB;
+  --accent-ink: #1d281b;
 }
 
 .app-frame {
