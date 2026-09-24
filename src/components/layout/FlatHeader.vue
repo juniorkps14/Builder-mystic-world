@@ -1,7 +1,7 @@
 <template>
   <header class="top-header">
     <div class="header-context">
-      <span class="eyebrow">DINO CORE / {{ currentPageTitle }}</span>
+      <span class="eyebrow">THE SWERVE CORE BY THAI SWERVE DRIVE ROBOTS / {{ currentPageTitle }}</span>
       <h1>{{ currentPageTitle }}</h1>
     </div>
 

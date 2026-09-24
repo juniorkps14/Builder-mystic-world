@@ -1,8 +1,8 @@
 <template>
   <aside class="side-rail">
-    <router-link to="/" class="brand-mark" aria-label="Dino Core dashboard">
+    <router-link to="/" class="brand-mark" aria-label="The Swerve Core By Thai Swerve Drive Robots dashboard">
       <span class="brand-dot"></span>
-      <span class="brand-name">DINO<br /><b>CORE</b></span>
+      <span class="brand-name">THE SWERVE<br /><b>CORE</b><small>By Thai Swerve Drive Robots</small></span>
     </router-link>
 
     <div class="rail-label">Workspace</div>
@@ -25,7 +25,7 @@
         <Settings :size="17" :stroke-width="1.7" />
         <span>Settings</span>
       </router-link>
-      <div class="rail-version">DINO OS <span>v2.4.1</span></div>
+      <div class="rail-version">THE SWERVE CORE <span>v2.4.1</span></div>
     </div>
   </aside>
 </template>

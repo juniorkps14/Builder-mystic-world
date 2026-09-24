@@ -79,6 +79,7 @@
 
 .brand-name { font-size: 12px; line-height: 1.05; }
 .brand-name b { font-weight: 700; }
+.brand-name small { display: block; max-width: 130px; margin-top: 5px; color: var(--ink-muted); font-size: 7px; line-height: 1.25; letter-spacing: .02em; text-transform: none; }
 .rail-label, .eyebrow { color: var(--ink-muted); font: 500 10px/1.2 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; }
 .rail-label { margin: 0 10px 12px; }
 .rail-nav { display: grid; gap: 4px; }
