@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "test -x node_modules/.bin/vite || npm ci",
     "dev": "vite",
     "build": "vue-tsc && vite build",
     "test": "vitest --run",
